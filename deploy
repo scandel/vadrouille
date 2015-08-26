@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# Usage : deploy <environnement="dev"> <tag="">
+# à exécuter en tant que root ou avoir les droits : 
+# - créer répertoire 
+# - accès à git  
+
+#Git repository
+repo='git@github.com:scandel/vadrouille.git'
+branch='templates'
+
+# Chemin du projet où déployer 
+projectpath='/home/web/vadrouille-covoiturage.com/ftp/'
+projectversions='versions/'
+projectshared='shared/'
+
+# Environnement choisi, dev par defaut 
+if [ $# -ge 1 ] 
+then
+    projectenv=$1
+else
+    projectenv='dev'
+fi
+
+# Tag de la version
+if [ $# -ge 2 ]
+then
+    tag='-'$2
+else
+    tag=''
+fi
+
+
+# Timestamp pour numéroter la version 
+timestamp=`date +%Y-%m-%d-%Hh%Mm%S`
+
+# echo $projectpath
+# echo $projectenv
+# echo $timestamp
+
+projectdir=$projectpath$projectversions$timestamp$tag
+
+# Création du répertoire dans /versions 
+mkdir $projectdir
+echo "Created dir $projectdir"
+# Pull des fichiers 
+cd $projectdir
+git init 
+git pull $repo $branch
+echo "Project $repo $branch downladed in $projectdir"
+# Droits pour www-data ; il doit être dans le groupe
+chown -R vadrouille:www-data $projectdir
+
+# Création des liens symboliques vers les fichiers partagés et les settings
+# to do, avec un parcours des répertoires dans shared
+
+#for envdir in `ls $projectpath$projectshared`
+#do
+#    mkdir $projectdir'/sites/'$envdir
+#    ln -s $projectpath$projectshared$envdir'/settings.php' $projectdir'/sites/'$envdir'/settings.php'
+#    echo "Symlink to "$projectpath$projectshared$envdir'/settings.php created'
+#done
+#ln -s $projectpath$projectshared'assets' $projectdir'/assets'
+#echo "Symlink to "$projectpath$projectshared'assets/ created'
+
+# end to do
+
+# Tag de la repo GIT
+#gittag="v_$timestamp$tag"
+#git tag $gittag
+#git push $repo $branch tag $gittag
+#echo "Version Git tagguee $gittag"
+
+
+# Backup de la base, enable features, revert features 
+#if [ "$projectenv" == "www" ]
+#then
+#	drush "@magic.$projectenv" bam-backup
+#	echo "Database backup $projectenv done"
+#fi
+
+#echo "Clearing cache ..."
+#drush "@magic.$projectenv" cc all
+
+# Création du lien symbolique de l'environnement
+cd $projectpath
+if [ -e ./$projectenv ] && [ -L ./$projectenv ]
+then 
+	rm ./$projectenv
+	ln -s $projectversions$timestamp$tag/www ./$projectenv
+	echo "Symlink $projectenv created"
+elif [ ! -e ./$projectenv ]
+then 
+	ln -s  $projectversions$timestamp$tag/www ./$projectenv
+	echo "Symlink $projectenv created"
+else 
+	echo "ATTENTION : $projectenv already exists and is not a symlink, not deleting it !!! "
+fi 
+
+echo "... Done !!!" 

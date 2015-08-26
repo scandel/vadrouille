@@ -1,0 +1,38 @@
+<VirtualHost *:80>
+        DocumentRoot /home/web/vadrouille-covoiturage.com/ftp/www
+        ServerName vadrouille-covoiturage.com
+        ServerAlias *.vadrouille-covoiturage.com
+        VirtualDocumentRoot /home/web/vadrouille-covoiturage.com/ftp/%1
+
+        CustomLog /var/log/apache2/access.vadrouille-covoiturage.com.log combined
+        ErrorLog /var/log/apache2/error.vadrouille-covoiturage.com.log
+        
+        php_admin_value upload_tmp_dir /home/web/vadrouille-covoiturage.com/tmp
+
+        # Production environnement
+
+        <Directory /home/web/vadrouille-covoiturage.com/ftp/www/>
+             php_value include_path ".:/home/web/vadrouille-covoiturage.com/ftp/www:/usr/share/php"
+         </Directory>
+
+        # Developpement environnement 
+        
+       <Directory /home/web/vadrouille-covoiturage.com/ftp/dev/>
+               AuthName "Pages protegees"
+               AuthType Basic
+               AuthUserFile "/home/web/protected/passwords"
+               Require valid-user
+
+               php_value include_path ".:/home/web/vadrouille-covoiturage.com/ftp/dev:/usr/share/php"
+
+               # PHP error handling for development servers
+                php_flag display_startup_errors on
+                php_flag display_errors on
+                php_flag track_errors on
+                php_value error_log /var/log/apache2/dev.vadrouille.PHP_errors.log
+                php_value error_reporting -1
+                php_value log_errors_max_len 0
+               
+       </Directory>
+
+</VirtualHost>
