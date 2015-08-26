@@ -7,7 +7,7 @@
 
 #Git repository
 repo='git@github.com:scandel/vadrouille.git'
-branch='templates'
+branch='symfony'
 
 # Chemin du projet où déployer 
 projectpath='/home/web/vadrouille-covoiturage.com/ftp/'
