@@ -87,11 +87,11 @@ cd $projectpath
 if [ -e ./$projectenv ] && [ -L ./$projectenv ]
 then 
 	rm ./$projectenv
-	ln -s $projectversions$timestamp$tag/www ./$projectenv
+	ln -s $projectversions$timestamp$tag/vadrouille/web ./$projectenv
 	echo "Symlink $projectenv created"
 elif [ ! -e ./$projectenv ]
 then 
-	ln -s  $projectversions$timestamp$tag/www ./$projectenv
+	ln -s  $projectversions$timestamp$tag/vadrouille/dev ./$projectenv
 	echo "Symlink $projectenv created"
 else 
 	echo "ATTENTION : $projectenv already exists and is not a symlink, not deleting it !!! "
