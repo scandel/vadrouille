@@ -1,13 +1,148 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+
+{% block head %}
+<head>
+    <meta charset="{{ charset|default('utf-8') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Vadrouille Covoiturage{% endblock %}</title>
+    <meta name='description' content='{% block description %}{% endblock %}'>
+    <link rel="shortcut icon" href="/theme/img/favicon.ico" />
+    <meta content='{{ robot|default('index, follow, noodp') }}' name="robots">
+    <meta content="fr" name="language">
+    <meta content="fr" http-equiv="Content-Language">
+    <meta content="France, FRANCE" name="location">
+    <meta content="Document" http-equiv="VW96.OBJECT TYPE">
+    <meta content="IE=8" http-equiv="X-UA-Compatible">
+
+
+    {% block head_style %}
+
+        {% block stylesheets %}
+            {% stylesheets
+                '../app/Resources/css/style.css'
+                filter='cssrewrite'
+                output='css/style.css'
+            %}
+            <link rel="stylesheet" href="{{ asset_url }}" />
+            {% endstylesheets %}
+        {% endblock %}
+        {#
+        {% if stylesheets is defined and stylesheets is not empty %}
+            {% for stylesheet in stylesheets %}
+                <link href="{{ stylesheet }}" type="text/css" rel="stylesheet" media="screen" />
+            {% endfor %}
+        {% endif %}
+        #}
+    {% endblock head_style %}
+
+    {% block head_inline_script %}
+        {% if inlineheadscripts is defined and inlineheadscripts is not empty %}
+            {% for javascript in inlineheadscripts %}
+                <script>{{ javascript|raw }}</script>
+            {% endfor %}
+        {% endif %}
+    {% endblock head_inline_script %}
+
+    {% block head_script %}
+        {% if headscripts is defined and headscripts is not empty %}
+            {% for javascript in headscripts %}
+                <script type="text/javascript" src="{{ javascript }}"></script>
+            {% endfor %}
+        {% endif %}
+    {% endblock head_script %}
+
+    {% block head_bottom %}{% endblock %}
+</head>
+{% endblock head %}
+
+
+
+<body>
+
+{% block body_start %}
+{% endblock body_start %}
+
+{% block body %}
+
+{% block header_container %}
+    <div class="header-container">
+        <div class="header container">
+            {% include 'header.html.twig' %}
+        </div>
+    </div>
+{% endblock header_container %}
+
+{% block body_container %}
+    <div class="content-container">
+        <div class="content container">
+            {% block page_header %}
+                <div class="page-header">
+                    <h1>{% block headline %}Vadrouille Covoiturage{% endblock headline %}</h1>
+                </div>
+            {% endblock page_header %}
+            {# {{ dump(session) }} #}
+            {% block flashes %}
+                {# Real session alerts ou fake ones #}
+                {# {% if session.alert|length > 0 %}
+                    <div class="row">
+                        <div class="col-sm-12 alert alert-dismissible {{ session.class_alert }}" role="alert">
+                            {{ session.alert|raw }}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if alerts.alert|length > 0 %}
+                    <div class="row">
+                        <div class="col-sm-12 alert alert-dismissible {{ alerts.class_alert }}" role="alert">
+                            {{ alerts.alert|raw }}
+                        </div>
+                    </div>
+                {% endif %}
+#}
+            {% endblock flashes %}
+
+            {% block content %}
+            {% endblock content %}
+
+{#            {% block debug %}
+                <div class="well">
+                    <h2>Debug - $_SESSION</h2>
+                    {{ dump(session) }}
+                </div>
+            {% endblock debug %}
+#}
+        </div>
+    </div>
+{% endblock body_container %}
+
+
+{% block footer_container %}
+    <footer class="footer-container">
+        <div class="footer container">
+            {% block footer %}
+                Footer
+            {% endblock footer %}
+        </div>
+    </footer>
+{% endblock footer_container %}
+
+    {% block body_end_before_js %}
+    {% endblock body_end_before_js %}
+
+{% block foot_script %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+{% endblock foot_script %}
+
+{% endblock body %}
+
+{% block body_end %}
+{% endblock body_end %}
+
+</body>
 </html>
+
