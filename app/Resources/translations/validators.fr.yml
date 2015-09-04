@@ -1,0 +1,4 @@
+# User
+user:
+  first_name.blank: Entrez votre prénom s'il vous plait
+  last_name.blank: Entrez votre nom s'il vous plait

@@ -4,6 +4,11 @@
     <div class="row">
     <div class="col-sm-12">
         <p>Homepage. Bienvenue {{ name }} !!</p>
+        <p>Encryption md5 de 123456 : {{ md5 }}</p>
+
+        {% if app.user is defined  %}
+            {{ dump(app.user)  }}
+        {% endif %}
 
     {#{% include "components/searchtripsform.html.twig" %}#}
 

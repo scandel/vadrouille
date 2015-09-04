@@ -1,10 +1,14 @@
 <div class="row">
      <div class="col-sm-3">
-        <a href="/" title="Accueil" alt="Vadrouille Covoiturage">
+        <a href="{{ path('homepage') }}" title="Accueil" alt="Vadrouille Covoiturage">
             <img src="/theme/img/vadrouille-covoiturage.png">
         </a>
     </div>
     <div class="col-sm-9 text-right">
 {#        {{ macros.render_menu(headermenu, 'header-menu', 'nav nav-pills') }} #}
+        <a href="{{ path('fos_user_registration_register') }}">Inscription</a> |
+        <a href="{{ path('fos_user_security_login') }}">Connexion</a> |
+        <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
+
     </div>
 </div>

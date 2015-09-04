@@ -17,6 +17,7 @@ class DefaultController extends Controller
         // replace this example code with whatever you need
         return $this->render('pages/homepage.html.twig', array(
             'name' => 'Séverine',
+            'md5' => md5('123456'),
         ));
     }
 
