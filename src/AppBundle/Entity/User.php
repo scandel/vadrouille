@@ -34,7 +34,7 @@ class User extends BaseUser
     protected $last_name;
 
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="phone_number")
      */
     protected $phone;
 
@@ -48,7 +48,7 @@ class User extends BaseUser
 
         // TODO : remove this but have a "no salt" logic for legacy users
         // No salt for legacy Users
-        $this->salt = '';
+        // $this->salt = '';
 
     }
 
@@ -156,10 +156,11 @@ class User extends BaseUser
         return $this->gender;
     }
 
+
     /**
      * Set phone
      *
-     * @param string $phone
+     * @param phone_number $phone
      * @return User
      */
     public function setPhone($phone)
@@ -172,7 +173,7 @@ class User extends BaseUser
     /**
      * Get phone
      *
-     * @return string 
+     * @return phone_number 
      */
     public function getPhone()
     {

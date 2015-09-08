@@ -1,6 +1,14 @@
 # User
 user:
-  gender: Civilité :
-  first_name: Prénom :
-  last_name: Nom :
-  phone: Téléphone :
+  gender:
+    label: Civilité :
+    male: Monsieur
+    female: Mademoiselle/Madame
+  first_name:
+    label: Prénom :
+  last_name:
+    label: Nom :
+  phone:
+    label: Téléphone :
+    help: Ne marche pas, défini direct dans le form.
+  terms: J'ai lu et j'accepte les Conditions d'Utilisation du service. Je confirme en particulier que : 1) je suis majeur(e), 2) je ne cherche pas à faire un bénéfice sur les trajets que je propose.

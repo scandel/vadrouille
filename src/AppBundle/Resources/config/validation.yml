@@ -26,15 +26,10 @@ AppBundle\Entity\User:
                 maxMessage: user.last_name.long
                 groups: [ "AppRegistration", "AppProfile" ]
        phone:
-            - NotBlank:
-                message: user.phone.blank
+           - Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber:
+                message: user.phone.invalid
                 groups: [ "AppRegistration", "AppProfile" ]
-            - Length:
-                min: 10
-                minMessage: user.phone.short
-                max: 20
-                maxMessage: user.phone.long
-                groups: [ "AppRegistration", "AppProfile" ]
+
 
 # Note: We still want to validate the email
 # See FOSUserBundle/Resources/config/validation/orm.xml to understand

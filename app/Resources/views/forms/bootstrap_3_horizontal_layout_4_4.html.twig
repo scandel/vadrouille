@@ -30,6 +30,10 @@ col-sm-4
         {{ form_label(form) }}
         <div class="{{ block('form_group_class') }}">
             {{ form_widget(form) }}
+            {% for attrname,attrvalue in attr %}
+                {% if attrname == 'help' %}
+                    <span class="help-block">{{ attrvalue }}</span>{% endif %}
+            {% endfor %}
             {{ form_errors(form) }}
         </div>
     </div>
@@ -47,8 +51,8 @@ col-sm-4
 {% block checkbox_radio_row -%}
 {% spaceless %}
     <div class="form-group{% if not valid %} has-error{% endif %}">
-        <div class="{{ block('form_label_class') }}"></div>
-        <div class="{{ block('form_group_class') }}">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-8">
             {{ form_widget(form) }}
             {{ form_errors(form) }}
         </div>
