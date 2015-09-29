@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'forms/bootstrap_3_horizontal_layout_4_8.html.twig' %}
+
+{% block headline %}Proposer un covoiturage{% endblock %}
+
+
+{% block content %}
+<div id="post-trip">
+    {{ form_start(form) }}
+
+    <div class="row">
+        {#-- The map --#}
+        {#=============#}
+
+        <div id='map_container' class="col-sm-6 col-sm-push-6">
+            <div id="map">
+                <div id="spinner" style="display: none;">
+                    <img src="/theme/img/icons/bigspinner.gif">
+                </div>
+            </div>
+            <div id="map_legend">
+                <p>Voir:
+                    <a id='dep_center' href='' title='Cliquez pour centrer la carte sur le point de départ'>Départ</a> -
+                    <a id='arr_center' href='' title='Cliquez pour centrer la carte sur le lieu d arrivée'>Arrivée</a> -
+                    <a id='trip_center' href='' title='Cliquez pour voir tout le trajet'>Trajet</a> |
+                    Distance: <strong><span id='distance'>0</span></strong> -
+                    Durée: <strong><span id='time'>0</span></strong>
+                </p>
+            </div>
+        </div>
+
+
+        {#-- The form --#}
+        {#==============#}
+
+        <div class="form-block col-sm-6 col-sm-pull-6">
+
+            <h2>Votre parcours</h2>
+
+            <ul class="stops" data-prototype="{{ form_widget(form.stops.vars.prototype)|e }}">
+                {# itère sur chaque tag existant et affiche son unique champ : name #}
+                {% set nstops = form.stops|length %}
+
+                {# Départ et arrivée #}
+                <h3>Départ</h3>
+                <li>{{ form_row(form.stops[0].cityName) }}</li>
+                <h3>Arrivée</h3>
+                <li>{{ form_row(form.stops[1].cityName) }}</li>
+
+                {# Etapes #}
+                <h3>Etapes</h3>
+                {% for i in 2..(nstops-1) if nstops > 2 %}
+                   <li class="deletable">{{ form_row(form.stops[i].cityName) }}</li>
+                {% endfor %}
+            </ul>
+         </div>
+    </div>
+    {{ form_row(form.comment) }}
+    {{ form_rest(form) }}
+
+    <div class="col-sm-4 col-sm-push-4">
+        {{ form_row(form.submit) }}
+    </div>
+    {{ form_end(form) }}
+</div>
+
+{% endblock content %}
+
+{% block body_end %}
+    <script>
+        // Nb max d'étapes
+        var max_stops = 5
+
+        // Récupère le div qui contient la collection de tags
+        var collectionHolder = $('ul.stops');
+        // INdice pour numéroter les nouvelles étapes
+        var iter = collectionHolder.find('.deletable').length+2;
+
+        // ajoute un lien « add a tag »
+        var $addStopLink = $('<div class="col-sm-8 col-sm-push-4"><button id="add_stop" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Ajouter une étape</button></div>');
+        var $newLinkLi = $('<li></li>').append($addStopLink);
+
+        jQuery(document).ready(function() {
+
+            // ajoute un lien de suppression à tous les éléments li de
+            // formulaires de tag existants
+            collectionHolder.find('.deletable').each(function() {
+                addStopFormDeleteLink($(this));
+            });
+
+            // ajoute l'ancre « ajouter un tag » et li à la balise ul
+            collectionHolder.append($newLinkLi);
+
+            $addStopLink.on('click', function(e) {
+                // empêche le lien de créer un « # » dans l'URL
+                e.preventDefault();
+
+                // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+                addStopForm(collectionHolder, $newLinkLi);
+
+                // Si on est au max d'éléments, disable l'élément
+                if (collectionHolder.find('.deletable').length >= max_stops) {
+                    $('#add_stop').attr('disabled', 'disabled');
+                }
+            });
+        });
+
+
+        function addStopForm(collectionHolder, $newLinkLi) {
+            // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+            var prototype = collectionHolder.attr('data-prototype');
+
+            // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+            // la longueur de la collection courante
+            var newForm = prototype.replace(/__name__/g, iter++);
+
+            // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+            var $newFormLi = $('<li class="deletable"></li>').append(newForm);
+            $newLinkLi.before($newFormLi);
+
+            // ajoute un lien de suppression au nouveau formulaire
+            addStopFormDeleteLink($newFormLi);
+        }
+
+        function addStopFormDeleteLink($stopFormLi) {
+            var $removeFormA = $('<div class="row"><div class="col-sm-8 col-sm-push-4 clearfix"><button class="btn btn-link btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Supprimer cette étape</button></div></div>');
+            $stopFormLi.append($removeFormA);
+
+            $removeFormA.on('click', function(e) {
+                // empêche le lien de créer un « # » dans l'URL
+                e.preventDefault();
+
+                // supprime l'élément li pour le formulaire de tag
+                $stopFormLi.remove();
+
+                if (collectionHolder.find('.deletable').length < max_stops) {
+                    $('#add_stop').attr('disabled', false);
+                }
+
+            });
+        }
+
+    </script>
+{% endblock body_end %}

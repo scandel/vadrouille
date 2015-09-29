@@ -1,0 +1,16 @@
+{# Table From-To with stops for a trip #}
+
+{#{% set dep_time = stops[0].time %}#}
+
+<table class="table trip-stops">
+{% for stop in stops %}
+
+    {# {% set class_line = (stop.id == trip.dep_city_id) ? "dep" : ((stop.id == trip.arr_city_id) ? "arr" : "") %}#}
+    {% set class_line = 'myclass' %}
+
+    <tr{{ class_line ? (' class="' ~ class_line ~ '"')|raw }}>
+        {# <td class="time">{{ (stop == stops[0] or stop.time != dep_time) ? stop.time|date("H\\hi") : "non précisé" }}</td> #}
+        <td class="place"><span>{{ stop.cityName|upper }}</span> {#, {{ stop.place_name }} #}</td>
+    </tr>
+{% endfor %}
+</table>

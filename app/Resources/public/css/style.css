@@ -7507,6 +7507,15 @@ ul#header-menu {
 ul#header-menu > li > a {
   padding: 2px 6px;
 }
+ul#header-menu .navbar-photo {
+  width: 35px;
+  height: auto;
+  position: relative;
+  top: -7px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
 select.shortselect {
   width: 90px;
   display: inline;
@@ -7601,15 +7610,24 @@ table.trip-details td {
   padding-bottom: 6px;
   padding-top: 6px;
 }
-#post-trip-page-1 #spinner {
+#post-trip ul.stops {
+  padding-left: 0 ;
+}
+#post-trip ul.stops li {
+  list-style-type: none;
+}
+#post-trip #spinner {
   left: 45%;
   position: absolute;
   top: 45%;
   z-index: 1000;
 }
-#post-trip-page-1 table {
+#post-trip table {
   table-layout: fixed;
 }
-#post-trip-page-1 .time-block {
+#post-trip .time-block {
   padding-top: 7px;
+}
+.user-photo-form button[type=submit] {
+  margin-top: 15px;
 }

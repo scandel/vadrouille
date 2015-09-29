@@ -1,0 +1,48 @@
+{# One line for displaying trips in a table #}
+{# Variables : trip, stops, driver #}
+
+<tr class="trip-line row"  {#onclick="location.href='{{ trip.url }}';"#} >
+    {# Zone trajet #}
+    <td class="col-xs-4">
+        {# Date #}
+        {#{% if trip.dep_time|date("Y-m-d") == "now"|date("Y-m-d") %}
+            <time datetime='{{ trip.dep_time|date("Y-m-d H:i:s") }}' class="h4">Aujourd'hui à {{ trip.dep_time|date('H\\hi') }}</time>
+        {% elseif  trip.dep_time|date("Y-m-d") == "tomorrow"|date("Y-m-d") %}
+            <time datetime='{{ trip.dep_time|date("Y-m-d H:i:s") }}' class="h4">Demain à {{ trip.dep_time|date("H\\hi") }}</time>
+        {% else %}
+            <time datetime='{{ trip.dep_time|date("Y-m-d H:i:s") }}' class="h4">{{ trip.dep_time|localizeddate('full','full',NULL,NULL,"EEEE d MMMM à HH'h'mm")|capitalize }}</time>
+        {% endif %}
+        #}
+        {% include "components/tripstopstable.html.twig" %}
+    </td>
+
+    {# Zone Prix, places, contact#}
+    {#<td  class="col-xs-3 text-center">
+        <p class="lead red">{{ trip.initial_places_nb }}<small> places</small></p>
+        <p>proposées</p>
+        <p class="lead red">{{ trip.price|number_format(0,',','') }}<small> €</small></p>
+        <p>par passager</p>
+    </td>
+
+    {# Zone Conducteur #}
+    {#<td class="col-xs-3">
+        <div class='col-xs-6'>
+                <img src="{{ driver.photo }}" title="Le conducteur" alt="Photo du conducteur" class="photo-small">
+        </div>
+        <div class="col-xs-6">
+            {{ (driver.sex == 'M') ? 'Le conducteur :' : 'La conductrice :' }}
+            <div class="name h4">{{ driver.first_name|title }} {{ driver.last_name|first|upper }}.</div>
+            <div class="infos">
+                {{ driver.age ? (driver.age ~ ' ans<br>')|raw }}
+                {{ driver.city ? (driver.city ~ '<br>')|raw }}
+
+            </div>
+        </div>
+    </td>
+
+    {# Zone actions#}
+    {#<td class="col-xs-2 text-center">
+        Actions
+    </td>
+    #}
+</tr>

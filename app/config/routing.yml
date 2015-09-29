@@ -4,3 +4,21 @@ app:
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+# Crop on upload bundle (ComurImageBundle)
+comur_image:
+    resource: "@ComurImageBundle/Resources/config/routing.yml"
+    prefix:   /
+
+# Admin
+admin:
+   resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.xml'
+   prefix: /admin
+
+_sonata_admin:
+   resource: .
+   type: sonata_admin
+   prefix: /admin

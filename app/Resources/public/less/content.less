@@ -216,6 +216,13 @@ ul#header-menu {
   }
   & > li:last-child {
   }
+  .navbar-photo {
+    width: 35px;
+    height: auto;
+    position: relative;
+    top: -7px;
+    .border-radius(50%);
+  }
 }
 
 // ----------------------------------------------
@@ -353,7 +360,15 @@ table.trip-details {
 // Post Trip Page 1
 // ----------------------------------------------
 
-#post-trip-page-1 {
+#post-trip {
+
+  ul.stops {
+    padding-left: 0 ;
+    li {
+      list-style-type: none;
+    }
+  }
+
   #spinner {
     left: 45%;
     position: absolute;
@@ -368,4 +383,14 @@ table.trip-details {
     padding-top: 7px;
   }
 
+}
+
+// -----------------------------------------------
+// User Zone
+// -----------------------------------------------
+
+.user-photo-form {
+  button[type=submit] {
+    margin-top: 15px;
+  }
 }

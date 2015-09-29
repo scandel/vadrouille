@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: @AppBundle/Resources/config/admin.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -97,3 +98,34 @@ fos_user:
         form:
             type: app_user_registration
             validation_groups: [AppRegistration]
+
+    profile:
+        form:
+            type: app_user_profile
+            validation_groups: [AppProfile]
+
+# Comur Image Bundle (Upload and Crop)
+comur_image:
+    config:
+        cropped_image_dir: 'cropped'
+        thumbs_dir: 'thumbnails'
+        media_lib_thumb_size: 150
+        web_dirname: 'web'
+        translation_domain: 'ComurImageBundle'
+        gallery_thumb_size: 150
+        gallery_dir: 'gallery'
+
+# Sonata - AdminBundle and dependencies
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        # Enable the SonataAdminBundle block
+        sonata.admin.block.admin_list:
+            contexts:   [admin]
+        # Your other blocks
+
+sonata_admin:
+    title: Admin
+    title_logo: theme/img/vadrouille-covoiturage.png
+    security:
+        handler: sonata.admin.security.handler.role

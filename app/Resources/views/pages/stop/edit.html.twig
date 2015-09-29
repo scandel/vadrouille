@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block headline %}Entrez votre étape{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <div class="col-sm-4 col-sm-push-4">
+        <button class="btn btn-primary" type="submit">{{ 'Enregistrer étape'|trans }}</button>
+    </div>
+    {{ form_end(form) }}
+
+    </div>
+{% endblock content %}
+
