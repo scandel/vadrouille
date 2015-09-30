@@ -34,14 +34,14 @@ class TripRepository extends EntityRepository
 
         $parameters = array();
 
-        if (!empty($tripSearch->getDepCityName())) {
+        if ($tripSearch->getDepCityName()) {
             $qb->from('AppBundle:Stop', 'd')
                 ->andwhere('d.trip = t')
                 ->andWhere('d.cityName = :depName');
             $parameters['depName'] = $tripSearch->getDepCityName();
         }
 
-        if (!empty($tripSearch->getArrCityName())) {
+        if ($tripSearch->getArrCityName()) {
             $qb->from('AppBundle:Stop', 'a')
                 ->andwhere('a.trip = t')
                 ->andWhere('a.cityName = :arrName');
