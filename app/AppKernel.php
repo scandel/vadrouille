@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new JMS\TranslationBundle\JMSTranslationBundle(),
             new Comur\ImageBundle\ComurImageBundle(),
+            new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             // Admin
             new Sonata\CoreBundle\SonataCoreBundle(),
             new Sonata\BlockBundle\SonataBlockBundle(),
