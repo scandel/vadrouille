@@ -41,6 +41,19 @@ class CarModel
      */
     private $type;
 
+    /**
+     * Set Id
+     * (not working when AI activated)
+     *
+     * @param integer $id
+     * @return CarBrand
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * Get id
