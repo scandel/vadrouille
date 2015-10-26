@@ -12,4 +12,60 @@ use Doctrine\ORM\EntityRepository;
  */
 class CityRepository extends EntityRepository
 {
+    /**
+     * Searches Cities which name (one of their names) begins with
+     * first letters given.
+     * Results ordered by City note.
+     *
+     * @param $firstLetters : First letters of the city name
+     * @param int $limit : max number of results
+     * @return array
+     */
+    public function searchByFirstLetters($firstLetters, $limit = 10)
+    {
+        // Comparison string is "normalized"
+        $firstLetters =  utf8_decode($firstLetters);
+        $firstLetters = ltrim($firstLetters);
+        $firstLetters = addslashes($firstLetters);
+        $firstLetters = preg_replace("# #","-",$firstLetters);
+
+        $query = $this->getEntityManager()->createQuery(
+                 'SELECT DISTINCT c FROM AppBundle:City c, AppBundle:CityName n
+                 WHERE n.normName LIKE :firstNormLetters
+                 AND   n.city = c
+                 ORDER BY c.note DESC'
+             )
+         ->setParameters(array(
+             'firstNormLetters' => $firstLetters."%",
+         ))
+        ->setMaxResults($limit);
+
+        return $query->getResult();
+
+
+        /*$qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('t')
+            ->from('AppBundle:Trip', 't');
+
+        $parameters = array();
+
+        if ($tripSearch->getDepCityName()) {
+            $qb->from('AppBundle:Stop', 'd')
+                ->andwhere('d.trip = t')
+                ->andWhere('d.cityName = :depName');
+            $parameters['depName'] = $tripSearch->getDepCityName();
+        }
+
+        if ($tripSearch->getArrCityName()) {
+            $qb->from('AppBundle:Stop', 'a')
+                ->andwhere('a.trip = t')
+                ->andWhere('a.cityName = :arrName');
+            $parameters['arrName'] = $tripSearch->getArrCityName();
+        }
+
+        $qb->setParameters($parameters);
+
+        return $qb->getQuery()->getResult();*/
+    }
 }

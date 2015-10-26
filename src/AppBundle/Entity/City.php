@@ -72,29 +72,6 @@ class City
     }
 
     /**
-     * Set names
-     *
-     * @param string $names
-     * @return City
-     */
-    public function setNames($names)
-    {
-        $this->names = $names;
-
-        return $this;
-    }
-
-    /**
-     * Get names
-     *
-     * @return string 
-     */
-    public function getNames()
-    {
-        return $this->names;
-    }
-
-    /**
      * Set country
      *
      * @param string $country
