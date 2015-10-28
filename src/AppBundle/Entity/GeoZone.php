@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\AppBundle;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -75,9 +76,23 @@ class GeoZone
      * A simple array of ids of the 10 or 20 (depends on level) main Cities
      * of the zone (acts like a cache).
      *
-     * @ORM\Column(name="mainCities", type="simple_array")
+     * @ORM\Column(name="mainCities", type="simple_array", nullable=true)
      */
     private $mainCities;
+
+    /**
+     * Set Id
+     * (not working when AI activated)
+     *
+     * @param integer $id
+     * @return GeoZone
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * Get id
@@ -138,10 +153,10 @@ class GeoZone
     /**
      * Set country
      *
-     * @param string $country
+     * @param Country $country
      * @return GeoZone
      */
-    public function setCountry($country)
+    public function setCountry(Country $country)
     {
         $this->country = $country;
 
@@ -151,7 +166,7 @@ class GeoZone
     /**
      * Get country
      *
-     * @return string 
+     * @return Country
      */
     public function getCountry()
     {
@@ -179,29 +194,6 @@ class GeoZone
     public function getParent()
     {
         return $this->parent;
-    }
-
-    /**
-     * Set adjacentZones
-     *
-     * @param string $adjacentZones
-     * @return GeoZone
-     */
-    public function setAdjacentZones($adjacentZones)
-    {
-        $this->adjacentZones = $adjacentZones;
-
-        return $this;
-    }
-
-    /**
-     * Get adjacentZones
-     *
-     * @return string 
-     */
-    public function getAdjacentZones()
-    {
-        return $this->adjacentZones;
     }
 
     /**
@@ -323,6 +315,29 @@ class GeoZone
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * Set adjacentZones
+     *
+     * @param string $adjacentZones
+     * @return GeoZone
+     */
+    public function setAdjacentZones($adjacentZones)
+    {
+        $this->adjacentZones = $adjacentZones;
+
+        return $this;
+    }
+
+    /**
+     * Get adjacentZones
+     *
+     * @return string
+     */
+    public function getAdjacentZones()
+    {
+        return $this->adjacentZones;
     }
 
     /**

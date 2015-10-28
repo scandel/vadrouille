@@ -33,6 +33,22 @@ class City
     private $country;
 
     /**
+     * Zone of level 1 = Region (in France)
+     *
+     * @ORM\ManyToOne(targetEntity="GeoZone")
+     * @ORM\JoinColumn(name="zone1_id", referencedColumnName="id")
+     */
+    private $zone1;
+
+    /**
+     * Zone of level 2 = Departement (in France)
+     *
+     * @ORM\ManyToOne(targetEntity="GeoZone")
+     * @ORM\JoinColumn(name="zone2_id", referencedColumnName="id")
+     */
+    private $zone2;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="postCode", type="string", length=10)
@@ -60,6 +76,19 @@ class City
      */
     private $note;
 
+    /**
+     * Set Id
+     * (not working when AI activated)
+     *
+     * @param integer $id
+     * @return City
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * Get id
@@ -261,5 +290,51 @@ class City
         else {
             return "";
         }
+    }
+
+    /**
+     * Set zone1
+     *
+     * @param \AppBundle\Entity\GeoZone $zone1
+     * @return City
+     */
+    public function setZone1(\AppBundle\Entity\GeoZone $zone1 = null)
+    {
+        $this->zone1 = $zone1;
+
+        return $this;
+    }
+
+    /**
+     * Get zone1
+     *
+     * @return \AppBundle\Entity\GeoZone 
+     */
+    public function getZone1()
+    {
+        return $this->zone1;
+    }
+
+    /**
+     * Set zone2
+     *
+     * @param \AppBundle\Entity\GeoZone $zone2
+     * @return City
+     */
+    public function setZone2(\AppBundle\Entity\GeoZone $zone2 = null)
+    {
+        $this->zone2 = $zone2;
+
+        return $this;
+    }
+
+    /**
+     * Get zone2
+     *
+     * @return \AppBundle\Entity\GeoZone 
+     */
+    public function getZone2()
+    {
+        return $this->zone2;
     }
 }

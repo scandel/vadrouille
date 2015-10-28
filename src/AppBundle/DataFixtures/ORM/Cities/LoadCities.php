@@ -37,8 +37,8 @@ class LoadCitiesData extends AbstractFixture implements OrderedFixtureInterface,
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . '..' .
-        //    DIRECTORY_SEPARATOR . 'Resources/data/Geo/Cities_*.csv';
-            DIRECTORY_SEPARATOR . 'Resources/data/Geo/Cities_FR.csv';
+            DIRECTORY_SEPARATOR . 'Resources/data/Cities/Cities_*.csv';
+        //    DIRECTORY_SEPARATOR . 'Resources/data/Cities/Cities_FR.csv';
 
 
         $em = $this->container->get('doctrine')->getManager('default');
@@ -82,6 +82,16 @@ class LoadCitiesData extends AbstractFixture implements OrderedFixtureInterface,
                     ->setLng($data['lng'])
                     ->setNote($data['note']);
                 $em->persist($entity);
+
+                // Geozones
+                if (!empty($data['zone1'])) {
+                    $zone1 = $em->getRepository('AppBundle:GeoZone')->find($data['zone1']);
+                    $entity->setZone1($zone1);
+                }
+                if (!empty($data['zone2'])) {
+                    $zone2 = $em->getRepository('AppBundle:GeoZone')->find($data['zone2']);
+                    $entity->setZone2($zone2);
+                }
 
                 // City Name(s)
 
