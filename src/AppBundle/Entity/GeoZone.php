@@ -3,11 +3,12 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * GeoZone
  *
- * @ORM\Table()
+ * @ORM\Table(name="GeoZones")
  * @ORM\Entity
  */
 class GeoZone
@@ -22,6 +23,13 @@ class GeoZone
     private $id;
 
     /**
+     * @ORM\OneToMany(targetEntity="GeoZoneName", mappedBy="geoZone")
+     */
+    private $names;
+
+    /**
+     * Level : 1 = Region (top level in a country), 2 = Département
+     *
      * @var integer
      *
      * @ORM\Column(name="level", type="smallint")
@@ -29,6 +37,8 @@ class GeoZone
     private $level;
 
     /**
+     * Local id of the zone ; ex 27 for Eure
+     *
      * @var integer
      *
      * @ORM\Column(name="localId", type="integer")
@@ -36,33 +46,38 @@ class GeoZone
     private $localId;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="country", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="Country")
+     * @ORM\JoinColumn(name="country_code", referencedColumnName="code")
      */
     private $country;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="parent", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="GeoZone", inversedBy="children")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
      */
     private $parent;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="adjacentZones", type="string", length=255)
+     * @ORM\OneToMany(targetEntity="GeoZone", mappedBy="parent")
+     */
+    private $children;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="GeoZone")
+     * @ORM\JoinTable(name="GeoZonesAdjacent",
+     *      joinColumns={@ORM\JoinColumn(name="zone1", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="zone2", referencedColumnName="id")}
+     *      )
      */
     private $adjacentZones;
 
     /**
-     * @var array
+     * A simple array of ids of the 10 or 20 (depends on level) main Cities
+     * of the zone (acts like a cache).
      *
      * @ORM\Column(name="mainCities", type="simple_array")
      */
     private $mainCities;
-
 
     /**
      * Get id
@@ -210,5 +225,126 @@ class GeoZone
     public function getMainCities()
     {
         return $this->mainCities;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->names = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->adjacentZones = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add names
+     *
+     * @param \AppBundle\Entity\GeoZoneName $names
+     * @return GeoZone
+     */
+    public function addName(\AppBundle\Entity\GeoZoneName $names)
+    {
+        $this->names[] = $names;
+
+        return $this;
+    }
+
+    /**
+     * Remove names
+     *
+     * @param \AppBundle\Entity\GeoZoneName $names
+     */
+    public function removeName(\AppBundle\Entity\GeoZoneName $names)
+    {
+        $this->names->removeElement($names);
+    }
+
+    /**
+     * Get names
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getNames()
+    {
+        return $this->names;
+    }
+
+    /**
+     * Get Name for the Zone in specified language
+     *
+     * @param string $language
+     * @return mixed|null|string
+     */
+    public function getName($language = "")
+    {
+        $language = ($language) ? $language : 'fr';
+        $namesInLanguage = array();
+        foreach ($this->names as $name) {
+            if ($name->getLanguage() == $language) {
+                $namesInLanguage[] = $name ;
+            }
+        }
+        if (count($namesInLanguage) > 0) {
+            return $namesInLanguage[0];
+        }
+        else {
+            return "";
+        }
+    }
+
+    /**
+     * Add children
+     *
+     * @param \AppBundle\Entity\GeoZone $children
+     * @return GeoZone
+     */
+    public function addChild(\AppBundle\Entity\GeoZone $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param \AppBundle\Entity\GeoZone $children
+     */
+    public function removeChild(\AppBundle\Entity\GeoZone $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * Add adjacentZones
+     *
+     * @param \AppBundle\Entity\GeoZone $adjacentZones
+     * @return GeoZone
+     */
+    public function addAdjacentZone(\AppBundle\Entity\GeoZone $adjacentZones)
+    {
+        $this->adjacentZones[] = $adjacentZones;
+
+        return $this;
+    }
+
+    /**
+     * Remove adjacentZones
+     *
+     * @param \AppBundle\Entity\GeoZone $adjacentZones
+     */
+    public function removeAdjacentZone(\AppBundle\Entity\GeoZone $adjacentZones)
+    {
+        $this->adjacentZones->removeElement($adjacentZones);
     }
 }

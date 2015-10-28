@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * GeoZoneName
  *
- * @ORM\Table()
+ * @ORM\Table(name="GeoZonesNames")
  * @ORM\Entity
  */
 class GeoZoneName
@@ -22,9 +22,8 @@ class GeoZoneName
     private $id;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="geoZone", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="GeoZone", inversedBy="names")
+     * @ORM\JoinColumn(name="geozone_id", referencedColumnName="id")
      */
     private $geoZone;
 
@@ -38,7 +37,7 @@ class GeoZoneName
     /**
      * @var string
      *
-     * @ORM\Column(name="normName", type="string", length=255)
+     * @ORM\Column(name="norm_name", type="string", length=255)
      */
     private $normName;
 
@@ -47,9 +46,12 @@ class GeoZoneName
      *
      * @ORM\Column(name="language", type="string", length=5)
      */
-    private $language;
+    private $language = 'fr';
 
     /**
+     * Articles to use before the name, in contexts :
+     * "the", "of", "in"
+     *
      * @var array
      *
      * @ORM\Column(name="articles", type="simple_array")

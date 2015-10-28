@@ -255,8 +255,11 @@ class City
         if ($mainNameInLanguage) {
             return $mainNameInLanguage;
         }
-        else {
+        else if (count($namesInLanguage) > 0){
             return $namesInLanguage[0];
+        }
+        else {
+            return "";
         }
     }
 }
