@@ -270,22 +270,22 @@ class City
 
     public function getMainName($language = "")
     {
-        $language = ($language) ? $language : 'fr';
         $namesInLanguage = array();
-        $mainNameInLanguage = "";
+        $mainName = "";
         foreach ($this->names as $name) {
-            if ($name->getLanguage() == $language) {
-                $namesInLanguage[] = $name ;
-                if ($name->isMain()) {
-                    $mainNameInLanguage = $name;
-                }
+            $namesInLanguage[$name->getLanguage()][] = $name ;
+            if ($name->isMain()) {
+                $mainName = $name;
             }
         }
-        if ($mainNameInLanguage) {
-            return $mainNameInLanguage;
+        if (!$language && $mainName) {
+            return $mainName;
         }
-        else if (count($namesInLanguage) > 0){
-            return $namesInLanguage[0];
+        else if ($language && isset($namesInLanguage[$language]) && count($namesInLanguage[$language]) > 0){
+            return $namesInLanguage[$language][0];
+        }
+        else if (count($this->names) > 0) {
+            return $this->names->first();
         }
         else {
             return "";

@@ -18,11 +18,12 @@ class CityController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $cities = $em->getRepository('AppBundle:City')->searchByFirstLetters($firstLetters);
+        $locale = $this->get('translator')->getLocale();
 
         $json = array();
         foreach($cities as $city) {
 
-            $cityName = $city->getMainName()->getName() ;
+            $cityName = $city->getMainName($locale)->getName() ;
             $countryCode = $city->getCountry()->getCode();
             if ($countryCode == "FR")
             {
