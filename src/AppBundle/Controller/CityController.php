@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use AppBundle\Form\City\CityType;
+use AppBundle\Form\SearchCity\SearchCityType;
 
 /**
  * Class CityController
@@ -63,7 +63,7 @@ class CityController extends Controller
      */
     public function findAction(Request $request)
     {
-        $form = $this->createForm(new CityType());
+        $form = $this->createForm(new SearchCityType());
         $form->handleRequest($request);
 
         if ($form->isValid()) {

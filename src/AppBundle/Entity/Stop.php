@@ -35,11 +35,10 @@ class Stop
     private $delta = 1;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="city_name", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="City")
+     * @ORM\JoinColumn(name="city_id", referencedColumnName="id", nullable=false)
      */
-    private $cityName;
+    private $city;
 
 
     /**
@@ -76,29 +75,6 @@ class Stop
     }
 
     /**
-     * Set cityName
-     *
-     * @param string $cityName
-     * @return Stop
-     */
-    public function setCityName($cityName)
-    {
-        $this->cityName = $cityName;
-
-        return $this;
-    }
-
-    /**
-     * Get cityName
-     *
-     * @return string 
-     */
-    public function getCityName()
-    {
-        return $this->cityName;
-    }
-
-    /**
      * Set trip
      *
      * @param \AppBundle\Entity\Trip $trip
@@ -119,5 +95,28 @@ class Stop
     public function getTrip()
     {
         return $this->trip;
+    }
+
+    /**
+     * Set city
+     *
+     * @param \AppBundle\Entity\City $city
+     * @return Stop
+     */
+    public function setCity(\AppBundle\Entity\City $city)
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return \AppBundle\Entity\City 
+     */
+    public function getCity()
+    {
+        return $this->city;
     }
 }

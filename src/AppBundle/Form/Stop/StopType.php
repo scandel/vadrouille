@@ -5,6 +5,7 @@ namespace AppBundle\Form\Stop;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use AppBundle\Form\SearchCity\SearchCityType;
 
 class StopType extends AbstractType
 {
@@ -14,9 +15,7 @@ class StopType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('cityName')
-        ;
+        $builder->add('searchcity', new SearchCityType(), array("mapped" => false));
     }
 
     /**
