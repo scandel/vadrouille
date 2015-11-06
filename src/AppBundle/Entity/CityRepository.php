@@ -17,18 +17,12 @@ class CityRepository extends EntityRepository
      * first letters given.
      * Results ordered by City note.
      *
-     * @param $firstLetters : First letters of the city name
+     * @param $firstNormLetters : First letters (normalized please) of the city name
      * @param int $limit : max number of results
      * @return array
      */
-    public function searchByFirstLetters($firstLetters, $limit = 10)
+    public function searchByFirstLetters($firstNormLetters, $limit = 10)
     {
-        // Comparison string is "normalized"
-        $firstLetters =  utf8_decode($firstLetters);
-        $firstLetters = ltrim($firstLetters);
-        $firstLetters = addslashes($firstLetters);
-        $firstLetters = preg_replace("# #","-",$firstLetters);
-
         $query = $this->getEntityManager()->createQuery(
                  'SELECT DISTINCT c FROM AppBundle:City c, AppBundle:CityName n
                  WHERE n.normName LIKE :firstNormLetters
@@ -36,7 +30,7 @@ class CityRepository extends EntityRepository
                  ORDER BY c.note DESC'
              )
          ->setParameters(array(
-             'firstNormLetters' => $firstLetters."%",
+             'firstNormLetters' => $firstNormLetters."%",
          ))
         ->setMaxResults($limit);
 
