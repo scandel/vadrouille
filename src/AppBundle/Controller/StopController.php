@@ -16,35 +16,59 @@ class StopController extends Controller
     public function newAction(Request $request)
     {
         $stop = new Stop();
-        $form = $this->createForm(new StopType(), $stop);
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm(new StopType($em), $stop);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
 
             $stop->setTrip(null);
 
-            if (intval($form['searchcity']->getData()->getId()) != 0) {
-                $em = $this->getDoctrine()->getManager();
-                $city = $em->getRepository('AppBundle:City')->find($form['searchcity']->getData()->getId());
-                if ($city) {
-                    $stop->setCity($city);
-                    // writes the stop to the database
-                    $em->persist($stop);
-                    $em->flush();
+            if ($stop->getCity()) {
+                $em->persist($stop);
+                $em->flush();
 
-                    $this->get('session')->getFlashBag()->add(
-                        'success',
-                        'L\'étape a bien été enregistrée.'
-                    );
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    'L\'étape a bien été enregistrée.'
+                );
 
-                    return $this->redirect($this->generateUrl('stop_new'));
+                return $this->redirect($this->generateUrl('stop_new'));
+            }
+            else {
+                $this->get('session')->getFlashBag()->add(
+                    'danger',
+                    'Choisissez une ville !'
+                );
+            }
+        }
+        return $this->render('pages/stop/edit.html.twig', array(
+            'form' => $form->createView()
+        ));
+    }
 
-                } else {
-                    $this->get('session')->getFlashBag()->add(
-                        'danger',
-                        'Ville non trouvée !'
-                    );
-                }
+    /**
+     * @Route("/stop/edit/{id}", name="stop_edit")
+    */
+    public function editAction( $id, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $stop =  $em->getRepository('AppBundle:Stop')->find($id);
+        $form = $this->createForm(new StopType($em), $stop);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+
+            if ($stop->getCity()) {
+                $em->persist($stop);
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    'L\'étape a bien été enregistrée.'
+                );
+
+                // return $this->redirect($this->generateUrl('stop_new'));
             }
             else {
                 $this->get('session')->getFlashBag()->add(

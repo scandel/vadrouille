@@ -5,17 +5,31 @@ namespace AppBundle\Form\Stop;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use AppBundle\Form\SearchCity\SearchCityType;
+use AppBundle\Form\City\CityType;
+use AppBundle\Form\DataTransformer\CityTransformer;
+use Doctrine\ORM\EntityManager;
 
 class StopType extends AbstractType
 {
+
+    private $manager;
+
+    public function __construct(EntityManager $manager) {
+        $this->manager = $manager;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('searchcity', new SearchCityType(), array("mapped" => false));
+        $builder->add('city', new CityType());
+
+
+        $builder->get('city')
+            ->addModelTransformer(new CityTransformer($this->manager));
+
     }
 
     /**

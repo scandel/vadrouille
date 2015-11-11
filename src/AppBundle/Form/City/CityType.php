@@ -1,12 +1,12 @@
 <?php
 
-namespace AppBundle\Form\SearchCity;
+namespace AppBundle\Form\City;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class SearchCityType extends AbstractType
+class CityType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -19,11 +19,13 @@ class SearchCityType extends AbstractType
                 'attr' => array(
                     'class' => 'city-autocomplete'
                     ),
-                'required' => false
+                'required' => false,
                 ))
             ->add('id','hidden',
-                array('required' => false))
-        ;
+                array('required' => false,
+                    // validation message if the data transformer fails
+                    'invalid_message' => 'Cette ville n\'est pas reconnue',
+               ));
     }
 
     /**
@@ -32,7 +34,7 @@ class SearchCityType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\SearchCity'
+            'data_class' => null
         ));
     }
 
