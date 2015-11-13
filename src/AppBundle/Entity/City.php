@@ -288,6 +288,17 @@ class City
             return $this->names->first();
         }
         else {
+            return null;
+        }
+    }
+
+    public function getName($language = "")
+    {
+        $mainName = $this->getMainName($language);
+        if ($mainName) {
+            return $mainName->getName();
+        }
+        else {
             return "";
         }
     }

@@ -5,24 +5,40 @@ namespace AppBundle\Form\Trip;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use AppBundle\Form\City\CityType;
+use AppBundle\Form\DataTransformer\CityTransformer;
+use Doctrine\ORM\EntityManager;
 
 class TripSearchType extends AbstractType
 {
+    private $manager;
+
+    public function __construct(EntityManager $manager) {
+        $this->manager = $manager;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('depCityName', null, array(
-            'required' => false
+        $builder->add('depCity', new CityType(), array(
+            'required' => false,
+            'invalid_message' => 'La ville de départ n\'est pas reconnue, merci d\'en choisir une parmi les propositions de l\'autocomplétion.' ,
         ));
+        $builder->get('depCity')
+            ->addModelTransformer(new CityTransformer($this->manager));
 
-        $builder->add('arrCityName', null, array(
-            'required' => false
+        $builder->add('arrCity', new CityType(), array(
+            'required' => false,
+            'invalid_message' => 'La ville d\'arrivée n\'est pas reconnue, merci d\'en choisir une parmi les propositions de l\'autocomplétion.' ,
         ));
+        $builder->get('arrCity')
+            ->addModelTransformer(new CityTransformer($this->manager));
 
-   }
+
+    }
     
     /**
      * @param OptionsResolverInterface $resolver

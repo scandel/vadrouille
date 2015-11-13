@@ -186,10 +186,7 @@ class TripController extends Controller
         return $this->render('pages/trip/edit.html.twig', array(
             'form' => $form->createView()
         ));
-
-
-
-    }
+     }
 
     /**
     * Creates a form to edit a Trip entity.
@@ -286,7 +283,7 @@ class TripController extends Controller
     {
         $tripSearch = new TripSearch();
 
-        $tripSearchForm =  $this->createForm(new TripSearchType(), $tripSearch, array(
+        $tripSearchForm =  $this->createForm('app_trip_search', $tripSearch, array(
             'action' => $this->generateUrl('covoiturage_find'),
             'method' => 'POST',
         ));

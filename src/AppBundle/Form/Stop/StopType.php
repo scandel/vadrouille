@@ -24,9 +24,9 @@ class StopType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('city', new CityType());
-
-
+        $builder->add('city', new CityType(), array(
+            'invalid_message' => 'Cette ville n\'est pas reconnue, merci d\'en choisir une parmi les propositions de l\'autocomplétion.' ,
+        ));
         $builder->get('city')
             ->addModelTransformer(new CityTransformer($this->manager));
 
@@ -38,7 +38,7 @@ class StopType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Stop'
+            'data_class' => 'AppBundle\Entity\Stop',
         ));
     }
 

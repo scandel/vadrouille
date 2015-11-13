@@ -22,7 +22,7 @@ class CityTransformer implements DataTransformerInterface {
     * @return string
     */
     public function transform($city) {
-        if (null === $city) {
+        if (!($city instanceof City)) {
             return null;
         }
 

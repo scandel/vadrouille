@@ -100,10 +100,10 @@ class Stop
     /**
      * Set city
      *
-     * @param \AppBundle\Entity\City $city
+     * @param  $city
      * @return Stop
      */
-    public function setCity(\AppBundle\Entity\City $city)
+    public function setCity($city)
     {
         $this->city = $city;
 

@@ -4,6 +4,9 @@
  * - autocomplete cities
  */
 
+// Client side cache
+var cache = {};
+
 $(document).ready(function() {
 
     /**
@@ -31,9 +34,6 @@ $(document).ready(function() {
      * todo : 1) Check ; 2) Expose routes with FOSJS
      *
      */
-
-    // Client side cache
-    var cache = {};
 
     $('.city-autocomplete').each(function() {
          var input_name, input_id ;

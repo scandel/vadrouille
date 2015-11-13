@@ -16,7 +16,7 @@ class TripType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('stops', 'collection', array(
-                'type' => new StopType(),
+                'type' => 'app_stop_edit',
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false

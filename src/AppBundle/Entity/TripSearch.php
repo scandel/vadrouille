@@ -5,58 +5,57 @@ namespace AppBundle\Entity;
 class TripSearch
 {
      /**
-     * @var string : departure city name
+     * @var City : departure city
      */
-    private $depCityName = "";
+    private $depCity = null;
 
     /**
-     * @var string  : arrival city name
+     * @var City  : arrival city
      */
-    private $arrCityName = "";
+    private $arrCity = "";
 
     /**
-     * Set depCityName
+     * Set depCity
      *
-     * @param string $depCityName
+     * @param City $depCity
      * @return TripSearch
      */
-    public function setDepCityName($depCityName)
+    public function setDepCity($depCity)
     {
-        $this->depCityName = $depCityName;
+        $this->depCity = $depCity;
+        return $this;
+    }
+
+    /**
+     * Get depCity
+     *
+     * @return City
+     */
+    public function getDepCity()
+    {
+        return $this->depCity;
+    }
+
+    /**
+     * Set arrCity
+     *
+     * @param City $arrCity
+     * @return TripSearch
+     */
+    public function setArrCity($arrCity)
+    {
+        $this->arrCity = $arrCity;
 
         return $this;
     }
 
     /**
-     * Get depCityName
+     * Get arrCity
      *
-     * @return string 
+     * @return City
      */
-    public function getDepCityName()
+    public function getArrCity()
     {
-        return $this->depCityName;
-    }
-
-    /**
-     * Set arrCityName
-     *
-     * @param string $arrCityName
-     * @return TripSearch
-     */
-    public function setArrCityName($arrCityName)
-    {
-        $this->arrCityName = $arrCityName;
-
-        return $this;
-    }
-
-    /**
-     * Get arrCityName
-     *
-     * @return string 
-     */
-    public function getArrCityName()
-    {
-        return $this->arrCityName;
+        return $this->arrCity;
     }
 }

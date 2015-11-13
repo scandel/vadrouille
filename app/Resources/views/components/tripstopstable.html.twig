@@ -10,7 +10,7 @@
 
     <tr{{ class_line ? (' class="' ~ class_line ~ '"')|raw }}>
         {# <td class="time">{{ (stop == stops[0] or stop.time != dep_time) ? stop.time|date("H\\hi") : "non précisé" }}</td> #}
-        <td class="place"><span>{{ stop.cityName|upper }}</span> {#, {{ stop.place_name }} #}</td>
+        <td class="place"><span>{{ stop.city.name|upper }}</span> {#, {{ stop.place_name }} #}</td>
     </tr>
 {% endfor %}
 </table>

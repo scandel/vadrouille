@@ -44,14 +44,14 @@
 
                 {# Départ et arrivée #}
                 <h3>Départ</h3>
-                <li>{{ form_row(form.stops[0].cityName) }}</li>
+                <li>{{ form_row(form.stops[0].city.name) }}</li>
                 <h3>Arrivée</h3>
-                <li>{{ form_row(form.stops[1].cityName) }}</li>
+                <li>{{ form_row(form.stops[1].city.name) }}</li>
 
                 {# Etapes #}
                 <h3>Etapes</h3>
                 {% for i in 2..(nstops-1) if nstops > 2 %}
-                   <li class="deletable">{{ form_row(form.stops[i].cityName) }}</li>
+                   <li class="deletable">{{ form_row(form.stops[i].city.name) }}</li>
                 {% endfor %}
             </ul>
          </div>
@@ -121,6 +121,57 @@
 
             // ajoute un lien de suppression au nouveau formulaire
             addStopFormDeleteLink($newFormLi);
+
+            // ajoute l'autocompletion dans le nouveau formulaire
+            $newFormLi.find('.city-autocomplete').each(function() {
+                var input_name, input_id ;
+                input_name = $(this).attr('id') ;
+                input_id = input_name.replace('name', 'id');
+                $(this).autocomplete({
+                    //source: AJAX_WRAP+'?name=city_complete',
+                    source: function( request, response ) {
+                        var firstLetters = request.term;
+                        if ( firstLetters in cache ) {
+                            response( cache[ firstLetters ] );
+                            return;
+                        }
+
+                        $.getJSON( '/app_dev.php/ville/completer/' + firstLetters, null, function( data, status, xhr ) {
+                            cache[ firstLetters ] = data;
+                            response( data );
+                        });
+                    },
+                    minLength: 1,
+
+                    select: function( event, ui ) {
+                        event.preventDefault();
+                        $(this).val( ui.item.name );
+                        // Set value for city id
+                        $("#"+input_id).val(ui.item.id);
+                        // console.log(cache);
+                        //console.log( ui.item ?
+                        //"For: " + input_name + ", Selected: " + ui.item.name + " aka " + ui.item.id :
+                        //"Nothing selected, input was " + this.value );
+                    },
+
+                    change: function( event, ui ) {
+                        //console.log(ui);
+                        // If value isn't selected from autocomplete, erase city id value
+                        if (ui.item) {
+                            $("#" + input_id).val(ui.item.id);
+                        }
+                        else {
+                            $("#" + input_id).val('');
+                        }
+                    },
+
+                }).autocomplete( "instance" )._renderItem = function (ul, item) {
+                    // Style menu items with flags
+                    return $("<li>")
+                            .append('<a><img src="/bundles/app/img/flags/' + item.country+ '.png"> ' + item.name + ' (' + item.postcode + ')</a>')
+                            .appendTo(ul.addClass('autocomplete-city-row'));
+                };
+            });
         }
 
         function addStopFormDeleteLink($stopFormLi) {

@@ -11,45 +11,56 @@ class TripRepository extends EntityRepository
 {
     public function search(TripSearch $tripSearch)
     {
-        // TODO : utiliser delta dans le query builder pour l'ordre. 
+        // DBAL query builder
+        $qb= $this->getEntityManager()->getConnection()->createQueryBuilder();
 
-       /* $query = $this->getEntityManager()->createQuery(
-                'SELECT t FROM AppBundle:Trip t, AppBundle:Stop d, AppBundle:Stop a
-                WHERE d.cityName = :depName
-                AND   d.trip = t
-                AND   a.cityName = :arrName
-                AND   d.trip = t
-                AND   d.delta < a.delta
-                ORDER BY t.id ASC'
-            )
-        ->setParameters(array(
-            'depName' => $tripSearch->getDepCityName(),
-            'arrName' => $tripSearch->getArrCityName(),
-        )); */
-
-        $qb = $this->getEntityManager()->createQueryBuilder();
-
-        $qb->select('t')
-            ->from('AppBundle:Trip', 't');
+        $qb->select('t.id')
+            ->from('Trips', 't');
 
         $parameters = array();
 
-        if ($tripSearch->getDepCityName()) {
-            $qb->from('AppBundle:Stop', 'd')
-                ->andwhere('d.trip = t')
-                ->andWhere('d.cityName = :depName');
-            $parameters['depName'] = $tripSearch->getDepCityName();
+        // Departure City is given
+        if ($tripSearch->getDepCity()) {
+            $qb->innerJoin('t', 'Stops', 'd', 't.id = d.trip_id')
+                ->andWhere('d.city_id = :depCityId');
+            $parameters['depCityId'] = $tripSearch->getDepCity()->getId();
         }
 
-        if ($tripSearch->getArrCityName()) {
-            $qb->from('AppBundle:Stop', 'a')
-                ->andwhere('a.trip = t')
-                ->andWhere('a.cityName = :arrName');
-            $parameters['arrName'] = $tripSearch->getArrCityName();
+        // Arrival City is given
+        if ($tripSearch->getArrCity()) {
+            $qb->innerJoin('t', 'Stops', 'a', 't.id = a.trip_id')
+                ->andWhere('a.city_id = :arrCityId');
+            $parameters['arrCityId'] = $tripSearch->getArrCity()->getId();
         }
+
+        // Order between departure and arrival
+        if ($tripSearch->getDepCity() && $tripSearch->getArrCity()) {
+            $qb->andWhere('d.delta < a.delta');
+        }
+        else if ($tripSearch->getArrCity()) {
+            $qb->andWhere('a.delta > 1');
+        }
+        else if ($tripSearch->getDepCity()) {
+            // Add a fake arrival to simulate it is not the last stop
+            $qb->innerJoin('t', 'Stops', 'a', 't.id = a.trip_id')
+                ->andWhere('d.delta < a.delta');
+        }
+
+        // Distinct
+        $qb->groupBy('t.id');
 
         $qb->setParameters($parameters);
 
-        return $qb->getQuery()->getResult();
+        $ids =  $qb->execute()->fetchAll();
+        if ($ids) {
+            $trips = array();
+            foreach ($ids as $id) {
+                $trips[] = $this->find($id);
+            }
+            return $trips;
+        }
+        else {
+            return null;
+        }
     }
 }

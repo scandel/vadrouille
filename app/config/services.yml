@@ -18,6 +18,19 @@ services:
         tags:
           - { name: form.type, alias: app_user_profile }
 
+    app.form.stop:
+        class: AppBundle\Form\Stop\StopType
+        arguments: [ "@doctrine.orm.entity_manager" ]
+        tags:
+            - { name: form.type, alias: app_stop_edit }
+
+    app.form.trip_search:
+        class: AppBundle\Form\Trip\TripSearchType
+        arguments: [ "@doctrine.orm.entity_manager" ]
+        tags:
+            - { name: form.type, alias: app_trip_search }
+
+
+
     app.slug:
         class: AppBundle\Utils\Slug
-

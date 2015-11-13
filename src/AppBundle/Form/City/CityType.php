@@ -22,9 +22,8 @@ class CityType extends AbstractType
                 'required' => false,
                 ))
             ->add('id','hidden',
-                array('required' => false,
-                    // validation message if the data transformer fails
-                    'invalid_message' => 'Cette ville n\'est pas reconnue',
+                array(
+                    'required' => false,
                ));
     }
 
