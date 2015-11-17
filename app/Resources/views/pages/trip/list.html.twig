@@ -8,12 +8,7 @@
     <div class="col-sm-12">
 
         {# Formulaire de recherche #}
-        {#{% include "components/searchtripsform.html.twig" %}#}
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button class="btn btn-primary" type="submit">Chercher</button>
-        {{ form_end(form) }}
-
+        {% include "components/searchtripsform.html.twig" %}
 
         {# Résultats - colonne principale #}
 

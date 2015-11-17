@@ -25,6 +25,7 @@ class TripSearchType extends AbstractType
     {
         $builder->add('depCity', new CityType(), array(
             'required' => false,
+            'label' => 'Départ : ',
             'invalid_message' => 'La ville de départ n\'est pas reconnue, merci d\'en choisir une parmi les propositions de l\'autocomplétion.' ,
         ));
         $builder->get('depCity')
@@ -32,11 +33,16 @@ class TripSearchType extends AbstractType
 
         $builder->add('arrCity', new CityType(), array(
             'required' => false,
+            'label' => 'Arrivée : ',
             'invalid_message' => 'La ville d\'arrivée n\'est pas reconnue, merci d\'en choisir une parmi les propositions de l\'autocomplétion.' ,
         ));
         $builder->get('arrCity')
             ->addModelTransformer(new CityTransformer($this->manager));
 
+        $builder->add('search', 'submit', array(
+            'attr' => array('class' => 'btn btn-primary'),
+            'label' => 'Chercher !'
+        ));
 
     }
     
