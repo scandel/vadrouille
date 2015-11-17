@@ -40,6 +40,7 @@ twig:
     # Use Boostrap forms - horizontal
     form_themes:
         - forms/bootstrap_3_horizontal_layout_4_4.html.twig
+        - forms/fields.html.twig
 
 # Assetic Configuration
 assetic:

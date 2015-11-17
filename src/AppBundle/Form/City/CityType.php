@@ -17,7 +17,7 @@ class CityType extends AbstractType
         $builder
             ->add('name','text',array(
                 'attr' => array(
-                    'class' => 'city-autocomplete'
+                    'class' => 'city-autocomplete',
                     ),
                 'required' => false,
                 ))
@@ -40,6 +40,6 @@ class CityType extends AbstractType
 
     public function getName()
     {
-        return 'city_search';
+        return 'city';
     }
 }

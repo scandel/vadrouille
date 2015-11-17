@@ -37,21 +37,21 @@
         <div class="form-block col-sm-6 col-sm-pull-6">
 
             <h2>Votre parcours</h2>
-
+            {# todo : Changer le label dans le prototype (Ville étape...) #}
             <ul class="stops" data-prototype="{{ form_widget(form.stops.vars.prototype)|e }}">
-                {# itère sur chaque tag existant et affiche son unique champ : name #}
+                {# itère sur chaque stop existant #}
                 {% set nstops = form.stops|length %}
 
                 {# Départ et arrivée #}
                 <h3>Départ</h3>
-                <li>{{ form_row(form.stops[0].city.name) }}</li>
+                <li>{{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}</li>
                 <h3>Arrivée</h3>
-                <li>{{ form_row(form.stops[1].city.name) }}</li>
+                <li>{{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}</li>
 
                 {# Etapes #}
                 <h3>Etapes</h3>
                 {% for i in 2..(nstops-1) if nstops > 2 %}
-                   <li class="deletable">{{ form_row(form.stops[i].city.name) }}</li>
+                   <li class="deletable">{{ form_row(form.stops[i].city, {'label': 'Ville étape :'}) }}</li>
                 {% endfor %}
             </ul>
          </div>

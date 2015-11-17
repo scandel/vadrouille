@@ -127,8 +127,6 @@ class TripController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-
             // Remet les étapes du formulaire dans l'ordre (Départ - Etapes 1..n - Arrivée)
             $nstops = $entity->getStops()->count();
             if ($nstops > 2) {
@@ -293,7 +291,7 @@ class TripController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $trips = $em->getRepository('AppBundle:Trip')->search($tripSearch);
-
+        
         return $this->render('pages/trip/list.html.twig', array(
             'h1' => "Tous les covoiturages",
             'trips' => $trips,
