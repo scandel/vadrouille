@@ -44,14 +44,26 @@
 
                 {# Départ et arrivée #}
                 <h3>Départ</h3>
-                <li>{{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}</li>
+                <li>
+                    {{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}
+                    {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
+                    {{ form_row(form.stops[0].lat) }}
+                    {{ form_row(form.stops[0].lng) }}
+                </li>
                 <h3>Arrivée</h3>
-                <li>{{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}</li>
+                <li>
+                    {{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}
+                    {{ form_row(form.stops[1].place, {'label': 'Lieu de dépose :'}) }}
+                    {{ form_row(form.stops[1].lat) }}
+                    {{ form_row(form.stops[1].lng) }}
+                </li>
 
                 {# Etapes #}
                 <h3>Etapes</h3>
                 {% for i in 2..(nstops-1) if nstops > 2 %}
-                   <li class="deletable">{{ form_row(form.stops[i].city, {'label': 'Ville étape :'}) }}</li>
+                   <li class="deletable">
+                       {{ form_widget(form.stops[i]) }}
+                   </li>
                 {% endfor %}
             </ul>
          </div>

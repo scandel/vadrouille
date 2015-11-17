@@ -56,6 +56,11 @@ class TripController extends Controller
                 $stop->setTrip($entity);
                 $stop->setDelta($delta);
                 $delta++;
+                if ($stop->getLat() == null || $stop->getLng() == null) {
+                    // set lat and lng to the ones of the city
+                    $stop->setLat($stop->getCity()->getLat());
+                    $stop->setLng($stop->getCity()->getLng());
+                }
                 $em->persist($stop);
             }
 
@@ -139,6 +144,11 @@ class TripController extends Controller
                 $stop->setTrip($entity);
                 $stop->setDelta($delta);
                 $delta++;
+                if ($stop->getLat() == 0 || $stop->getLng() == 0) {
+                    // set lat and lng to the ones of the city
+                    $stop->setLat($stop->getCity()->getLat());
+                    $stop->setLng($stop->getCity()->getLng());
+                }
                 // $em->persist($stop);
             }
 

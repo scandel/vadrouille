@@ -11,6 +11,8 @@ use AppBundle\Form\Stop\StopType;
 class StopController extends Controller
 {
     /**
+     * Route used only during site construction.
+     * todo : disable (or remove access to non-admin) in prod.
      * @Route("/stop/new", name="stop_new")
     */
     public function newAction(Request $request)
@@ -25,6 +27,11 @@ class StopController extends Controller
             $stop->setTrip(null);
 
             if ($stop->getCity()) {
+
+                // set lat and lng to the ones of the city
+                $stop->setLat($stop->getCity()->getLat());
+                $stop->setLng($stop->getCity()->getLng());
+
                 $em->persist($stop);
                 $em->flush();
 
@@ -60,6 +67,10 @@ class StopController extends Controller
         if ($form->isValid()) {
 
             if ($stop->getCity()) {
+                // set lat and lng to the ones of the city
+                $stop->setLat($stop->getCity()->getLat());
+                $stop->setLng($stop->getCity()->getLng());
+
                 $em->persist($stop);
                 $em->flush();
 

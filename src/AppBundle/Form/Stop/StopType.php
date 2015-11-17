@@ -25,11 +25,20 @@ class StopType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('city', new CityType(), array(
+            'label' => 'Ville :',
             'invalid_message' => 'Cette ville n\'est pas reconnue, merci d\'en choisir une parmi les propositions de l\'autocomplétion.' ,
         ));
         $builder->get('city')
             ->addModelTransformer(new CityTransformer($this->manager));
 
+        $builder->add('place', 'text', array(
+            'label' => 'Lieu ou adresse :',
+            'required' => false,
+        ));
+
+        $builder->add('lat', 'hidden');
+
+        $builder->add('lng', 'hidden');
     }
 
     /**
