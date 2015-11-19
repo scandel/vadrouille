@@ -7,7 +7,7 @@
 
     <title>{% block title %}Vadrouille Covoiturage{% endblock %}</title>
     <meta name='description' content='{% block description %}{% endblock %}'>
-    <link rel="shortcut icon" href="/theme/img/favicon.ico" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <meta content='{{ robot|default('index, follow, noodp') }}' name="robots">
     <meta content="fr" name="language">
     <meta content="fr" http-equiv="Content-Language">
@@ -113,7 +113,7 @@
     {% endblock body_end_before_js %}
 
 {% block foot_script %}
-    {% javascripts 'bundles/app/js/*' %}
+    {% javascripts 'bundles/app/js/global/*' %}
     <script type="text/javascript" src="{{ asset_url }}"></script>
     {% endjavascripts %}
 
