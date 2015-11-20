@@ -43,6 +43,8 @@ class CityController extends Controller
                     "name" => $cityName,
                     "postcode" => $city->getPostCode(),
                     "country" => $countryCode,
+                    "lat" => $city->getLat(),
+                    "lng" => $city->getLng(),
                 );
             }
             else {
@@ -51,12 +53,13 @@ class CityController extends Controller
                     "name" => $cityName,
                     "postcode" => $city->getCountry()->getName().', '.$city->getPostCode(),
                     "country" => $countryCode,
+                    "lat" => $city->getLat(),
+                    "lng" => $city->getLng(),
                 );
             }
         }
         return new JsonResponse($json);
     }
-
 
     /**
      * @Route("/chercher", name="city_search")

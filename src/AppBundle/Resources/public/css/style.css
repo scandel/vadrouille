@@ -7534,6 +7534,10 @@ select.shortselect {
   padding-top: 0;
   min-height: 0;
 }
+.form-group .control-label.required:after {
+  content: " *";
+  color: #d90465;
+}
 #search-form {
   padding: 20px 5px;
   background-color: #eeeeee;

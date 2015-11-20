@@ -193,6 +193,31 @@ class City
     }
 
     /**
+     * Set together lat and lng
+     *
+     * @param $lat
+     * @param $lng
+     * @return $this
+     */
+    public function setLatLng($lat, $lng)
+    {
+        $this->lat = $lat;
+        $this->lng = $lng;
+
+        return $this;
+    }
+
+    /**
+     * Get together lat and lng
+     *
+     * @return array
+     */
+    public function getLatLng()
+    {
+        return array($this->lat, $this->lng);
+    }
+
+    /**
      * Set note
      *
      * @param integer $note

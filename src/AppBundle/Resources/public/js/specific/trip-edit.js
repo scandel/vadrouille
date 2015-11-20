@@ -27,13 +27,13 @@ france = new Object;
 france.center = L.latLng(46.40, 2.60); // (3.082418, 45.777168);
 france.zoom = 3;
 
-/*
+// Array of stops positions
+// 0 = departure, 1 = arrival, 2+ = intermediate stops
 var pos= new Array();
-$.each(['dep','arr','step1','step2','step3','step4','step5'],function(index, item) {
-    pos[item] = new Object;
-    pos[item].set = false;
-});
-*/
+for (var i=0; i < 200; i++){
+    pos['app_trip_edit_stops_' + i] = new Object;
+    pos['app_trip_edit_stops_' + i].set = false;
+}
 
 //Extend the Default marker class
 var RedIcon = L.Icon.Default.extend({
@@ -70,7 +70,8 @@ function addStopForm(collectionHolder, $newLinkLi) {
     $newFormLi.find('.city-autocomplete').each(function() {
         var input_name, input_id ;
         input_name = $(this).attr('id') ;
-        input_id = input_name.replace('name', 'id');
+        input_item = input_name.replace('_city_name', '');
+        input_id = input_name.replace('_city_name', '_city_id');
         $(this).autocomplete({
             //source: AJAX_WRAP+'?name=city_complete',
             source: function( request, response ) {
@@ -89,23 +90,16 @@ function addStopForm(collectionHolder, $newLinkLi) {
 
             select: function( event, ui ) {
                 event.preventDefault();
-                $(this).val( ui.item.name );
-                // Set value for city id
-                $("#"+input_id).val(ui.item.id);
-                // console.log(cache);
-                //console.log( ui.item ?
-                //"For: " + input_name + ", Selected: " + ui.item.name + " aka " + ui.item.id :
-                //"Nothing selected, input was " + this.value );
+                if (!$('#'+input_id).val() || $('#'+input_id).val() != ui.item.id) {
+                    UpdateCity(input_item, ui.item);
+                }
             },
 
             change: function( event, ui ) {
-                //console.log(ui);
-                // If value isn't selected from autocomplete, erase city id value
-                if (ui.item) {
-                    $("#" + input_id).val(ui.item.id);
-                }
-                else {
-                    $("#" + input_id).val('');
+                if ( $(this).val().trim() == '' ) {
+                    $.each(['city_id', /*'city_details',*/ 'place', 'lat', 'lng'], function (index, what) {
+                        $('#' + input_item + '_' + what).val('');
+                    });
                 }
             },
 
@@ -121,6 +115,7 @@ function addStopForm(collectionHolder, $newLinkLi) {
 function addStopFormDeleteLink($stopFormLi) {
     var $removeFormA = $('<div class="row"><div class="col-sm-8 col-sm-push-4 clearfix"><button class="btn btn-link btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Supprimer cette étape</button></div></div>');
     $stopFormLi.append($removeFormA);
+    var item = $stopFormLi.children().first().attr('id');
 
     $removeFormA.on('click', function(e) {
         // empêche le lien de créer un « # » dans l'URL
@@ -128,6 +123,9 @@ function addStopFormDeleteLink($stopFormLi) {
 
         // supprime l'élément li pour le formulaire de tag
         $stopFormLi.remove();
+
+        // supprime le marker de l'étape
+        MapRemoveMarker(item);
 
         if (collectionHolder.find('.deletable').length < max_stops) {
             $('#add_stop').attr('disabled', false);
@@ -142,7 +140,7 @@ function addStopFormDeleteLink($stopFormLi) {
  * Initialisation carte
  *
  */
-function MapInitStep1() {
+function MapInit() {
 
     // Création de la carte
     map = new L.Mappy.Map('map', {
@@ -160,6 +158,141 @@ function MapInitStep1() {
     /* Cadre Pour les marqueurs */
     markerLayer =  L.layerGroup().addTo(map);
 }
+
+
+/**
+ * Met un marqueur sur le point de RV;
+ * ne change pas l'affichage de la carte
+ *
+ * @param stop : 0..6
+ */
+function MapPutMarker(stop) {
+    // console.log("Marker ",stop,pos[stop]);
+    switch (stop) {
+        case 'app_trip_edit_stops_0':
+            var icon = new GreenIcon();
+            var tooltip = 'Cliquez pour centrer la carte sur le point de départ.';
+            break;
+        case 'app_trip_edit_stops_1':
+            var icon = new RedIcon();
+            var tooltip = 'Cliquez pour centrer la carte sur le point d \'arrivée.';
+            break;
+        default:
+            var icon = new L.Icon.Default();
+            var tooltip = 'Cliquez pour centrer la carte sur l\'étape.';
+            break;
+    }
+
+    if (pos[stop].set) {
+        markerLayer.removeLayer(markers[stop]);
+    }
+    else pos[stop].set = true;
+
+    markers[stop] = L.marker(pos[stop].center, {
+        title: tooltip,
+        icon: icon
+    }).addTo(markerLayer);
+
+    /*markers[stop].on('click', function () {
+        MapCenter(stop);
+    });*/
+
+    // console.log(markers);
+}
+
+/**
+ * Remove a marker
+ * @param stop  : 'app_trip_edit_stops_x'
+ */
+function MapRemoveMarker(stop) {
+    markerLayer.removeLayer(markers[stop]);
+    markers[stop]=null;
+    pos[stop].set = false;
+}
+
+
+
+
+/*========= recherche, vérification, update villes ============*/
+
+/**
+ * Quand une ville est choisie (autocompleter ou search)
+ * Fait toutes les opérations nécessaires :
+ *
+ * @param item : ex : 'app_trip_edit_stops_0'
+ * @param cityid
+ * @param city_name
+ * @param city_details (postcode)
+ *
+ */
+function UpdateCity(item, uiItem) {
+
+    // console.log("Update City");
+
+    // Le nom
+    $('#'+item+'_city_name').val(uiItem.name);
+
+    // Coordonnées
+    $('#'+item+'_lat').val(uiItem.lat);
+    $('#'+item+'_lng').val(uiItem.lng);
+
+    // Les détails (code postal, pays) pour la géoloc
+    // $('#'+item+'_city_details').val(city_details);
+
+    // Effacer le pt de RV (placeholder "N'importe où")
+    $('#'+item+'_place').val('');
+
+    // Placer le marqueur
+    if ( !(isNaN(uiItem.lat)) && uiItem.lat!=0) {
+        OnPlaceUpdate(item, -1, true);
+    }
+
+    // Change le nom dans les temps de parcours
+    // UpdateStepNamesForTimes();
+}
+
+
+/**
+ * Place un marqueur sur le lieu ;
+ * si zoom >= 0, centre sur le lieu avec le niveau de zoom donné
+ * si iti = true, calcule (éventuellement) l'itinéraire
+ * (les deux options ne devraient pas être utilisées ensemble)
+ * à executer lors de l'update d'un lieu
+ *
+ * @param item
+ * @param zoom
+ * @param iti
+ */
+function OnPlaceUpdate(item,zoom,iti) {
+
+    var lat = parseFloat($('#'+item+'_lat').val());
+    var lng = parseFloat($('#'+item+'_lng').val());
+
+    // place un marker et calcule éventuellement l'itinéraire
+    if ( !(isNaN(lat)) && !(isNaN(lng))) {
+
+        // Est-ce que l'on change de position ?
+        var change = true;
+        if (pos[item].set) {
+            var distance = pos[item].center.distanceTo(L.latLng(lat,lng));
+            if (distance<10) // 10 m : on ne change pas
+                change = false ;
+        }
+        pos[item].center = L.latLng(lat,lng);
+
+        if (change) {
+            MapPutMarker(item); // Met un marqueur sur le point de RV; ne change pas l'affichage de la carte
+            // si les lieux de d?part et d'arriv?e sont connus tous deux, calcule et affiche l'itin?raire
+            if ( iti && (pos['app_trip_edit_stops_0'].set==true) && (pos['app_trip_edit_stops_1'].set==true) ) {
+                // Itinerary(); // Calcule le trajet, centre la carte sur le trajet, ?crit les infos trajet
+            }
+        }
+        if (zoom >= 0) {
+            map.setView([lat,lng],zoom);
+        }
+    }
+}
+
 
 
 jQuery(document).ready(function() {
@@ -187,6 +320,41 @@ jQuery(document).ready(function() {
     });
 
     //---- Init Map ----
-    MapInitStep1();
+    MapInit();
+
+    //---- Init markers : Si les villes sont déjà remplies  ---
+    for (var i=0; i < 200; i++){
+        var item = 'app_trip_edit_stops_' + i;
+        var cityid = parseInt($('#'+item+'_city_id').val());
+        if ( !(isNaN(cityid)) && cityid!=0) {
+            OnPlaceUpdate(item,-1,true);
+        }
+    };
+
+    //---- On "City" Change ----
+
+    // Change select behavior
+    $('.city-autocomplete').on("autocompleteselect", function (event, ui) {
+        var input_item, input_id ;
+        input_item = $(this).attr('id').replace('_city_name', '');
+        input_id = $(this).attr('id').replace('_city_name', '_city_id');
+        console.log("Selection ", input_item);
+        console.log(ui.item);
+        if (!$('#'+input_id).val() || $('#'+input_id).val() != ui.item.id) {
+            UpdateCity(input_item, ui.item);
+        }
+    });
+
+    // Change "change" behavior
+    $('.city-autocomplete').on("autocompletechange", function () {
+        var input_item ;
+        input_item = $(this).attr('id').replace('_city_name', '');
+        console.log("Changement ", input_item);
+        if ( $(this).val().trim() == '' ){
+            $.each(['city_id',/*'city_details',*/ 'place','lat','lng'], function(index, what) {
+                $('#'+input_item+'_'+what).val('');
+            });
+        }
+    });
 
 });

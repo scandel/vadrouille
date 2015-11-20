@@ -34,6 +34,7 @@ class StopType extends AbstractType
         $builder->add('place', 'text', array(
             'label' => 'Lieu ou adresse :',
             'required' => false,
+            'attr' => array('placeholder' => 'N\'importe où'),
         ));
 
         $builder->add('lat', 'hidden');

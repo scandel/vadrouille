@@ -223,4 +223,14 @@ class Stop
 
         return $this;
     }
+
+    /**
+     * Get together lat and lng
+     *
+     * @return array
+     */
+    public function getLatLng()
+    {
+        return array($this->lat, $this->lng);
+    }
 }

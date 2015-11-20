@@ -40,7 +40,6 @@ $(document).ready(function() {
          input_name = $(this).attr('id') ;
          input_id = input_name.replace('name', 'id');
          $(this).autocomplete({
-             //source: AJAX_WRAP+'?name=city_complete',
              source: function( request, response ) {
                  var firstLetters = request.term;
                  if ( firstLetters in cache ) {
