@@ -47,6 +47,13 @@ class Trip
     private $stops;
 
     /**
+     * @var Datetime
+     *
+     * @ORM\Column(name="dep_time", type="time")
+     */
+    private $depTime;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="comment", type="text", nullable=true)
@@ -191,4 +198,27 @@ class Trip
         }
     }
 
+
+    /**
+     * Set depTime
+     *
+     * @param \DateTime $depTime
+     * @return Trip
+     */
+    public function setDepTime($depTime)
+    {
+        $this->depTime = $depTime;
+
+        return $this;
+    }
+
+    /**
+     * Get depTime
+     *
+     * @return \DateTime 
+     */
+    public function getDepTime()
+    {
+        return $this->depTime;
+    }
 }

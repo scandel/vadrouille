@@ -113,6 +113,10 @@ function addStopForm(collectionHolder, $newLinkLi) {
                 .appendTo(ul.addClass('autocomplete-city-row'));
         };
     });
+
+    // Initialise le timepicker
+    timePickerInit($newFormLi.find('.timepicker').first());
+
 }
 
 function addStopFormDeleteLink($stopFormLi) {

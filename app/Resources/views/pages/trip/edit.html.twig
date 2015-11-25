@@ -59,6 +59,7 @@
                 <li>
                     {{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}
                     {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
+                    {{ form_row(form.stops[0].time, {'label': 'Heure de départ :'}) }}
                     {{ form_row(form.stops[0].lat) }}
                     {{ form_row(form.stops[0].lng) }}
                 </li>
@@ -66,6 +67,7 @@
                 <li>
                     {{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}
                     {{ form_row(form.stops[1].place, {'label': 'Lieu de dépose :'}) }}
+                    {{ form_row(form.stops[1].time, {'label': 'Heure d\'arrivée :'}) }}
                     {{ form_row(form.stops[1].lat) }}
                     {{ form_row(form.stops[1].lng) }}
                 </li>

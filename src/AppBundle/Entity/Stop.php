@@ -64,7 +64,7 @@ class Stop
     /**
      * @var Datetime : the time from departure (first stop)
      *
-     * @ORM\Column(name="time", type="time")
+     * @ORM\Column(name="time", type="time", nullable=true)
      */
     private $time;
 

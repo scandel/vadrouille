@@ -10,7 +10,7 @@
     {% if widget == 'single_text' %}
         {{- block('form_widget_simple') -}}
     {% else -%}
-        {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-inline')|trim}) -%}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-inline timepicker')|trim}) -%}
         {% if datetime is not defined or false == datetime -%}
             <div {{ block('widget_container_attributes') -}}>
         {%- endif -%}

@@ -44,6 +44,11 @@ class TripController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
 
+            // Heure de départ
+            // todo : erreur de validation si non présent + marquer le champ comme "required"
+            $depTime = $entity->getStops()->first()->getTime();
+            $entity->setDepTime($depTime);
+
             // Remet les étapes dans l'ordre (Départ - Etapes 1..n - Arrivée)
             $nstops = $entity->getStops()->count();
             if ($nstops > 2) {
@@ -61,6 +66,13 @@ class TripController extends Controller
                     $stop->setLat($stop->getCity()->getLat());
                     $stop->setLng($stop->getCity()->getLng());
                 }
+                // set time as the diff between the given time (if any) and depTime
+                // todo : validation que les heures sont dans l'ordre
+                if ($stopTime = $stop->getTime()) {
+                    $diff = $depTime->diff($stopTime);
+                    $stop->setTime( date_create('@0')->add($diff)  );
+                }
+
                 $em->persist($stop);
             }
 

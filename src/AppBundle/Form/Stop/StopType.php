@@ -38,12 +38,12 @@ class StopType extends AbstractType
         ));
 
         $hours = range(0,23);
-        array_unshift($hours, '---');
         $minutes = range(0,55,5);
-        array_unshift($minutes, '---');
 
         $builder->add('time', 'time', array(
-            'label' => 'Heure de passage : ',
+            'label' => 'Heure : ',
+            'required' => false,
+            'placeholder' => '---',
             'input'  => 'datetime',
             'widget' => 'choice',
             'hours' => $hours,

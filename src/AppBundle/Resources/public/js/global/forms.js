@@ -1,11 +1,29 @@
 /**
  * Add JS to form components :
  * - init datepickers
+ * - change minutes to "0" in timepickers, when hour selected
  * - autocomplete cities
  */
 
 // Client side cache
 var cache = {};
+
+/**
+ * Set minutes to 0 in time pickers, when an hour is selected and minutes are not.
+ */
+function timePickerInit(timePicker) {
+    var input_name, input_hour, input_minute ;
+    input_name = timePicker.attr('id') ;
+    input_hour = input_name + '_hour';
+    input_minute = input_name + '_minute';
+    if ( $('#'+input_minute).length ) {
+        $('#'+input_hour).on('change',function() {
+            if ( $('#'+input_minute).val() == "" ) {
+                $('#'+input_minute).val("0");
+            }
+        });
+    }
+}
 
 $(document).ready(function() {
 
@@ -25,6 +43,11 @@ $(document).ready(function() {
            startDate: '0',
            clearBtn: cBtn,
        });
+    });
+
+
+    $('.timepicker').each(function(){
+        timePickerInit($(this));
     });
 
     /**
@@ -59,11 +82,7 @@ $(document).ready(function() {
                 $(this).val( ui.item.name );
                  // Set value for city id
                 $("#"+input_id).val(ui.item.id);
-                // console.log(cache);
-                //console.log( ui.item ?
-                //"For: " + input_name + ", Selected: " + ui.item.name + " aka " + ui.item.id :
-                //"Nothing selected, input was " + this.value );
-             },
+              },
 
              change: function( event, ui ) {
                  //console.log(ui);
