@@ -1,5 +1,22 @@
+{# Create a new city widget - needed to remove labels #}
 {% block city_widget %}
     {# Renders the form without labels #}
     {{ form_widget(form.name)  }}
     {{ form_widget(form.id)  }}
 {% endblock %}
+
+{# Override time widget - to use "h" and "min" instead of ":" #}
+{% block time_widget -%}
+    {% if widget == 'single_text' %}
+        {{- block('form_widget_simple') -}}
+    {% else -%}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-inline')|trim}) -%}
+        {% if datetime is not defined or false == datetime -%}
+            <div {{ block('widget_container_attributes') -}}>
+        {%- endif -%}
+        {{- form_widget(form.hour) }} h {{ form_widget(form.minute) }} min {% if with_seconds %}:{{ form_widget(form.second) }} s{% endif %}
+        {% if datetime is not defined or false == datetime -%}
+            </div>
+        {%- endif -%}
+    {% endif %}
+{%- endblock time_widget %}

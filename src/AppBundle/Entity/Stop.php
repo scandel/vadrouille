@@ -62,6 +62,13 @@ class Stop
     private $lng;
 
     /**
+     * @var Datetime : the time from departure (first stop)
+     *
+     * @ORM\Column(name="time", type="time")
+     */
+    private $time;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -232,5 +239,28 @@ class Stop
     public function getLatLng()
     {
         return array($this->lat, $this->lng);
+    }
+
+    /**
+     * Set time
+     *
+     * @param \DateTime $time
+     * @return Stop
+     */
+    public function setTime($time)
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
+    /**
+     * Get time
+     *
+     * @return \DateTime 
+     */
+    public function getTime()
+    {
+        return $this->time;
     }
 }
