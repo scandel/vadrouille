@@ -90,12 +90,15 @@ function addStopForm(collectionHolder, $newLinkLi) {
 
             select: function( event, ui ) {
                 event.preventDefault();
+                console.log("Selection ", input_item);
+                console.log(ui.item);
                 if (!$('#'+input_id).val() || $('#'+input_id).val() != ui.item.id) {
                     UpdateCity(input_item, ui.item);
                 }
             },
 
             change: function( event, ui ) {
+                console.log("Changement ", input_item);
                 if ( $(this).val().trim() == '' ) {
                     $.each(['city_id', /*'city_details',*/ 'place', 'lat', 'lng'], function (index, what) {
                         $('#' + input_item + '_' + what).val('');
@@ -231,6 +234,9 @@ function UpdateCity(item, uiItem) {
 
     // Le nom
     $('#'+item+'_city_name').val(uiItem.name);
+
+    // L'id
+    $('#'+item+'_city_id').val(uiItem.id);
 
     // Coordonnées
     $('#'+item+'_lat').val(uiItem.lat);

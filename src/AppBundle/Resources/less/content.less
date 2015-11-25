@@ -250,9 +250,13 @@ select.shortselect {
   min-height: 0;
 }
 
-.form-group .control-label.required:after {
-  content:" *";
+form label.required:after {
+  content:"*";
   color: @vadrouille-dark-red;
+  display: block;
+  position: absolute;
+  right: 5px;
+  top: 7px;
 }
 
 // ----------------------------------------------
