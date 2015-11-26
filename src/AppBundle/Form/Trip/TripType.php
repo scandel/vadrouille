@@ -22,6 +22,29 @@ class TripType extends AbstractType
                 'by_reference' => false
             ));
 
+        $builder->add('regular', 'choice', array(
+           'choices' => array(
+               '0' => 'Une seule fois',
+               '1' => 'Régulier',
+           ),
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Fréquence : '
+        ));
+
+        $hours = range(0,23);
+        $minutes = range(0,55,5);
+
+        $builder->add('depTime', 'time', array(
+            'label' => 'à : ',
+            'placeholder' => '---',
+            'input'  => 'datetime',
+            'widget' => 'choice',
+            'hours' => $hours,
+            'minutes' => $minutes,
+        ));
+
+
         $builder->add('comment', null, array('required' => false))
         ;
     }

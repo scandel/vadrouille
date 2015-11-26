@@ -54,6 +54,50 @@ class Trip
     private $depTime;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="regular", type="boolean")
+     */
+    private $regular = false;
+
+    /**
+     * @var Datetime
+     *
+     * @ORM\Column(name="dep_date", type="date")
+     */
+    private $depDate;
+
+    /**
+     * @var array
+     * An array of 7 booleans, one for each day of the week, true if the
+     * trip is to be done this day.
+     *
+     * @ORM\Column(name="days", type="simple_array")
+     */
+    private $days = array(false,false,false,false,false,false,false);
+
+    /**
+     * @var Datetime
+     *
+     * @ORM\Column(name="begin_date", type="date")
+     */
+    private $beginDate;
+
+    /**
+     * @var Datetime
+     *
+     * @ORM\Column(name="end_date", type="date")
+     */
+    private $endDate;
+
+    /**
+     * @var Datetime
+     *
+     * @ORM\Column(name="next_datetime", type="datetime")
+     */
+    private $nextDateTime;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="comment", type="text", nullable=true)
@@ -65,6 +109,10 @@ class Trip
     public function __construct()
     {
         $this->stops = new ArrayCollection();
+        $this->depDate = new \DateTime('now');
+        $this->beginDate = new \DateTime('now');
+        $this->endDate = new \DateTime('now');
+        $this->nextDateTime = new \DateTime('now');
     }
 
 
@@ -220,5 +268,143 @@ class Trip
     public function getDepTime()
     {
         return $this->depTime;
+    }
+
+    /**
+     * Set regular
+     *
+     * @param boolean $regular
+     * @return Trip
+     */
+    public function setRegular($regular)
+    {
+        $this->regular = $regular;
+
+        return $this;
+    }
+
+    /**
+     * Get regular
+     *
+     * @return boolean 
+     */
+    public function getRegular()
+    {
+        return $this->regular;
+    }
+
+    /**
+     * Set depDate
+     *
+     * @param \DateTime $depDate
+     * @return Trip
+     */
+    public function setDepDate($depDate)
+    {
+        $this->depDate = $depDate;
+
+        return $this;
+    }
+
+    /**
+     * Get depDate
+     *
+     * @return \DateTime 
+     */
+    public function getDepDate()
+    {
+        return $this->depDate;
+    }
+
+    /**
+     * Set days
+     *
+     * @param array $days
+     * @return Trip
+     */
+    public function setDays($days)
+    {
+        $this->days = $days;
+
+        return $this;
+    }
+
+    /**
+     * Get days
+     *
+     * @return array 
+     */
+    public function getDays()
+    {
+        return $this->days;
+    }
+
+    /**
+     * Set beginDate
+     *
+     * @param \DateTime $beginDate
+     * @return Trip
+     */
+    public function setBeginDate($beginDate)
+    {
+        $this->beginDate = $beginDate;
+
+        return $this;
+    }
+
+    /**
+     * Get beginDate
+     *
+     * @return \DateTime 
+     */
+    public function getBeginDate()
+    {
+        return $this->beginDate;
+    }
+
+    /**
+     * Set endDate
+     *
+     * @param \DateTime $endDate
+     * @return Trip
+     */
+    public function setEndDate($endDate)
+    {
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    /**
+     * Get endDate
+     *
+     * @return \DateTime 
+     */
+    public function getEndDate()
+    {
+        return $this->endDate;
+    }
+
+    /**
+     * Set nextDateTime
+     *
+     * @param \DateTime $nextDateTime
+     * @return Trip
+     */
+    public function setNextDateTime($nextDateTime)
+    {
+        $this->nextDateTime = $nextDateTime;
+
+        return $this;
+    }
+
+    /**
+     * Get nextDateTime
+     *
+     * @return \DateTime 
+     */
+    public function getNextDateTime()
+    {
+        return $this->nextDateTime;
     }
 }

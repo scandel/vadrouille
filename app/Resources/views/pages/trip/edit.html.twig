@@ -59,7 +59,6 @@
                 <li>
                     {{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}
                     {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
-                    {{ form_row(form.stops[0].time, {'label': 'Heure de départ :'}) }}
                     {{ form_row(form.stops[0].lat) }}
                     {{ form_row(form.stops[0].lng) }}
                 </li>
@@ -67,7 +66,6 @@
                 <li>
                     {{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}
                     {{ form_row(form.stops[1].place, {'label': 'Lieu de dépose :'}) }}
-                    {{ form_row(form.stops[1].time, {'label': 'Heure d\'arrivée :'}) }}
                     {{ form_row(form.stops[1].lat) }}
                     {{ form_row(form.stops[1].lng) }}
                 </li>
@@ -82,8 +80,15 @@
             </ul>
          </div>
     </div>
-    {{ form_row(form.comment) }}
-    {{ form_rest(form) }}
+
+    <div class="col-sm-12">
+        <h2>Date et Heure</h2>
+        {{ form_row(form.regular, {'class': 'radio-inline'}) }}
+        {{ form_row(form.depTime) }}
+
+        {{ form_row(form.comment) }}
+        {{ form_rest(form) }}
+    </div>
 
     <div class="col-sm-4 col-sm-push-4">
         {{ form_row(form.submit) }}

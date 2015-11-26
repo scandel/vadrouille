@@ -37,7 +37,7 @@ class StopType extends AbstractType
             'attr' => array('placeholder' => 'N\'importe où'),
         ));
 
-        $hours = range(0,23);
+        /*$hours = range(0,23);
         $minutes = range(0,55,5);
 
         $builder->add('time', 'time', array(
@@ -49,7 +49,7 @@ class StopType extends AbstractType
             'hours' => $hours,
             'minutes' => $minutes,
         ));
-
+*/
         $builder->add('lat', 'hidden');
 
         $builder->add('lng', 'hidden');
