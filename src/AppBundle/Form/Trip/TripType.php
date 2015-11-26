@@ -32,7 +32,11 @@ class TripType extends AbstractType
             'label' => 'Fréquence : '
         ));
 
-        $hours = range(0,23);
+        $builder->add('depDate', 'datePicker', array(
+            'label' => 'Départ le : ',
+        ));
+
+            $hours = range(0,23);
         $minutes = range(0,55,5);
 
         $builder->add('depTime', 'time', array(

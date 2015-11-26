@@ -20,3 +20,12 @@
         {%- endif -%}
     {% endif %}
 {%- endblock time_widget %}
+
+{# Create datePicker widget#}
+{% block datePicker_widget %}
+    {% spaceless %}
+        <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        {%  set attr = attr|merge({'class': ((attr.class|default('') ~ ' datepicker')|trim)}) %}
+        <input type="text" {{ block('widget_attributes') }}/>
+    {% endspaceless %}
+{% endblock datePicker_widget %}

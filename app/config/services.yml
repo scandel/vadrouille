@@ -30,7 +30,10 @@ services:
         tags:
             - { name: form.type, alias: app_trip_search }
 
-
+    app.form.datePicker:
+        class: AppBundle\Form\Type\DatePickerType
+        tags:
+          - { name: form.type, alias: datePicker }
 
     app.slug:
         class: AppBundle\Utils\Slug
