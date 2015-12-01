@@ -10,7 +10,7 @@
 {% block head_script %}
     {{ parent() }}
     <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js" type="text/javascript"></script>
-    <script src="/bundles/app/mappy/L.Mappy.js" type="text/javascript"></script>
+    <script>if (typeof L !== 'undefined') {document.write('<script src="/bundles/app/mappy/L.Mappy.js">\x3C/script>')}</script>
 {% endblock head_script %}
 
 {% form_theme form 'forms/bootstrap_3_horizontal_layout_4_8.html.twig' %}

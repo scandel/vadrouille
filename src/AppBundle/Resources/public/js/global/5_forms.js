@@ -26,12 +26,13 @@ function timePickerInit(timePicker) {
 }
 
 $(document).ready(function() {
-
+console.log('I m ready');
     /**
      * Datepickers
      * Bootstrap Datepicker
      */
     $('.datepicker').each(function(){
+        console.log('Ici un datepicker');
        var cBtn = ($(this).hasClass('datepicker-clear'));
        $(this).datepicker({
            format: "dd/mm/yyyy",

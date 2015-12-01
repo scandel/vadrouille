@@ -6,6 +6,8 @@ use AppBundle\Form\Stop\StopType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class TripType extends AbstractType
 {
@@ -24,19 +26,27 @@ class TripType extends AbstractType
 
         $builder->add('regular', 'choice', array(
            'choices' => array(
-               '0' => 'Une seule fois',
-               '1' => 'Régulier',
+               0 => 'Une seule fois',
+               1 => 'Régulier',
            ),
             'expanded' => true,
             'multiple' => false,
-            'label' => 'Fréquence : '
+            'label' => 'Fréquence : ',
         ));
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                $trip = $event->getData();
+                $trip->setRegular( $trip->getRegular() === false ? 0 : 1 );
+                $event->setData($trip);
+            }
+        );
 
         $builder->add('depDate', 'datePicker', array(
             'label' => 'Départ le : ',
         ));
 
-            $hours = range(0,23);
+        $hours = range(0,23);
         $minutes = range(0,55,5);
 
         $builder->add('depTime', 'time', array(
