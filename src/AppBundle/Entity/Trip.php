@@ -72,7 +72,7 @@ class Trip
      * An array of 7 booleans, one for each day of the week, true if the
      * trip is to be done this day.
      *
-     * @ORM\Column(name="days", type="simple_array")
+     * @ORM\Column(name="days", type="simple_array", nullable=true)
      */
     private $days = array();
 
@@ -386,15 +386,62 @@ class Trip
     }
 
     /**
-     * Set nextDateTime
+     * Compute nextDateTime
+     * based on regular/unique, depDate or days, depTime,
+     * begin and end date
+     * Also compute current (boolean), true if trip is "to come"
      *
-     * @param \DateTime $nextDateTime
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     *
+     * @param \DateTime $after
      * @return Trip
      */
-    public function setNextDateTime($nextDateTime)
+    public function computeNextDateTime()
     {
-        $this->nextDateTime = $nextDateTime;
+        $after = new \DateTime('now');
 
+        // regular trip
+        if ($this->regular) {
+
+            if ($after < $this->beginDate) {
+                $after = $this->beginDate;
+            }
+            if ($this->endDate ==null || $after < $this->endDate ) {
+
+                $lastSundayTS = strtotime("last Sunday", strtotime($after->format("Y-m-d")));
+                $lastSundayTS += 3600 * intval($this->depTime->format("H")) + 60 * intval($this->depTime->format("i"));
+                $lastSundayDate = date("c",$lastSundayTS);
+                $lastSunday = date_create_immutable($lastSundayDate);
+
+                // days of the trip in next week, +1 of next week
+                $days = $this->days;
+                $days[] = $days[0] + 7;
+                array_unshift($days, 0);
+
+                $depTimes = array();
+                foreach ($days as $d) {
+                    $depTimes[] = $lastSunday->add(new \DateInterval('P'.$d.'D'));
+                }
+
+                for ($i = 0; $i < count($depTimes)-1; $i++) {
+                    if ( $depTimes[$i] <= $after && $after < $depTimes[$i+1]) {
+                        $this->nextDateTime = $depTimes[$i+1];
+                        break;
+                    }
+                }
+            }
+            // If $after > $endDate, on ne change pas le nextDate, qui est < after et donc current = false.
+        }
+        // one-shot date
+        else {
+             $this->nextDateTime = \DateTime::createFromFormat(
+                                        "Y-m-d H:i",
+                                        $this->depDate->format("Y-m-d ").
+                                        $this->depTime->format("H:i"));
+        }
+
+        $this->current = $this->nextDateTime >= $after;
         return $this;
     }
 
