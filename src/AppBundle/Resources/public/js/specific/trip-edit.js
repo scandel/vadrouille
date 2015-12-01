@@ -339,6 +339,28 @@ jQuery(document).ready(function() {
         }
     });
 
+   //---- Montre/cache des champs en fonction de aller simple/retour, trajet unique/régulier
+
+    // Au chargement : cacher/montrer ce qu'il faut
+    if ( $('input[id=app_trip_edit_regular_0]').prop('checked') ) {
+        $('.if_unique').show();
+        $('.if_regular').hide();
+    }
+    else {
+        $('.if_unique').hide();
+        $('.if_regular').show();
+    }
+
+    $("input[id=app_trip_edit_regular_0]").click( function(e) {
+        $('.if_regular').hide();
+        $('.if_unique').show();
+    });
+    $("input[id=app_trip_edit_regular_1]").click( function(e) {
+        $('.if_regular').show();
+        $('.if_unique').hide();
+    });
+
+
     //---- Init Map ----
     MapInit();
 

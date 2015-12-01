@@ -11,13 +11,13 @@ class DaysOfWeekType extends AbstractType
     {
         $resolver->setDefaults(array(
             'choices' => array(
-                1 => 'Lundi',
-                2 => 'Mardi',
-                3 => 'Mercredi',
-                4 => 'Jeudi',
-                5 => 'Vendredi',
-                6 => 'Samedi',
-                7 => 'Dimanche',
+                1 => 'Lun.',
+                2 => 'Mar.',
+                3 => 'Mer.',
+                4 => 'Jeu.',
+                5 => 'Ven.',
+                6 => 'Sam.',
+                7 => 'Dim.',
             ),
             'multiple' => true,
             'expanded' => true,

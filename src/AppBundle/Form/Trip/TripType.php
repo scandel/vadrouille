@@ -56,6 +56,14 @@ class TripType extends AbstractType
             'label' => 'Jours du trajet : ',
         ));
 
+        // If regular, begin and end  date
+        $builder->add('beginDate', 'datePicker', array(
+            'label' => 'Début : ',
+        ));
+        $builder->add('endDate', 'datePicker', array(
+            'label' => 'Fin : ',
+        ));
+
 
         // Departure time
         $hours = range(0,23);
