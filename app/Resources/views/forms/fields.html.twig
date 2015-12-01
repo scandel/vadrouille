@@ -28,3 +28,19 @@
         <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
    {% endspaceless %}
 {% endblock datePicker_widget %}
+
+{# Create DaysOfWeek widget - button group #}
+{% block daysOfWeek_widget %}
+    {%  set attr = attr|merge({'class': ((attr.class|default('') ~ ' btn-group daysofweek')|trim),
+    'data-toggle' : 'buttons'}) %}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            {#  {{ dump(child) }}#}
+           {%- set active = (child.vars.checked) ? ' active' : '' %}
+           {{- form_widget(child, {
+                parent_label_class: ((label_attr.class|default('') ~ ' btn btn-default checkbox-inline' ~ active )|trim),
+                translation_domain: choice_translation_domain,
+            }) -}}
+        {% endfor -%}
+    </div>
+{% endblock daysOfWeek_widget %}

@@ -17,6 +17,8 @@ class TripType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //== Departure, arrival, and intermediate stops
+        // (Cities and addresses)
         $builder->add('stops', 'collection', array(
                 'type' => 'app_stop_edit',
                 'allow_add' => true,
@@ -24,6 +26,8 @@ class TripType extends AbstractType
                 'by_reference' => false
             ));
 
+        //== Date, time, regularity...
+        // One-shot or regular
         $builder->add('regular', 'choice', array(
            'choices' => array(
                0 => 'Une seule fois',
@@ -42,10 +46,18 @@ class TripType extends AbstractType
             }
         );
 
+        // If one-shot, departure date
         $builder->add('depDate', 'datePicker', array(
             'label' => 'Départ le : ',
         ));
 
+        // If regular, departure days of the week
+        $builder->add('days', 'daysOfWeek', array(
+            'label' => 'Jours du trajet : ',
+        ));
+
+
+        // Departure time
         $hours = range(0,23);
         $minutes = range(0,55,5);
 
@@ -58,7 +70,7 @@ class TripType extends AbstractType
             'minutes' => $minutes,
         ));
 
-
+        // Comment
         $builder->add('comment', null, array('required' => false))
         ;
     }

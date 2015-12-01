@@ -35,5 +35,10 @@ services:
         tags:
           - { name: form.type, alias: datePicker }
 
+    app.form.daysOfWeek:
+        class: AppBundle\Form\Type\DaysOfWeekType
+        tags:
+          - { name: form.type, alias: daysOfWeek }
+
     app.slug:
         class: AppBundle\Utils\Slug

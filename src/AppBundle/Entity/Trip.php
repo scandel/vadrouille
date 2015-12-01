@@ -74,7 +74,7 @@ class Trip
      *
      * @ORM\Column(name="days", type="simple_array")
      */
-    private $days = array(false,false,false,false,false,false,false);
+    private $days = array();
 
     /**
      * @var Datetime
