@@ -301,6 +301,11 @@ class User extends BaseUser
         return null === $this->photo ? null : '/'.$this->getUploadDir().'/'.$this->photo;
     }
 
+    public function getHtmlPhoto()
+    {
+        return null === $this->photo ? '' : '<img src="'.$this->getWebPhotoPath().'" />';
+    }
+    
     public function getUploadRootDir()
     {
         // le chemin absolu du répertoire où les documents uploadés doivent être sauvegardés

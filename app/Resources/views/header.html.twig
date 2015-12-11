@@ -5,7 +5,10 @@
 
 {# Menu #}
 <ul id="header-menu" class="nav nav-pills navbar-right">
-
+    {# Exit impersonation#}
+    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+        <li><a class="btn btn-sm btn-danger" href="{{ path('homepage', {'_i_am_now': '_exit'}) }}">Sors de ce corps !</a></li>
+    {% endif %}
     {# If user is connected #}
     {% if is_granted('ROLE_USER') %}
         <li><img src="{{ app.user.webPhotoPath }}" class="navbar-photo"></li>

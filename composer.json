@@ -25,8 +25,8 @@
         "misd/phone-number-bundle": "^1.0",
         "friendsofsymfony/jsrouting-bundle": "^1.5",
         "comur/image-bundle": "^1.1",
-        "sonata-project/admin-bundle": "^2.3",
-        "sonata-project/doctrine-orm-admin-bundle": "^2.3",
+        "sonata-project/admin-bundle": "2.3.*",
+        "sonata-project/doctrine-orm-admin-bundle": "2.3.*",
         "doctrine/doctrine-fixtures-bundle": "^2.2"
      },
     "require-dev": {

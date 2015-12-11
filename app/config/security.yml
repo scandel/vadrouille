@@ -28,6 +28,7 @@ security:
 
             logout:       true
             anonymous:    true
+            switch_user: { role: ROLE_SUPER_ADMIN, parameter: _i_am_now }
 
     access_control:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }

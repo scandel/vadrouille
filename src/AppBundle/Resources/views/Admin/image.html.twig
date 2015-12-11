@@ -1,0 +1,9 @@
+{#
+Field for Sonata list
+#}
+
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+
+{% block field %}
+    <img src="{{ object.webPhotoPath }}" width="40" height="auto">
+{% endblock %}
