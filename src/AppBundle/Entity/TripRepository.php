@@ -46,8 +46,26 @@ class TripRepository extends EntityRepository
                 ->andWhere('d.delta < a.delta');
         }
 
+        // Date is given
+        if ($tripSearch->getDate()) {
+            // Must match if this is the one date of the trip (single trip)
+            // OR if the given date is in the days of a regular trip
+            // todo : speed up this part ? index ON days ?
+            $qb->andwhere('(t.regular=0 AND t.dep_date = :date) OR (t.regular=1 AND t.days LIKE :day)');
+            $parameters['date'] = $tripSearch->getDate()->format('Y-m-d');
+            $day  = ($tripSearch->getDate()->format('w') == '0') ? '7' : $tripSearch->getDate()->format('w');
+            $parameters['day'] = "%$day%";
+        }
+        else {
+            // todo : search after now ?
+            // Or just use 'current', which will be updated every 5 minutes
+        }
+
         // Distinct
         $qb->groupBy('t.id');
+
+        // Order
+        $qb->orderBy('t.next_datetime');
 
         $qb->setParameters($parameters);
 

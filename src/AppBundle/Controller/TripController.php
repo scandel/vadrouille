@@ -217,44 +217,21 @@ class TripController extends Controller
     /**
      * Deletes a Trip entity.
      *
-     * @Route("/{id}", name="covoiturage_delete")
-     * @Method("DELETE")
+     * @Route("/{id}/delete", name="covoiturage_delete")
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('AppBundle:Trip')->find($id);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('AppBundle:Trip')->find($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Trip entity.');
-            }
-
-            $em->remove($entity);
-            $em->flush();
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Trip entity.');
         }
 
-        return $this->redirect($this->generateUrl('covoiturage'));
-    }
+        $em->remove($entity);
+        $em->flush();
 
-    /**
-     * Creates a form to delete a Trip entity by id.
-     *
-     * @param mixed $id The entity id
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('covoiturage_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
+        return $this->redirect($this->generateUrl('covoiturage_find'));
     }
 
     /**
@@ -301,7 +278,7 @@ class TripController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $trips = $em->getRepository('AppBundle:Trip')->search($tripSearch);
-        
+
         return $this->render('pages/trip/list.html.twig', array(
             'h1' => "Tous les covoiturages",
             'trips' => $trips,

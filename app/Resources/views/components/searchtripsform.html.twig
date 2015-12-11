@@ -3,6 +3,10 @@
 
 <div id="search-form" class="form-inline">
     {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.depCity) }}
+    {{ form_row(form.arrCity) }}
+    {{ form_row(form.date) }}
+    {{ form_widget(form.search) }}
+
     {{ form_end(form) }}
 </div>

@@ -15,6 +15,11 @@ class TripSearch
     private $arrCity = "";
 
     /**
+     * @var \DateTime : departure date null
+     */
+    private $date = null;
+
+    /**
      * Set depCity
      *
      * @param City $depCity
@@ -57,5 +62,28 @@ class TripSearch
     public function getArrCity()
     {
         return $this->arrCity;
+    }
+
+    /**
+     * Set search date
+     *
+     * @param $date
+     * @return $this
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get search date
+     *
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
     }
 }

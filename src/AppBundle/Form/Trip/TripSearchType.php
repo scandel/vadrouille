@@ -39,6 +39,11 @@ class TripSearchType extends AbstractType
         $builder->get('arrCity')
             ->addModelTransformer(new CityTransformer($this->manager));
 
+        $builder->add('date', 'datePicker', array(
+            'required' => false,
+            'label' => 'Date : ',
+        ));
+
         $builder->add('search', 'submit', array(
             'attr' => array('class' => 'btn btn-primary'),
             'label' => 'Chercher !'

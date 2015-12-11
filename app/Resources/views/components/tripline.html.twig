@@ -14,6 +14,14 @@
             <time datetime='{{ trip.nextDateTime|date("Y-m-d H:i:s") }}' class="h4">{{ trip.nextDateTime|date("\\L\\e d/m/Y à H\\hi") }}</time>
         {% endif %}
 
+        {# Régulier #}
+        {% if trip.regular %}
+            <div class="days">
+                {{ trip.days|join(',')  }}
+            </div>
+        {% endif %}
+
+
         {# Tableau des étapes #}
         {% set depTime = trip.depTime %}
         {% include "components/tripstopstable.html.twig" %}
@@ -45,6 +53,7 @@
 
     {# Zone actions#}
     <td class="col-xs-2 text-center">
-        Actions
+        <a class="btn btn-default btn-sm" href="{{ path('covoiturage_delete', { 'id': trip.id }) }}"><span class="glyphicon glyphicon-remove"></span></a><br>
+        <a class="btn btn-default btn-sm" href="{{ path('covoiturage_edit', { 'id': trip.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
     </td>
 </tr>
