@@ -76,6 +76,11 @@ class User extends BaseUser
      */
     protected $updated_at;
 
+    /**
+     * @ORM\Column(name="status", type="string", columnDefinition="enum('OK', 'OLD', 'BANNED')")
+     */
+    protected $status='OK';
+
 
     public function __construct()
     {
@@ -447,5 +452,28 @@ class User extends BaseUser
     public function getCars()
     {
         return $this->cars;
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     * @return User
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string 
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }

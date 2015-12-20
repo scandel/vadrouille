@@ -32,6 +32,7 @@ class UserAdmin extends Admin
             ->add('first_name', null, array('editable' => true))
             ->add('last_name', null, array('editable' => true))
             //->add('phone')
+            ->add('enabled', null, array('editable' => true))
             ->add('locked', null, array('editable' => true))
             ->add('lastLogin')
         ;

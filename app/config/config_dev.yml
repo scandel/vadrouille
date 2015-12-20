@@ -45,4 +45,10 @@ assetic:
     use_controller: true
 
 #swiftmailer:
-#    delivery_address: me@example.com
+#
+# Swiftmailer Development Configuration
+swiftmailer:
+    transport: gmail
+    username:  service.client@vadrouille-covoiturage.com
+    password:  VCelmsdc!
+    delivery_address: severine.candelier@gmail.com
