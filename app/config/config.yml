@@ -74,8 +74,10 @@ doctrine:
                 host:       195.154.227.86
                 port:       "%database_port%"
                 dbname:     vadrouillecovo
-                user:       severine
+                user:       migrate_user
                 password:   mLWNeXfXvAxpYudj
+                mapping_types:
+                    enum: string
         types:
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
 

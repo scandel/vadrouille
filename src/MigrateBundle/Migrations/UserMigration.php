@@ -21,15 +21,55 @@ class UserMigration extends Migration
         $this->destinationTable = "Users";
         $this->sourceTable = "Users";
 
-        // Mappings (source => destination)
-        // $this->mappings[''] = '';
-
         // Auto-Increment (ne marche pas)
         $this->disableAutoIncrement = true;
 
         // Essais
-        $this->rowMin = 100;
+        $this->rowMin = 111;
         $this->rowMax = $this->rowMin + 10 ;
+
+        // Mappings (destination => source)
+        $this->mappings['username'] = 'email';
+        $this->mappings['username_canonical'] = 'email';
+        $this->mappings['email_canonical'] = 'email';
+
+        $this->mappings['last_login'] = 'last_connexion';
+
+        $this->mappings['bio'] = 'a_few_words';
     }
+
+    /**
+     * @param $row : Before insertRow is prepared, based on mappings
+     * Must return true, or false to skip row.
+     */
+    public function prepareRow($row)
+    {
+        // On ne garde que les utilisateurs OK, PRE, et les BANNED
+        // (les OLD et PARTNER sont dégagés). OLD, c'est pour des questions d'intégrité email.
+        if (!in_array($row['status'], array('OK', 'PRE', 'BANNED'))) {
+            return false;
+        }
+
+        // Conversion de valeurs
+        if (empty($row['a_few_words'])) {
+            $row['a_few_words'] = '';
+        }
+
+        $gender = array(
+            'M' => 'm',
+            'W' => 'w',
+            'Y' => 'w',
+            '' => 'm');
+        $row['sex'] = $gender[$row['sex']];
+
+        // Téléphone...
+
+
+
+
+        return $row;
+    }
+
+
 
 }
