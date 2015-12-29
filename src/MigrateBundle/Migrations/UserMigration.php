@@ -26,7 +26,7 @@ class UserMigration extends Migration
 
         // Essais
         $this->rowMin = 111;
-        $this->rowMax = $this->rowMin + 10 ;
+        $this->rowMax = $this->rowMin + 100 ;
 
         // Mappings (destination => source)
         $this->mappings['username'] = 'email';
@@ -35,6 +35,7 @@ class UserMigration extends Migration
 
         $this->mappings['last_login'] = 'last_connexion';
 
+        $this->mappings['gender'] = 'sex';
         $this->mappings['bio'] = 'a_few_words';
     }
 
