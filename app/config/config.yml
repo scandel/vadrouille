@@ -136,3 +136,8 @@ sonata_admin:
     title_logo: theme/img/vadrouille-covoiturage.png
     security:
         handler: sonata.admin.security.handler.role
+
+sonata_doctrine_orm_admin:
+    templates:
+        form:
+            - bootstrap_3_layout.html.twig

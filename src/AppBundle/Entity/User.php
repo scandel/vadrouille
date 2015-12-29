@@ -77,10 +77,16 @@ class User extends BaseUser
     protected $updated_at;
 
     /**
-     * @ORM\Column(name="status", type="string", columnDefinition="enum('OK', 'OLD', 'BANNED')")
+     * @var string : comment visible only in admin (security)
+     * @ORM\Column(type="text")
      */
-    protected $status='OK';
+    protected $comment = '';
 
+    /**
+     * @var array : other ids known for this user
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $multipleIds;
 
     public function __construct()
     {
@@ -475,5 +481,51 @@ class User extends BaseUser
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param string $comment
+     * @return User
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return string 
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * Set multipleIds
+     *
+     * @param string $multipleIds
+     * @return User
+     */
+    public function setMultipleIds($multipleIds)
+    {
+        $this->multipleIds = $multipleIds;
+
+        return $this;
+    }
+
+    /**
+     * Get multipleIds
+     *
+     * @return string 
+     */
+    public function getMultipleIds()
+    {
+        return $this->multipleIds;
     }
 }

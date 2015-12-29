@@ -43,8 +43,86 @@ class UserController extends Controller
         return $this->render('pages/user/photo.html.twig', array(
             'form' => $form->createView()
         ));
-
     }
+
+    /**
+     * Deactivate (unsubscribe) a user
+     * @Route("/profile/unsubscribe", name="user_unsubscribe")
+     */
+    public function unsubscribeAction(Request $request)
+    {
+        $user = $this->getUser();
+        if (!is_object($user)) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        $form = $this->createFormBuilder()
+            ->add('unsubscribe', 'checkbox', array(
+                'label' => "Je souhaite me désinscrire du service ; mon profil, ainsi
+                 que toutes mes offres de covoiturage, seront supprimés du site."
+            ))
+            ->add('message', 'textarea', array(
+                'required' => false,
+                'label' => 'Pourquoi souhaitez-vous vous désinscrire ? (optionnel,
+                 votre réponse nous aide à améliorer le site)'
+            ))
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            // data is an array with "unsubscribe",  and "message" keys
+            $data = $form->getData();
+            if ($data['unsubscribe']) {
+                // Deactivate user
+                $manipulator = $this->get('fos_user.util.user_manipulator');
+                $manipulator->deactivate($user->getUsername());
+
+
+                //== Complete Log out
+                // (see http://stackoverflow.com/a/28828377/2761700 )
+                // Logging user out.
+                $this->get('security.token_storage')->setToken(null);
+
+                // Invalidating the session.
+                $session = $this->get('request')->getSession();
+                $session->invalidate();
+
+                // Redirecting user to login page in the end.
+                $response = $this->redirectToRoute('homepage');
+
+                // Clearing the cookies.
+                /*$cookieNames = [
+                    $this->container->getParameter('session.name'),
+                    $this->container->getParameter('session.remember_me.name'),
+                ];
+                foreach ($cookieNames as $cookieName) {
+                    $response->headers->clearCookie($cookieName);
+                }*/
+
+                // Notice it
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    'Vous avez été désinscrit du site !'
+                );
+                return $response;
+            }
+            else {
+                $this->get('session')->getFlashBag()->add(
+                    'error',
+                    'Pour vous désinscrire, merci de cocher la case de désinscription'
+                );
+            }
+        }
+
+        return $this->render('pages/user/unsubscribe.html.twig', array(
+            'form' => $form->createView()
+        ));
+    }
+
+
+
+
 }
 
 

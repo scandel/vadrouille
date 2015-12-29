@@ -19,6 +19,7 @@ class UserAdmin extends Admin
             ->add('email')
             ->add('first_name')
             ->add('last_name')
+            ->add('locked')
         ;
     }
 
@@ -32,7 +33,7 @@ class UserAdmin extends Admin
             ->add('first_name', null, array('editable' => true))
             ->add('last_name', null, array('editable' => true))
             //->add('phone')
-            ->add('enabled', null, array('editable' => true))
+            ->add('enabled')
             ->add('locked', null, array('editable' => true))
             ->add('lastLogin')
         ;
@@ -53,87 +54,83 @@ class UserAdmin extends Admin
 
         // define group zoning
         $formMapper
-            ->tab('User')
-                ->with('General', array('class' => 'col-md-6'))->end()
-                ->with('Profile', array('class' => 'col-md-6'))->end()
-            ->end()
-           ->tab('Photo')
-                ->with('Photo', array('class' => 'col-md-12'))->end()
-            ->end()
-            ->tab('Security')
-                ->with('Status', array('class' => 'col-md-6'))->end()
-                ->with('Roles', array('class' => 'col-md-6'))->end()
-
-            ->end()
+            ->with('General', array('class' => 'col-md-6'))->end()
+            ->with('Profile', array('class' => 'col-md-6 clearfix'))->end()
+            ->with('Security', array('class' => 'col-md-6'))->end()
+            ->with('Photo', array('class' => 'col-md-6'))->end()
         ;
 
         $now = new \DateTime();
 
         $formMapper
-            ->tab('User')
-                ->with('General')
-                    ->add('id','text',array(
-                        'disabled' => true,
-                    ))
-                    ->add('email')
-                    ->add('plainPassword', 'text', array(
-                        'required' => (!$this->getSubject() || is_null($this->getSubject()->getId())),
-                    ))
-                ->end()
-                ->with('Profile')
-                    /*->add('dateOfBirth', 'sonata_type_date_picker', array(
-                        'years'       => range(1900, $now->format('Y')),
-                        'dp_min_date' => '1-1-1900',
-                        'dp_max_date' => $now->format('c'),
-                        'required'    => false,
-                    ))*/
-                    ->add('first_name')
-                    ->add('last_name')
-                    // ->add('biography', 'text', array('required' => false))
-                    ->add('gender', 'choice', array(
-                        'label' => 'user.gender.label',
-                        'choices' => array('m' => 'user.gender.male', 'w' => 'user.gender.female'),
-                    ))
-                    ->add('phone', 'tel', array(
-                        'label' => 'user.phone.label',
-                        'required' => false,
-                        'default_region' => 'FR',
-                        'format' => PhoneNumberFormat::NATIONAL,
-                    ))
-                ->end()
+            ->with('General')
+                ->add('id','text',array(
+                    'disabled' => true,
+                ))
+                ->add('email')
+                ->add('plainPassword', 'text', array(
+                    'required' => (!$this->getSubject() || is_null($this->getSubject()->getId())),
+                ))
             ->end()
-            ->tab('Photo')
-                ->with('Photo')
-                    ->add('photo','comur_image', array(
-                            'uploadConfig' => array(
-                                'uploadUrl' => $user->getUploadRootDir(),
-                                'webDir' => $user->getUploadDir(),
-                                'saveOriginal' => 'originalPhoto',
-                                'showLibrary' => false, // don't show images already uploaded
-                            ),
-                            'cropConfig' => array(
-                                'minWidth' => 150,
-                                'minHeight' => 150,
-                                'aspectRatio' => true,
-                                'forceResize' => false,
-                                'thumbs' => array(
-                                    array(
-                                        'maxWidth' => 600,
-                                        'maxHeight' => 600,
-                                    ),
-                                    array(
-                                        'maxWidth' => 300,
-                                        'maxHeight' => 300,
-                                        'useAsFieldImage' => true  //optional
-                                    ),
-                                    array(
-                                        'maxWidth' => 100,
-                                        'maxHeight' => 100,
-                                    ),
-                                )
+            ->with('Profile')
+                /*->add('dateOfBirth', 'sonata_type_date_picker', array(
+                    'years'       => range(1900, $now->format('Y')),
+                    'dp_min_date' => '1-1-1900',
+                    'dp_max_date' => $now->format('c'),
+                    'required'    => false,
+                ))*/
+                ->add('first_name')
+                ->add('last_name')
+                // ->add('biography', 'text', array('required' => false))
+                ->add('gender', 'choice', array(
+                    'label' => 'user.gender.label',
+                    'choices' => array('m' => 'user.gender.male', 'w' => 'user.gender.female'),
+                ))
+                ->add('phone', 'tel', array(
+                    'label' => 'user.phone.label',
+                    'required' => false,
+                    'default_region' => 'FR',
+                    'format' => PhoneNumberFormat::NATIONAL,
+                ))
+            ->end()
+            ->with('Security')
+                ->add('enabled','checkbox',array(
+                   //  'disabled' => true,
+                ))
+                ->add('locked')
+                ->add('comment')
+                ->add('multipleIds')
+            ->end()
+            ->with('Photo')
+                ->add('photo','comur_image', array(
+                        'uploadConfig' => array(
+                            'uploadUrl' => $user->getUploadRootDir(),
+                            'webDir' => $user->getUploadDir(),
+                            'saveOriginal' => 'originalPhoto',
+                            'showLibrary' => false, // don't show images already uploaded
+                        ),
+                        'cropConfig' => array(
+                            'minWidth' => 150,
+                            'minHeight' => 150,
+                            'aspectRatio' => true,
+                            'forceResize' => false,
+                            'thumbs' => array(
+                                array(
+                                    'maxWidth' => 600,
+                                    'maxHeight' => 600,
+                                ),
+                                array(
+                                    'maxWidth' => 300,
+                                    'maxHeight' => 300,
+                                    'useAsFieldImage' => true  //optional
+                                ),
+                                array(
+                                    'maxWidth' => 100,
+                                    'maxHeight' => 100,
+                                ),
                             )
-                        ))
-                ->end()
+                        )
+                    ))
             ->end()
         ;
 
