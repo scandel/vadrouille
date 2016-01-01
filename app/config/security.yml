@@ -28,6 +28,14 @@ security:
 
             logout:       true
             anonymous:    true
+            remember_me:
+                key:      '%secret%'
+                lifetime: 31536000 # 1 year in seconds
+                path:     /
+                # by default, the feature is enabled by checking a
+                # checkbox in the login form (see below), uncomment the
+                # following line to always enable it.
+                #always_remember_me: true
             switch_user: { role: ROLE_SUPER_ADMIN, parameter: _i_am_now }
 
     access_control:
