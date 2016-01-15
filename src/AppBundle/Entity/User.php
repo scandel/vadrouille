@@ -72,6 +72,12 @@ class User extends BaseUser
     protected $originalPhoto;
 
     /**
+     * @var NULL or date at wich email has been confirmed
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $emailConfirmed;
+
+    /**
      * @ORM\Column(type="datetime")
      */
     protected $updated_at;
@@ -527,5 +533,28 @@ class User extends BaseUser
     public function getMultipleIds()
     {
         return $this->multipleIds;
+    }
+
+    /**
+     * Set emailConfirmed
+     *
+     * @param \DateTime $emailConfirmed
+     * @return User
+     */
+    public function setEmailConfirmed($emailConfirmed)
+    {
+        $this->emailConfirmed = $emailConfirmed;
+
+        return $this;
+    }
+
+    /**
+     * Get emailConfirmed
+     *
+     * @return \DateTime 
+     */
+    public function getEmailConfirmed()
+    {
+        return $this->emailConfirmed;
     }
 }
