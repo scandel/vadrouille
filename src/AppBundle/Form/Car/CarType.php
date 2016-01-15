@@ -2,6 +2,9 @@
 
 namespace AppBundle\Form\Car;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -27,7 +30,7 @@ class CarType extends AbstractType
         $formModifier = function (FormInterface $form, CarBrand $brand = null) {
             $models = null === $brand ? array() : $brand->getModels();
 
-            $form->add('model', 'entity', array(
+            $form->add('model', EntityType::class, array(
                 'class'       => 'AppBundle:CarModel',
                 'property' => 'name',
                 'placeholder' => 'Choisissez - - -',
@@ -60,61 +63,65 @@ class CarType extends AbstractType
             }
         );
 
-        $builder->add('type', 'choice', array(
+        $builder->add('type', ChoiceType::class, array(
             'label' => 'Type de voiture :',
             'choices' => array(
-                'small'     => 'Petite voiture',
-                'medium'    => 'Moyenne voiture',
-                'road'      => 'Routière',
-                'espace'    => 'Espace/4x4',
-                'minibus'    => 'Minibus',
+                'Petite voiture' => 'small',
+                'Moyenne voiture' =>'medium',
+                'Routière' => 'road',
+                'Espace/4x4' => 'espace',
+                'Minibus' => 'minibus',
                 ),
+            'choices_as_values' => true,
             'expanded' => false,
             'multiple' => false,
         ));
-        $builder->add('color', 'choice', array(
+        $builder->add('color', ChoiceType::class, array(
             'label' => 'Couleur :',
             'choices' => array(
-                'BLACK' => 'noire'       ,
-                'SILVER'=> 'argent'      ,
-                'GREY'  => 'grise'       ,
-                'WHITE' => 'blanche'     ,
-                'BLUE'  => 'bleue'       ,
-                'RED'   => 'rouge'       ,
-                'GREEN' => 'verte'       ,
-                'YELLOW'=> 'jaune/dorée' ,
-                'BROWN' => 'marron/beige',
-                'PINK'  => 'rose'        ,
-                'ORANGE'=> 'orange'      ,
-                'OTHER' => 'autre'       ,
+                'noire'        => 'BLACK' ,
+                'argent'       => 'SILVER',
+                'grise'        => 'GREY'  ,
+                'blanche'      => 'WHITE' ,
+                'bleue'        => 'BLUE'  ,
+                'rouge'        => 'RED'   ,
+                'verte'        => 'GREEN' ,
+                'jaune/dorée'  => 'YELLOW',
+                'marron/beige' => 'BROWN' ,
+                'rose'         => 'PINK'  ,
+                'orange'       => 'ORANGE',
+                'autre'        => 'OTHER' ,
                 ),
+            'choices_as_values' => true,
             'expanded' => false,
             'multiple' => false,
         ));
-        $builder->add('number_plate', null, array(
+        $builder->add('number_plate', TextType::class, array(
             'label' => 'Numéro d\'immatriculation :'
         ));
-        $builder->add('places', null, array(
+        $builder->add('places', TextType::class, array(
             'label' => 'Nombre de places total :'
         ));
-        $builder->add('doors', null, array(
+        $builder->add('doors', TextType::class, array(
             'label' => 'Nombre de portes :'
         ));
-        $builder->add('airCond', 'choice', array(
+        $builder->add('airCond', ChoiceType::class, array(
             'label' => 'Climatisation :',
             'choices' => array(
-                1 => 'oui'       ,
-                0 => 'non'
+                'oui' => 1       ,
+                'non' => 0
             ),
+            'choices_as_values' => true,
             'expanded' => true,
             'multiple' => false,
         ));
-        $builder->add('music', 'choice', array(
+        $builder->add('music', ChoiceType::class, array(
             'label' => 'Autoradio :',
             'choices' => array(
-                1 => 'oui'       ,
-                0 => 'non'
+                'oui' => 1       ,
+                'non' => 0
             ),
+            'choices_as_values' => true,
             'expanded' => true,
             'multiple' => false,
         ));
@@ -159,7 +166,7 @@ class CarType extends AbstractType
 
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'app_car_edit';
     }

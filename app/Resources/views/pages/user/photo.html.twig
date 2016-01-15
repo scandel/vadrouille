@@ -14,14 +14,10 @@
     </div>
 
     <div class="col-sm-9">
-        <form action="#" method="post" class="form-horizontal user-photo-form" {{ form_enctype(form) }}>
+        {{ form_start(form, {'class': 'form-horizontal user-photo-form'}) }}
             {{ form_errors(form.photo) }}
             {{ form_widget(form.photo) }}
-
-            {{ form_rest(form) }}
-            {#{{ form_widget(form) }}#}
             <button class="btn btn-primary" type="submit">{{ 'Sauver la photo' }}</button>
-
-        </form>
+        {{ form_end(form) }}
     </div>
 {% endblock content %}

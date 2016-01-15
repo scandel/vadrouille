@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class RegistrationController extends BaseController
 {
+    /*
     public function registerAction()
     {
         $form = $this->container->get('fos_user.registration.form');
@@ -51,7 +52,7 @@ class RegistrationController extends BaseController
             'form' => $form->createView(),
         ));
     }
-
+*/
     // Send welcome and email confirmation email
     public function sendWelcomeEmail($user)
     {
