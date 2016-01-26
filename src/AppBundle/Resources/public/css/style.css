@@ -8246,6 +8246,12 @@ img {
 .red {
   color: #d90465;
 }
+.green {
+  color: #48b13d;
+}
+.gray {
+  color: #555555;
+}
 .header-container {
   border-bottom: 2px solid #63b9dc;
   padding: 10px 0;

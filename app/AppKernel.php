@@ -32,7 +32,6 @@ class AppKernel extends Kernel
             new Sonata\AdminBundle\SonataAdminBundle(),
             // AppBundle
             new AppBundle\AppBundle(),
-            new AppBundle\AppUserBundle(),
             new MigrateBundle\MigrateBundle(),
         );
 

@@ -15,7 +15,25 @@
             {{ form_row(form.gender) }}
             {{ form_row(form.first_name) }}
             {{ form_row(form.last_name) }}
-            {{ form_row(form.email) }}
+            <div class="form-group {% if not form.email.vars.valid %}has-error{% endif %}">
+                {{ form_label(form.email) }}
+                <div class="col-sm-4">
+                    {{ form_widget(form.email) }}
+                    {{ form_errors(form.email) }}
+                </div>
+                <div class="col-sm-4">
+                    {% if app.user.emailConfirmed != null %}
+                        <span class="glyphicon glyphicon glyphicon-ok-sign green" aria-hidden="true"></span>
+                        <span class="help-inline">Email confirmé.</span>
+                    {% else  %}
+                        <div id="confirmation">
+                            <span class="glyphicon glyphicon glyphicon-question-sign gray" aria-hidden="true"></span>
+                            <span class="help-inline">Email non confirmé.</span>
+                            <button id="mail-confirmation">Vérifier l'email</button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
             {{ form_row(form.phone) }}
 
             {{ form_rest(form) }}
@@ -27,3 +45,22 @@
         </form>
     </div>
 {% endblock content %}
+
+{% block body_end %}
+    <script type="text/javascript">
+        function sendConfirmationMail(e){
+            $('#confirmation').html("<img src='/bundles/app/img/icons/spinner.gif'>");
+            $.post( "/app_dev.php/profile/email/confirm", function( data ) {
+                 $('#confirmation').html("Mail de confirmation envoyé");
+            });
+        }
+
+        jQuery(document).ready(function() {
+            $('#mail-confirmation').on('click', function(e){
+                e.preventDefault();
+                sendConfirmationMail();
+            });
+        });
+    </script>
+
+{% endblock %}

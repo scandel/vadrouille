@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use AppBundle\Entity\User;
 
 class UserController extends Controller
@@ -44,6 +46,79 @@ class UserController extends Controller
             'form' => $form->createView()
         ));
     }
+
+    /**
+     * Confirm the email of a user
+     * @Route("/profile/confirm/{token}", name="user_confirm_email")
+     */
+    public function confirmEmailAction(Request $request, $token) {
+
+        /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+        $userManager = $this->get('fos_user.user_manager');
+
+        $user = $userManager->findUserByConfirmationToken($token);
+
+        if (null === $user) {
+            throw new NotFoundHttpException(sprintf('The user with confirmation token "%s" does not exist', $token));
+        }
+
+        $user->setConfirmationToken(null);
+        $user->setEmailConfirmed(new \DateTime());
+        $userManager->updateUser($user);
+
+        // Notice
+        $this->get('session')->getFlashBag()->add(
+            'success',
+            'Merci, votre adresse email est maintenant confirmée.'
+        );
+        $url = $this->generateUrl('fos_user_profile_edit');
+        return new RedirectResponse($url);
+    }
+
+    /**
+     * Send a confirmation mail (to check email) to a user
+     * @Route("/profile/email/confirm", name="user_send_confirmation_email")
+     */
+    public function sendConfirmationMailAction()
+    {
+        $userManager = $this->get('fos_user.user_manager');
+
+        $user = $this->getUser();
+        if (!is_object($user)) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        if (null === $user->getConfirmationToken()) {
+            $user->setConfirmationToken($this->get('fos_user.util.token_generator')->generateToken());
+            $userManager->updateUser($user);
+        }
+        $this->sendWelcomeEmail($user);
+        $this->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
+
+        $response = array("message" => "Mail de confirmation envoyé", "success" => true);
+        return new Response(json_encode($response));
+    }
+
+    // Send welcome and email confirmation email
+    public function sendWelcomeEmail($user)
+    {
+        $url = $this->get('router')->generate('user_confirm_email',
+            array('token' => $user->getConfirmationToken()),
+            UrlGeneratorInterface::ABSOLUTE_URL);
+        $message = \Swift_Message::newInstance()
+            ->setSubject('Confirmez votre email')
+            ->setFrom('contact@vadrouille-covoiturage.com')
+            ->setTo($user->getEmail())
+            ->setBody(
+                $this->render('emails/email-confirmation.html.twig', array(
+                        'user' => $user,
+                        'url' => $url,
+                    ))
+            )
+        ;
+        $this->get('mailer')->send($message);
+    }
+
 
     /**
      * Deactivate (unsubscribe) a user

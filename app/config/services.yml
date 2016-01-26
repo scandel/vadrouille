@@ -42,3 +42,9 @@ services:
 
     app.slug:
         class: AppBundle\Utils\Slug
+
+    app.user_email_confirmation:
+        class: AppBundle\EventListener\EmailConfirmationListener
+        arguments: ["@fos_user.user_manager","@fos_user.util.token_generator.default","@session", "@router","@mailer", "@templating"]
+        tags:
+            - { name: kernel.event_subscriber }
