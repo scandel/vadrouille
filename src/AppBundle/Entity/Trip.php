@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Trip
@@ -104,6 +105,21 @@ class Trip
      */
     private $comment;
 
+    /**
+     * @var \DateTime $created
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
+
+    /**
+     * @var \DateTime $updated
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    private $updated;
 
 
     public function __construct()
@@ -454,4 +470,27 @@ class Trip
     {
         return $this->nextDateTime;
     }
+
+
+
+    /**
+     * Get created_at
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Get updated_at
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated;
+    }
+
 }
