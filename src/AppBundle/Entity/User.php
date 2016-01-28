@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 
 /**
@@ -78,11 +79,6 @@ class User extends BaseUser
     protected $emailConfirmed;
 
     /**
-     * @ORM\Column(type="datetime")
-     */
-    protected $updated_at;
-
-    /**
      * @var string : comment visible only in admin (security)
      * @ORM\Column(type="text")
      */
@@ -93,6 +89,22 @@ class User extends BaseUser
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $multipleIds;
+
+    /**
+     * @var \DateTime $created
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
+
+    /**
+     * @var \DateTime $updated
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    private $updated;
 
     public function __construct()
     {
@@ -364,26 +376,23 @@ class User extends BaseUser
 
 
     /**
-     * Set updated_at
+     * Get created_at
      *
-     * @param \DateTime $updatedAt
-     * @return User
+     * @return \DateTime 
      */
-    public function setUpdatedAt($updatedAt)
+    public function getCreatedAt()
     {
-        $this->updated_at = $updatedAt;
-
-        return $this;
+        return $this->created;
     }
 
     /**
      * Get updated_at
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdatedAt()
     {
-        return $this->updated_at;
+        return $this->updated;
     }
 
 

@@ -28,7 +28,8 @@
         "comur/image-bundle": "^1.1",
         "sonata-project/admin-bundle": "2.*",
         "sonata-project/doctrine-orm-admin-bundle": "2.*",
-        "doctrine/doctrine-fixtures-bundle": "^2.2"
+        "doctrine/doctrine-fixtures-bundle": "^2.2",
+        "stof/doctrine-extensions-bundle": "^1.2"
      },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
