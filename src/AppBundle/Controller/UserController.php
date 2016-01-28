@@ -105,18 +105,13 @@ class UserController extends Controller
         $url = $this->get('router')->generate('user_confirm_email',
             array('token' => $user->getConfirmationToken()),
             UrlGeneratorInterface::ABSOLUTE_URL);
-        $message = \Swift_Message::newInstance()
-            ->setSubject('Confirmez votre email')
-            ->setFrom('contact@vadrouille-covoiturage.com')
-            ->setTo($user->getEmail())
-            ->setBody(
-                $this->render('emails/email-confirmation.html.twig', array(
-                        'user' => $user,
-                        'url' => $url,
-                    ))
-            )
-        ;
-        $this->get('mailer')->send($message);
+
+        $this->get('app.mail_manager')->sendEmail("email-confirmation",
+            array(
+                'user' => $user,
+                'url' => $url,
+            ),
+            $user->getEmail());
     }
 
 

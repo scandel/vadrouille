@@ -43,8 +43,12 @@ services:
     app.slug:
         class: AppBundle\Utils\Slug
 
+    app.mail_manager:
+        class: AppBundle\Utils\MailManager
+        arguments: ["@mailer", "@twig","%contact_email%","%from_email%","%from_name%"]
+
     app.user_email_confirmation:
         class: AppBundle\EventListener\EmailConfirmationListener
-        arguments: ["@fos_user.user_manager","@fos_user.util.token_generator.default","@session", "@router","@mailer", "@templating"]
+        arguments: ["@fos_user.user_manager","@fos_user.util.token_generator.default","@session", "@router","@app.mail_manager"]
         tags:
             - { name: kernel.event_subscriber }

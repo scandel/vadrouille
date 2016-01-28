@@ -12,6 +12,7 @@ use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
 use FOS\UserBundle\Model\UserManager;
+use AppBundle\Utils\MailManager;
 
 /**
  * Listener responsible to send a "confirm your mail" email after registration
@@ -23,23 +24,20 @@ class EmailConfirmationListener implements EventSubscriberInterface
     private $tokenGenerator;
     private $session;
     private $router;
-    private $mailer;
-    private $templating;
+    private $mailManager;
     private $oldEmail;
 
     public function __construct(UserManager $userManager,
                                 TokenGeneratorInterface $tokenGenerator,
                                 SessionInterface $session,
                                 UrlGeneratorInterface $router,
-                                $mailer,
-                                EngineInterface $templating )
+                                MailManager $mailManager )
     {
         $this->userManager = $userManager;
         $this->tokenGenerator = $tokenGenerator;
         $this->session = $session;
         $this->router = $router;
-        $this->mailer = $mailer;
-        $this->templating = $templating;
+        $this->mailManager = $mailManager;
     }
 
     /**
@@ -76,29 +74,14 @@ class EmailConfirmationListener implements EventSubscriberInterface
         $url = $this->router->generate('user_confirm_email',
             array('token' => $user->getConfirmationToken()),
             UrlGeneratorInterface::ABSOLUTE_URL);
-        $message = \Swift_Message::newInstance()
-            ->setSubject('Bienvenue')
-            ->setFrom('contact@vadrouille-covoiturage.com')
-            ->setTo($user->getEmail())
-            ->setBody(
-                $this->templating
-                    ->renderResponse('emails/registration.html.twig', array(
-                        'user' => $user,
-                        'url' => $url,
-                    ))
-            )
-            /*
-             * If you also want to include a plaintext version of the message
-            ->addPart(
-                $this->renderView(
-                    'Emails/registration.txt.twig',
-                    array('name' => $name)
-                ),
-                'text/plain'
-            )
-            */
-        ;
-        $this->mailer->send($message);
+
+        $this->mailManager->sendEmail("registration",
+            array(
+                'user' => $user,
+                'url' => $url,
+            ),
+            $user->getEmail());
+
     }
 
     public function onProfileEditInitialize(GetResponseUserEvent $event)

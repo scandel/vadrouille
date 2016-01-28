@@ -1,7 +1,31 @@
+{% extends "mail-template.html.twig" %}
+
+{%- block subject %}
+Confirmez votre email
+{% endblock -%}
+
+{%- block email_body_text %}
+{% autoescape true %}
 Bonjour {{ user.firstName }},
 
-Pour confirmer votre email, cliquez sur : <a href="{{ url }}">{{ url }}</a>.
+Pour confirmer votre email, allez à : {{ url }}
 
 A bientôt !
 
-<em>L'équipe Vadrouille</em>
+{% endautoescape %}
+{% endblock -%}
+
+{%- block email_body_html %}
+    {% autoescape false %}
+<p>Bonjour {{ user.firstName }},</p>
+
+<p>Pour confirmer votre email, cliquez sur : <a href="{{ url }}">{{ url }}</a>.</p>
+
+<p>A bientôt !</p>
+
+    {% endautoescape %}
+{% endblock -%}
+
+
+
+
