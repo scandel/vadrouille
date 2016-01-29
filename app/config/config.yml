@@ -127,23 +127,3 @@ comur_image:
         translation_domain: 'ComurImageBundle'
         gallery_thumb_size: 150
         gallery_dir: 'gallery'
-
-# Sonata - AdminBundle and dependencies
-sonata_block:
-    default_contexts: [cms]
-    blocks:
-        # Enable the SonataAdminBundle block
-        sonata.admin.block.admin_list:
-            contexts:   [admin]
-        # Your other blocks
-
-sonata_admin:
-    title: Admin
-    title_logo: theme/img/vadrouille-covoiturage.png
-    security:
-        handler: sonata.admin.security.handler.role
-
-sonata_doctrine_orm_admin:
-    templates:
-        form:
-            - bootstrap_3_layout.html.twig
