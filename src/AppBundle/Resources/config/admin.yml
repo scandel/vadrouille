@@ -9,3 +9,14 @@ services:
             - ~
         calls:
             - [ setTranslationDomain, [AppBundle]]
+
+    sonata.admin.trip:
+        class: AppBundle\Admin\TripAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Admin", label: "Trips" }
+        arguments:
+            - ~
+            - AppBundle\Entity\Trip
+            - ~
+        calls:
+            - [ setTranslationDomain, [AppBundle]]
