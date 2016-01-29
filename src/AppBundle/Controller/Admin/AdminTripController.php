@@ -35,9 +35,13 @@ class AdminTripController extends Controller
             $em->flush();
         }
 
-        return new Response(
+        $this->get('session')->getFlashBag()->add(
+            'success',
             count($currentTrips) . " trajets traités."
         );
+
+        return $this->redirect($this->generateUrl('sonata_admin_dashboard'));
+
     }
 
 }
