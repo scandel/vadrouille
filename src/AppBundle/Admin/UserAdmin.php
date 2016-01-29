@@ -17,8 +17,8 @@ class UserAdmin extends Admin
         $datagridMapper
             ->add('id')
             ->add('email')
-            ->add('first_name')
-            ->add('last_name')
+            ->add('firstName')
+            ->add('lastName')
             ->add('locked')
         ;
     }
@@ -30,8 +30,8 @@ class UserAdmin extends Admin
             ->addIdentifier('id')
             ->add('Photo', 'string', array('template' => 'AppBundle:Admin:image.html.twig'))
             ->add('email')
-            ->add('first_name', null, array('editable' => true))
-            ->add('last_name', null, array('editable' => true))
+            ->add('firstName', null, array('editable' => true))
+            ->add('lastName', null, array('editable' => true))
             //->add('phone')
             ->add('enabled')
             ->add('locked', null, array('editable' => true))
@@ -79,8 +79,8 @@ class UserAdmin extends Admin
                     'dp_max_date' => $now->format('c'),
                     'required'    => false,
                 ))*/
-                ->add('first_name')
-                ->add('last_name')
+                ->add('firstName')
+                ->add('lastName')
                 // ->add('biography', 'text', array('required' => false))
                 ->add('gender', 'choice', array(
                     'label' => 'user.gender.label',

@@ -30,12 +30,12 @@ class User extends BaseUser
     /**
      * @ORM\Column(type="string", length=255)
      */
-    protected $first_name;
+    protected $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    protected $last_name;
+    protected $lastName;
 
     /**
      * @ORM\Column(type="phone_number")
@@ -45,7 +45,7 @@ class User extends BaseUser
     /**
      * @ORM\Column(type="date", nullable=true)
      */
-    protected $birth_date;
+    protected $birthDate;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -53,7 +53,7 @@ class User extends BaseUser
     protected $city;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $bio = '';
 
@@ -137,7 +137,7 @@ class User extends BaseUser
      */
     public function setFirstName($firstName)
     {
-        $this->first_name = $firstName;
+        $this->firstName = $firstName;
 
         return $this;
     }
@@ -149,7 +149,7 @@ class User extends BaseUser
      */
     public function getFirstName()
     {
-        return $this->first_name;
+        return $this->firstName;
     }
 
     /**
@@ -160,7 +160,7 @@ class User extends BaseUser
      */
     public function setLastName($lastName)
     {
-        $this->last_name = $lastName;
+        $this->lastName = $lastName;
 
         return $this;
     }
@@ -172,7 +172,7 @@ class User extends BaseUser
      */
     public function getLastName()
     {
-        return $this->last_name;
+        return $this->lastName;
     }
 
     /**
@@ -565,5 +565,51 @@ class User extends BaseUser
     public function getEmailConfirmed()
     {
         return $this->emailConfirmed;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return User
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return User
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
     }
 }

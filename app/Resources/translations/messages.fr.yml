@@ -4,9 +4,9 @@ user:
     label: Civilité :
     male: Monsieur
     female: Mademoiselle/Madame
-  first_name:
+  firstName:
     label: Prénom :
-  last_name:
+  lastName:
     label: Nom :
   phone:
     label: Téléphone :

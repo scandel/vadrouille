@@ -11,18 +11,18 @@ class ProfileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // Adds fields : gender, first_name, last_name
+        // Adds fields : gender, first_name, last_name, phone, birthDate, city, bio
         $builder->add('gender', 'choice', array(
             'label' => 'user.gender.label',
             'choices' => array('m' => 'user.gender.male', 'w' => 'user.gender.female'),
             'expanded' => true,
             'multiple' => false,
         ));
-        $builder->add('first_name', null, array(
-            'label' => 'user.first_name.label'
+        $builder->add('firstName', null, array(
+            'label' => 'user.firstName.label'
         )) ;
-        $builder->add('last_name', null, array(
-            'label' => 'user.last_name.label'
+        $builder->add('lastName', null, array(
+            'label' => 'user.lastName.label'
         ));
         $builder->add('phone', 'tel', array(
             'label' => 'user.phone.label',
@@ -31,6 +31,7 @@ class ProfileType extends AbstractType
             'default_region' => 'FR',
             'format' => PhoneNumberFormat::NATIONAL,
         ));
+
 
         // Removes username as email is used instead
         $builder->remove('username');

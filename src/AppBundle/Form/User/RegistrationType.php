@@ -18,11 +18,11 @@ class RegistrationType extends AbstractType
             'expanded' => true,
             'multiple' => false,
             ));
-        $builder->add('first_name', null, array(
-            'label' => 'user.first_name.label'
+        $builder->add('firstName', null, array(
+            'label' => 'user.firstName.label'
             )) ;
-        $builder->add('last_name', null, array(
-            'label' => 'user.last_name.label'
+        $builder->add('lastName', null, array(
+            'label' => 'user.lastName.label'
             ));
         $builder->add('phone', 'tel', array(
             'label' => 'user.phone.label',

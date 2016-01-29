@@ -5,25 +5,25 @@ AppBundle\Entity\User:
             - NotBlank:
                 message: user.gender.blank
                 groups: [ "AppRegistration", "AppProfile" ]
-       first_name:
+       firstName:
             - NotBlank:
-                message: user.first_name.blank
+                message: user.firstName.blank
                 groups: [ "AppRegistration", "AppProfile" ]
             - Length:
                 min: 2
-                minMessage: user.first_name.short
+                minMessage: user.firstName.short
                 max: 255
-                maxMessage: user.first_name.long
+                maxMessage: user.firstName.long
                 groups: [ "AppRegistration", "AppProfile" ]
-       last_name:
+       lastName:
             - NotBlank:
-                message: user.last_name.blank
+                message: user.lastName.blank
                 groups: [ "AppRegistration", "AppProfile" ]
             - Length:
                 min: 2
-                minMessage: user.last_name.short
+                minMessage: user.lastName.short
                 max: 255
-                maxMessage: user.last_name.long
+                maxMessage: user.lastName.long
                 groups: [ "AppRegistration", "AppProfile" ]
        phone:
            - Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber:
