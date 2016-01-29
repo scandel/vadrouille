@@ -48,9 +48,10 @@ class User extends BaseUser
     protected $birthDate;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity="City")
+     * @ORM\JoinColumn(name="city_id", referencedColumnName="id", nullable=true)
      */
-    protected $city;
+    private $city;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -248,28 +249,43 @@ class User extends BaseUser
     }
 
     /**
-     * Set birth_date
+     * Set birthDate
      *
      * @param \DateTime $birthDate
      * @return User
      */
     public function setBirthDate($birthDate)
     {
-        $this->birth_date = $birthDate;
+        $this->birthDate = $birthDate;
 
         return $this;
     }
 
     /**
-     * Get birth_date
+     * Get birthDate
      *
      * @return \DateTime 
      */
     public function getBirthDate()
     {
-        return $this->birth_date;
+        return $this->birthDate;
     }
 
+    /**
+     * Get age calculated from birthDate
+     *
+     * @return mixed
+     */
+    public function getAge()
+    {
+        if (!$this->birthDate)
+            return null;
+
+        $from = $this->birthDate;
+        $to   = new \DateTime('today');
+        return $from->diff($to)->y;
+    }
+    
     /**
      * Set city
      *
