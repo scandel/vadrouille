@@ -62,6 +62,9 @@ sonata_admin:
     # Override
       - bundles/app/css/sonataadmin/styles.css
 
+  templates:
+    layout: 'SonataAdminBundle::custom_layout.html.twig'
+
   dashboard:
     blocks:
       -
