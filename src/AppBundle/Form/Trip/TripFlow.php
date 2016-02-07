@@ -13,6 +13,8 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
  */
 class TripFlow extends FormFlow {
 
+    protected $allowDynamicStepNavigation = true;
+
     protected function loadStepsConfig() {
         return array(
             array(

@@ -1,0 +1,38 @@
+{# Step 3 of the form to post/edit a trip :
+
+* Confirmation
+
+#}
+
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'forms/bootstrap_3_horizontal_layout_4_8.html.twig' %}
+
+{% block headline %}Proposer un covoiturage : Confirmation{% endblock %}
+
+{% block content %}
+<div id="post-trip">
+
+    {# Etapes #}
+    <div>
+        {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
+    </div>
+
+    {{ form_start(form, {'action': path(app.request.attributes.get('_route'),
+        app.request.query.all | craue_removeDynamicStepNavigationParameters(flow))}) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_rest(form) }}
+
+    <div class="col-sm-8 col-sm-push-4">
+        {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' with {
+            craue_formflow_button_class_last: 'btn btn-primary',
+            craue_formflow_button_class_back: 'btn btn-default pull-left',
+            craue_formflow_button_class_reset: 'hidden',
+        } %}
+    </div>
+    {{ form_end(form) }}
+</div>
+
+{% endblock content %}

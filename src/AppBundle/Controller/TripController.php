@@ -77,11 +77,6 @@ class TripController extends Controller
         // form of the current step
         $form = $flow->createForm();
 
-        //$form = $this->createCreateForm($entity);
-        //$form->handleRequest($request);
-
-        //if ($form->isValid()) {
-
         if ($flow->isValid($form)) {
             $flow->saveCurrentStepData($form);
 
@@ -128,31 +123,12 @@ class TripController extends Controller
             }
         }
 
-        return $this->render('pages/trip/edit.html.twig', array(
+        $flowStep = $flow->getCurrentStepNumber();
+        return $this->render('pages/trip/edit-'.$flowStep.'.html.twig', array(
             'form' => $form->createView(),
             'flow' => $flow,
         ));
     }
-
-    /**
-     * Creates a form to create a Trip entity.
-     *
-     * @param Trip $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createCreateForm(Trip $entity)
-    {
-        $form = $this->createForm(new TripType(), $entity, array(
-            'action' => $this->generateUrl('covoiturage_new'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Poster votre covoiturage'));
-
-        return $form;
-    }
-
 
     /**
      * Displays a form to edit an existing Trip entity.
@@ -179,94 +155,94 @@ class TripController extends Controller
             $entity->getStops()->set(1,$arr);
         }
 
-        $form = $this->createEditForm($entity);
-        //$deleteForm = $this->createDeleteForm($id);
+        //$form = $this->createEditForm($entity);
 
-        $form->handleRequest($request);
+        //$form->handleRequest($request);
 
-        if ($form->isValid()) {
-            // Remet les étapes du formulaire dans l'ordre (Départ - Etapes 1..n - Arrivée)
-            $nstops = $entity->getStops()->count();
-            if ($nstops > 2) {
-                $arr = $entity->getStops()->remove(1);
-                $entity->getStops()->add($arr);
-            }
+        // if ($form->isValid()) {
 
-            $delta = 1;
-            foreach ($entity->getStops() as $stop) {
-                $stop->setTrip($entity);
-                $stop->setDelta($delta);
-                $delta++;
-                if ($stop->getLat() == 0 || $stop->getLng() == 0) {
-                    // set lat and lng to the ones of the city
-                    $stop->setLat($stop->getCity()->getLat());
-                    $stop->setLng($stop->getCity()->getLng());
+        // Création du "flow" (formulaire en plusieurs étapes)
+        $flow = $this->get('app.form.flow.trip');
+        $flow->bind($entity);
+
+        // form of the current step
+        $form = $flow->createForm();
+
+        if ($flow->isValid($form)) {
+            $flow->saveCurrentStepData($form);
+
+            if ($flow->nextStep()) {
+                // form for the next step
+                $form = $flow->createForm();
+            } else {
+
+                // Remet les étapes du formulaire dans l'ordre (Départ - Etapes 1..n - Arrivée)
+                $nstops = $entity->getStops()->count();
+                if ($nstops > 2) {
+                    $arr = $entity->getStops()->remove(1);
+                    $entity->getStops()->add($arr);
                 }
-                // $em->persist($stop);
+
+                $delta = 1;
+                foreach ($entity->getStops() as $stop) {
+                    $stop->setTrip($entity);
+                    $stop->setDelta($delta);
+                    $delta++;
+                    if ($stop->getLat() == 0 || $stop->getLng() == 0) {
+                        // set lat and lng to the ones of the city
+                        $stop->setLat($stop->getCity()->getLat());
+                        $stop->setLng($stop->getCity()->getLng());
+                    }
+                    // $em->persist($stop);
+                }
+
+                // Enlève de la bse les stops qui ont été enlevés
+                // -- les n°s des stops du formulaire
+                $stops_form = array();
+                foreach ($entity->getStops() as $stop) {
+                    if (is_numeric($stop->getId()))
+                        $stops_form[] = $stop->getId();
+                }
+
+                // -- les n°s des stops dans la base
+                $query = $em->createQuery(
+                    'SELECT s.id
+                    FROM AppBundle:Stop s
+                    WHERE s.trip = :trip_id'
+                )->setParameter('trip_id', $entity->getId());
+
+                $results = $query->getResult();
+                $stops_base = array();
+                foreach ($results as $res) {
+                    $stops_base[] = $res['id'];
+                }
+
+                // -- ceux qu'il faut retirer : ceux qui sont dans la base mais pas dans le formulaire
+                $to_remove = array_values(array_diff($stops_base, $stops_form));
+
+                foreach ($to_remove as $stop_id) {
+                    $stop = $em->getRepository('AppBundle:Stop')->find($stop_id);
+                    $em->remove($stop);
+                }
+
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    'Votre annonce a bien été modifiée.'
+                );
+
+                return $this->redirect($this->generateUrl('covoiturage_edit', array('id' => $entity->getId())));
             }
-
-            // Enlève de la bse les stops qui ont été enlevés
-            // -- les n°s des stops du formulaire
-            $stops_form = array();
-            foreach ($entity->getStops() as $stop) {
-                if (is_numeric($stop->getId()))
-                    $stops_form[] = $stop->getId();
-            }
-
-            // -- les n°s des stops dans la base
-            $query = $em->createQuery(
-                'SELECT s.id
-                FROM AppBundle:Stop s
-                WHERE s.trip = :trip_id'
-            )->setParameter('trip_id',$entity->getId());
-
-            $results = $query->getResult();
-            $stops_base = array();
-            foreach($results as $res) {
-                $stops_base[] = $res['id'];
-            }
-
-            // -- ceux qu'il faut retirer : ceux qui sont dans la base mais pas dans le formulaire
-            $to_remove = array_values(array_diff($stops_base, $stops_form));
-
-            foreach($to_remove as $stop_id) {
-                $stop = $em->getRepository('AppBundle:Stop')->find($stop_id);
-                $em->remove($stop);
-            }
-
-            $em->flush();
-
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                'Votre annonce a bien été modifiée.'
-            );
-
-            return $this->redirect($this->generateUrl('covoiturage_edit', array('id' => $entity->getId())));
         }
 
-        return $this->render('pages/trip/edit.html.twig', array(
-            'form' => $form->createView()
+        $flowStep = $flow->getCurrentStepNumber();
+        return $this->render('pages/trip/edit-'.$flowStep.'.html.twig', array(
+            'form' => $form->createView(),
+            'flow' => $flow,
         ));
      }
 
-    /**
-    * Creates a form to edit a Trip entity.
-    *
-    * @param Trip $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(Trip $entity)
-    {
-        $form = $this->createForm(new TripType(), $entity, array(
-            'action' => $this->generateUrl('covoiturage_edit', array('id' => $entity->getId())),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Modifier votre covoiturage'));
-
-        return $form;
-    }
     /**
      * Deletes a Trip entity.
      *
