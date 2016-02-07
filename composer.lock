@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d57f1f2c03ec67c8b1a422e786e3cb5f",
-    "content-hash": "daf5f3262afaa131cf50edd5b8a255a6",
+    "hash": "1483f08ee3983ea1dde4855aff962d53",
+    "content-hash": "ff069f61e3ae60bc05b451f2015e9047",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -173,6 +173,70 @@
                 "upload"
             ],
             "time": "2015-04-01 09:21:30"
+        },
+        {
+            "name": "craue/formflow-bundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/craue/CraueFormFlowBundle.git",
+                "reference": "08cd90cbaddc803010819d9d68f207a0513fc279"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/craue/CraueFormFlowBundle/zipball/08cd90cbaddc803010819d9d68f207a0513fc279",
+                "reference": "08cd90cbaddc803010819d9d68f207a0513fc279",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.2|~7.0",
+                "symfony/form": "^2.6.4|~3.0",
+                "symfony/http-kernel": "^2.6.4|~3.0",
+                "symfony/translation": "^2.6.4|~3.0",
+                "symfony/yaml": "^2.6.4|~3.0"
+            },
+            "require-dev": {
+                "doctrine/common": "~2.3",
+                "phpunit/phpunit": "~4.1|~5.0",
+                "sensio/framework-extra-bundle": "~3.0",
+                "symfony/phpunit-bridge": "^2.8.1|^3.0.1",
+                "symfony/symfony": "^2.6.4|~3.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Craue\\FormFlowBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Raue",
+                    "email": "christian.raue@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://github.com/craue/CraueFormFlowBundle/contributors"
+                }
+            ],
+            "description": "Multi-step forms for your Symfony project.",
+            "homepage": "https://github.com/craue/CraueFormFlowBundle",
+            "keywords": [
+                "Symfony2",
+                "form",
+                "step",
+                "symfony3",
+                "wizard"
+            ],
+            "time": "2016-01-30 09:04:50"
         },
         {
             "name": "doctrine/annotations",
@@ -3724,7 +3788,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "friendsofsymfony/user-bundle": 20
+        "friendsofsymfony/user-bundle": 20,
+        "craue/formflow-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

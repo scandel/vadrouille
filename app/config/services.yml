@@ -25,6 +25,10 @@ services:
         tags:
             - { name: form.type, alias: app_stop_edit }
 
+    app.form.flow.trip:
+        class: AppBundle\Form\Trip\TripFlow
+        parent: craue.form.flow
+
     app.form.trip_search:
         class: AppBundle\Form\Trip\TripSearchType
         arguments: [ "@doctrine.orm.entity_manager" ]

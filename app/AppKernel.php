@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Comur\ImageBundle\ComurImageBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new Craue\FormFlowBundle\CraueFormFlowBundle(),
             // Admin
             new Sonata\CoreBundle\SonataCoreBundle(),
             new Sonata\BlockBundle\SonataBlockBundle(),

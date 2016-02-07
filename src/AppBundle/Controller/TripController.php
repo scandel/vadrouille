@@ -22,6 +22,39 @@ use AppBundle\Form\Trip\TripSearchType;
 class TripController extends Controller
 {
 
+    public function createVehicleAction() {
+        $formData = new Vehicle(); // Your form data class. Has to be an object, won't work properly with an array.
+
+        $flow = $this->get('myCompany.form.flow.createVehicle'); // must match the flow's service id
+        $flow->bind($formData);
+
+        // form of the current step
+        $form = $flow->createForm();
+        if ($flow->isValid($form)) {
+            $flow->saveCurrentStepData($form);
+
+            if ($flow->nextStep()) {
+                // form for the next step
+                $form = $flow->createForm();
+            } else {
+                // flow finished
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($formData);
+                $em->flush();
+
+                $flow->reset(); // remove step data from the session
+
+                return $this->redirect($this->generateUrl('home')); // redirect when done
+            }
+        }
+
+        return $this->render('MyCompanyMyBundle:Vehicle:createVehicle.html.twig', array(
+            'form' => $form->createView(),
+            'flow' => $flow,
+        ));
+    }
+
+
     /**
      * Creates a new Trip entity.
      *
@@ -37,47 +70,67 @@ class TripController extends Controller
         $stop2 = new Stop();
         $entity->getStops()->add($stop2);
 
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
+        // Création du "flow" (formulaire en plusieurs étapes)
+        $flow = $this->get('app.form.flow.trip');
+        $flow->bind($entity);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
+        // form of the current step
+        $form = $flow->createForm();
 
-            // Remet les étapes dans l'ordre (Départ - Etapes 1..n - Arrivée)
-            $nstops = $entity->getStops()->count();
-            if ($nstops > 2) {
-                $arr = $entity->getStops()->remove(1);
-                $entity->getStops()->add($arr);
-            }
+        //$form = $this->createCreateForm($entity);
+        //$form->handleRequest($request);
 
-            $delta = 1;
-            foreach ($entity->getStops() as $stop) {
-                $stop->setTrip($entity);
-                $stop->setDelta($delta);
-                $delta++;
-                if ($stop->getLat() == null || $stop->getLng() == null) {
-                    // set lat and lng to the ones of the city
-                    $stop->setLat($stop->getCity()->getLat());
-                    $stop->setLng($stop->getCity()->getLng());
+        //if ($form->isValid()) {
+
+        if ($flow->isValid($form)) {
+            $flow->saveCurrentStepData($form);
+
+            if ($flow->nextStep()) {
+                // form for the next step
+                $form = $flow->createForm();
+            } else {
+                // flow finished
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($entity);
+
+                // Remet les étapes dans l'ordre (Départ - Etapes 1..n - Arrivée)
+                $nstops = $entity->getStops()->count();
+                if ($nstops > 2) {
+                    $arr = $entity->getStops()->remove(1);
+                    $entity->getStops()->add($arr);
                 }
-                $em->persist($stop);
+
+                $delta = 1;
+                foreach ($entity->getStops() as $stop) {
+                    $stop->setTrip($entity);
+                    $stop->setDelta($delta);
+                    $delta++;
+                    if ($stop->getLat() == null || $stop->getLng() == null) {
+                        // set lat and lng to the ones of the city
+                        $stop->setLat($stop->getCity()->getLat());
+                        $stop->setLng($stop->getCity()->getLng());
+                    }
+                    $em->persist($stop);
+                }
+
+                $em->flush();
+
+                $flow->reset(); // remove step data from the session
+
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    'Votre annonce a bien été créée.'
+                );
+
+                return $this->redirect($this->generateUrl(
+                    'covoiturage_edit',
+                    array('id' => $entity->getId())));
             }
-
-            $em->flush();
-
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                'Votre annonce a bien été créée.'
-            );
-
-            return $this->redirect($this->generateUrl(
-                'covoiturage_edit',
-                array('id' => $entity->getId())));
         }
 
         return $this->render('pages/trip/edit.html.twig', array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'flow' => $flow,
         ));
     }
 
