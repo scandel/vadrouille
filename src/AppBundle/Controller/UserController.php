@@ -33,8 +33,6 @@ class UserController extends Controller
         if ($form->isValid()) {
             /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
             $userManager = $this->get('fos_user.user_manager');
-
-            $user->setUpdatedAt(new \DateTime());
             $userManager->updateUser($user);
 
             $url = $this->generateUrl('user_photo_edit');
