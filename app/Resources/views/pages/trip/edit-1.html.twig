@@ -36,9 +36,7 @@
         {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
     </div>
 
-    {{ form_start(form, {'action': path(app.request.attributes.get('_route'),
-        app.request.query.all | craue_removeDynamicStepNavigationParameters(flow))}) }}
-
+    {{ form_start(form) }}
     {{ form_errors(form) }}
 
     <div class="row">
