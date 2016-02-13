@@ -57,3 +57,9 @@ services:
         arguments: ["@fos_user.user_manager","@fos_user.util.token_generator.default","@session", "@router","@app.mail_manager"]
         tags:
             - { name: kernel.event_subscriber }
+
+    app.user_person:
+        class: AppBundle\EventListener\UserPersonListener
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: kernel.event_subscriber }

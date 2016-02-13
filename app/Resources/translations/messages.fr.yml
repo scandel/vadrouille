@@ -8,6 +8,8 @@ user:
     label: Prénom :
   lastName:
     label: Nom :
+  email:
+    label: Email :
   phone:
     label: Téléphone :
     help: Ne marche pas, défini direct dans le form.

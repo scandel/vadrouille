@@ -23,6 +23,11 @@ class User extends BaseUser
     protected $id;
 
     /**
+     * @ORM\OneToOne(targetEntity="Person", mappedBy="user", cascade={"persist", "remove"})
+     */
+    protected $person;
+
+    /**
      * @ORM\Column(type="string", length=1)
      */
     protected $gender;
@@ -128,6 +133,12 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
+    }
+
+
+    public function getPerson()
+    {
+        return $this->person;
     }
 
     /**
