@@ -41,6 +41,13 @@ class Trip
 
 
     /**
+     * @var Person
+     *
+     * @ORM\ManyToOne(targetEntity="Person", inversedBy="trips", cascade={"persist"})
+     */
+    private $person;
+
+    /**
      * @var
      *
      * @ORM\OneToMany(targetEntity="Stop", mappedBy="trip", cascade={"persist", "remove"})
@@ -493,4 +500,86 @@ class Trip
         return $this->updated;
     }
 
+
+    /**
+     * Set nextDateTime
+     *
+     * @param \DateTime $nextDateTime
+     * @return Trip
+     */
+    public function setNextDateTime($nextDateTime)
+    {
+        $this->nextDateTime = $nextDateTime;
+
+        return $this;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return Trip
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Trip
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * Set person
+     *
+     * @param \AppBundle\Entity\Person $person
+     * @return Trip
+     */
+    public function setPerson(\AppBundle\Entity\Person $person = null)
+    {
+        $this->person = $person;
+
+        return $this;
+    }
+
+    /**
+     * Get person
+     *
+     * @return \AppBundle\Entity\Person 
+     */
+    public function getPerson()
+    {
+        return $this->person;
+    }
 }

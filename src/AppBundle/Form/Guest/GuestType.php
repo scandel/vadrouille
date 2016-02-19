@@ -5,6 +5,7 @@ namespace AppBundle\Form\Guest;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use libphonenumber\PhoneNumberFormat;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\True;
 
 class GuestType extends AbstractType
@@ -34,6 +35,13 @@ class GuestType extends AbstractType
             'default_region' => 'FR',
             'format' => PhoneNumberFormat::NATIONAL,
             ));
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'AppBundle\Entity\Guest',
+        ));
     }
 
     public function getName()

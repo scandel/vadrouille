@@ -7,6 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use AppBundle\Entity\Person;
+use AppBundle\Entity\User;
+use AppBundle\Entity\Guest;
 use AppBundle\Entity\Trip;
 use AppBundle\Entity\Stop;
 use AppBundle\Entity\TripSearch;
@@ -22,39 +25,6 @@ use AppBundle\Form\Trip\TripSearchType;
 class TripController extends Controller
 {
 
-    public function createVehicleAction() {
-        $formData = new Vehicle(); // Your form data class. Has to be an object, won't work properly with an array.
-
-        $flow = $this->get('myCompany.form.flow.createVehicle'); // must match the flow's service id
-        $flow->bind($formData);
-
-        // form of the current step
-        $form = $flow->createForm();
-        if ($flow->isValid($form)) {
-            $flow->saveCurrentStepData($form);
-
-            if ($flow->nextStep()) {
-                // form for the next step
-                $form = $flow->createForm();
-            } else {
-                // flow finished
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($formData);
-                $em->flush();
-
-                $flow->reset(); // remove step data from the session
-
-                return $this->redirect($this->generateUrl('home')); // redirect when done
-            }
-        }
-
-        return $this->render('MyCompanyMyBundle:Vehicle:createVehicle.html.twig', array(
-            'form' => $form->createView(),
-            'flow' => $flow,
-        ));
-    }
-
-
     /**
      * Creates a new Trip entity.
      *
@@ -62,17 +32,27 @@ class TripController extends Controller
      */
     public function newAction(Request $request)
     {
-        $entity = new Trip();
+        $trip = new Trip();
+
+        // If a user is connected, he/she is the owner of the trip
+        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            $user = $this->getUser();
+            $trip->setPerson($user->getPerson());
+        }
+        // If not, then we create an empty guest which will be the owner of the trip
+        else {
+            $trip->setPerson(new Person(new Guest()));
+        }
 
         // On ajoute deux arrêts vides pour qu'ils soient affichés
         $stop1 = new Stop();
-        $entity->getStops()->add($stop1);
+        $trip->getStops()->add($stop1);
         $stop2 = new Stop();
-        $entity->getStops()->add($stop2);
+        $trip->getStops()->add($stop2);
 
         // Création du "flow" (formulaire en plusieurs étapes)
         $flow = $this->get('app.form.flow.trip');
-        $flow->bind($entity);
+        $flow->bind($trip);
 
         // form of the current step
         $form = $flow->createForm();
@@ -86,18 +66,18 @@ class TripController extends Controller
             } else {
                 // flow finished
                 $em = $this->getDoctrine()->getManager();
-                $em->persist($entity);
+                $em->persist($trip);
 
                 // Remet les étapes dans l'ordre (Départ - Etapes 1..n - Arrivée)
-                $nstops = $entity->getStops()->count();
+                $nstops = $trip->getStops()->count();
                 if ($nstops > 2) {
-                    $arr = $entity->getStops()->remove(1);
-                    $entity->getStops()->add($arr);
+                    $arr = $trip->getStops()->remove(1);
+                    $trip->getStops()->add($arr);
                 }
 
                 $delta = 1;
-                foreach ($entity->getStops() as $stop) {
-                    $stop->setTrip($entity);
+                foreach ($trip->getStops() as $stop) {
+                    $stop->setTrip($trip);
                     $stop->setDelta($delta);
                     $delta++;
                     if ($stop->getLat() == null || $stop->getLng() == null) {
@@ -119,7 +99,7 @@ class TripController extends Controller
 
                 return $this->redirect($this->generateUrl(
                     'covoiturage_edit',
-                    array('id' => $entity->getId())));
+                    array('id' => $trip->getId())));
             }
         }
 

@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\Guest;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -35,13 +36,22 @@ class Person
     protected $user;
 
     /**
-     * @ORM\OneToOne(targetEntity="Guest")
+     * @ORM\OneToOne(targetEntity="Guest", cascade={"persist"})
      */
     protected $guest;
 
 
+    /**
+     * @var array of Trip
+     *
+     * @ORM\OneToMany(targetEntity="Trip", mappedBy="person")
+     */
+    protected $trips;
+
+
     public function __construct($person) {
         $this->setPerson($person);
+        $this->trips = new ArrayCollection();
     }
 
      /**
@@ -189,5 +199,87 @@ class Person
     public function getUpdated()
     {
         return $this->getPerson()->getUpdated();
+    }
+
+    /**
+     * Set isUser
+     *
+     * @param boolean $isUser
+     * @return Person
+     */
+    public function setIsUser($isUser)
+    {
+        $this->isUser = $isUser;
+
+        return $this;
+    }
+
+    /**
+     * Get isUser
+     *
+     * @return boolean 
+     */
+    public function getIsUser()
+    {
+        return $this->isUser;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     * @return Person
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Set guest
+     *
+     * @param \AppBundle\Entity\Guest $guest
+     * @return Person
+     */
+    public function setGuest(\AppBundle\Entity\Guest $guest = null)
+    {
+        $this->guest = $guest;
+
+        return $this;
+    }
+
+    /**
+     * Add trips
+     *
+     * @param \AppBundle\Entity\Trip $trips
+     * @return Person
+     */
+    public function addTrip(\AppBundle\Entity\Trip $trip)
+    {
+        $this->trips[] = $trip;
+
+        return $this;
+    }
+
+    /**
+     * Remove trips
+     *
+     * @param \AppBundle\Entity\Trip $trips
+     */
+    public function removeTrip(\AppBundle\Entity\Trip $trip)
+    {
+        $this->trips->removeElement($trip);
+    }
+
+    /**
+     * Get trips
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTrips()
+    {
+        return $this->trips;
     }
 }

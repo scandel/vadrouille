@@ -5,11 +5,13 @@ namespace AppBundle\Form\Trip;
 use AppBundle\Form\Stop\StopType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Craue\FormFlowBundle\Event\FormFlowEvent;
 use Craue\FormFlowBundle\Form\FormFlowEvents;
+use AppBundle\Form\Person\PersonType;
+use AppBundle\Form\Person\PersonGuestType;
 
 class TripType extends AbstractType
 {
@@ -19,6 +21,9 @@ class TripType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // Underlying $trip object...
+        $trip = $builder->getData();
+
         // This form is splitted in two steps, so we use the 'fow_step' option
         // from form flow to cnstruct the fields of the form
         if (isset($options['flow_step'])) {
@@ -91,16 +96,23 @@ class TripType extends AbstractType
                     // Comment
                     $builder->add('comment', null, array('required' => false));
 
+                    // Person
+                    if (!$trip->getPerson() || $trip->getPerson()->isGuest()) {
+                        // The Guest Person Form
+                        $builder->add("person", PersonGuestType::class, array(
+                            'label' => false
+                        ));
+                    }
+
                     break;
             }
         }
     }
     
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
+    public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\Trip'
         ));
