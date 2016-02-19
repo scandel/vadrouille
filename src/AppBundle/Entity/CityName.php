@@ -179,4 +179,14 @@ class CityName
     {
         return $this->city;
     }
+
+    /**
+     * Get main
+     *
+     * @return boolean 
+     */
+    public function getMain()
+    {
+        return $this->main;
+    }
 }
