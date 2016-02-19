@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use libphonenumber\PhoneNumber;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Person;
 
 class LoadTestUsersData extends AbstractFixture implements OrderedFixtureInterface
 {
@@ -16,41 +17,55 @@ class LoadTestUsersData extends AbstractFixture implements OrderedFixtureInterfa
      */
     public function load(ObjectManager $manager)
     {
-        $phoneNumber = new PhoneNumber();
-        $phoneNumber->setNationalNumber("33612345678");
+        $users = array(
+            array(
+                'email' => "severine@me.com",
+                'firstName' => 'Séverine',
+                'lastName' => 'Candelier',
+                'gender' => 'w',
+                'phone' => '33612345678',
+                'roles' => array('ROLE_ADMIN','ROLE_SUPER_ADMIN')
+            ),
+            array(
+                'email' => "jeannot@me.com",
+                'firstName' => 'Jeannot',
+                'lastName' => 'Lapin',
+                'gender' => 'm',
+                'phone' => '33612345678',
+            ),
+            array(
+                'email' => "jeannette@me.com",
+                'firstName' => 'Jeannette',
+                'lastName' => 'Lapine',
+                'gender' => 'w',
+                'phone' => '33612345678',
+            ),
+        );
 
-        $admin = new User();
-        $admin->setEmail("severine@me.com")
-            ->setEnabled(true)
-            ->setPlainPassword("123456")
-            ->setFirstName("Séverine")
-            ->setLastName("Candelier")
-            ->setGender('w')
-            ->setPhone($phoneNumber)
-            ->setRoles(array('ROLE_ADMIN','ROLE_SUPER_ADMIN'));;
-        $manager->persist($admin);
+        foreach ($users as $user) {
 
-        $user1 = new User();
-        $user1->setEmail("jeannot@me.com")
-            ->setEnabled(true)
-            ->setPlainPassword("123456")
-            ->setFirstName("Jeannot")
-            ->setLastName("Lapin")
-            ->setGender('m')
-            ->setPhone($phoneNumber);
-        $manager->persist($user1);
+            $theUser = new User();
 
-        $user2 = new User();
-        $user2->setEmail("jeannette@me.com")
-            ->setEnabled(true)
-            ->setPlainPassword("123456")
-            ->setFirstName("Jeannette")
-            ->setLastName("Lapine")
-            ->setGender('w')
-            ->setPhone($phoneNumber);
-        $manager->persist($user2);
+            $phoneNumber = new PhoneNumber();
+            $phoneNumber->setNationalNumber($user['phone']);
 
-        $manager->flush();
+            $theUser->setEmail($user['email'])
+                ->setEnabled(true)
+                ->setPlainPassword("123456")
+                ->setFirstName($user['firstName'])
+                ->setLastName($user['lastName'])
+                ->setGender($user['gender'])
+                ->setPhone($phoneNumber);
+            if (isset($user['roles']) && is_array($user['roles'])) {
+                $theUser->setRoles($user['roles']);
+            }
+
+            $manager->persist($theUser);
+
+            $person = new Person($theUser);
+            $manager->persist($person);
+            $manager->flush();
+        }
     }
 
     /**
