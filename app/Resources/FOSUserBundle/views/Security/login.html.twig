@@ -44,6 +44,12 @@
         </div>
     </div>
 
+    {# Adds a hidden field "_redirect" responsible for redirecting the user after succesful login #}
+    {# (see security.yml) #}
+    {% if app.request.query.get("_redirect") is defined %}
+        <input type="hidden" id="redirect" name="_redirect" value="{{ app.request.query.get("_redirect") }}">
+    {% endif %}
+
     <div class="col-sm-4 col-sm-offset-4">
         <input type="submit" id="_submit" name="_submit" class="btn btn-primary" value="{{ 'security.login.submit'|trans({}, 'messages') }}" />
     </div>

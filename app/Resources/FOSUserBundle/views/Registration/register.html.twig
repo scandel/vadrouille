@@ -15,6 +15,12 @@
         {{ form_row(form.plainPassword) }}
         {{ form_row(form.terms) }}
 
+        {# Adds a hidden field "_redirect" responsible for redirecting the user after succesful registration #}
+        {# (see UserRedirectListener.php) #}
+        {% if app.request.query.get("_redirect") is defined %}
+            <input type="hidden" id="redirect" name="_redirect" value="{{ app.request.query.get("_redirect") }}">
+        {% endif %}
+
         {{ form_rest(form) }}
         {#{{ form_widget(form) }}#}
 

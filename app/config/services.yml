@@ -63,3 +63,9 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: kernel.event_subscriber }
+
+    app.user_redirect:
+            class: AppBundle\EventListener\UserRedirectListener
+            arguments: [@router]
+            tags:
+                - { name: kernel.event_subscriber }
