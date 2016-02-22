@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,6 +25,21 @@ use AppBundle\Form\Trip\TripSearchType;
  */
 class TripController extends Controller
 {
+
+    /**
+     * Action called via Ajax : set a session variable saying it is ok
+     * to post a trip as guest (so he doesn't see annoying notices again...)
+     *
+     * @Route("/mode-invite-ok", name="covoiturage_post_as_guest")
+     */
+    public function postAsGuestAction()
+    {
+        $isAjax = $this->get('Request')->isXMLHttpRequest();
+        if ($isAjax) {
+            $this->get('session')->set('post_as_guest',true);
+        }
+        return new Response();
+    }
 
     /**
      * Creates a new Trip entity.

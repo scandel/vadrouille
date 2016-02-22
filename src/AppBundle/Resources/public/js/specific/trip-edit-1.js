@@ -399,4 +399,14 @@ jQuery(document).ready(function() {
         }
     });
 
+    // Quand l'alerte "mode invité" est fermée, envoie un Ajax à une action
+    // qui écrit dans la session d'accepter le mode invité.
+    $('[data-dismiss="alert"]').on('click', function() {
+        //console.log("Notice closed");
+        $.ajax({
+            url: "/covoiturage/mode-invite-ok"
+        });
+    });
+
+
 });

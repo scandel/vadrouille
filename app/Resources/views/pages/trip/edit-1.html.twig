@@ -34,7 +34,7 @@
 <div id="post-trip">
 
     {# Bloc proposant aux utilisateurs anonymes de se connecter si ils ne le sont pas #}
-    {% if not is_granted('ROLE_USER') %}
+    {% if not is_granted('ROLE_USER') and not app.session.get('post_as_guest') %}
         <div class="alert alert-dismissible alert-info" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
             <p>Vous allez créer une annonce en mode invité. Voulez-vous vous inscrire ?</p>
