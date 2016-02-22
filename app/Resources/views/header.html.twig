@@ -14,7 +14,7 @@
         <li><img src="{{ app.user.webPhotoPath }}" class="navbar-photo"></li>
         <li><a href="#" class="dropdown-toggle "  data-toggle="dropdown" role="button" aria-expanded="false">Bienvenue {{ app.user.firstName }}<span class="caret"></span></a>
             <ul  class="dropdown-menu ">
-                <li><a href="/">Mon espace</a></li>
+                <li><a href="{{ path('user_homepage') }}">Mon espace</a></li>
                 <li><a href="{{ path('fos_user_profile_edit') }}">Mon profil</a></li>
                 <li><a href="{{ path('fos_user_change_password') }}">Changer le mot de passe</a></li>
                 <li><a href="/">Mes messages</a></li>

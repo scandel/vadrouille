@@ -15,16 +15,36 @@ use AppBundle\Entity\User;
 
 class UserController extends Controller
 {
+
+    /**
+     * Home page of connected Users
+     * @Route("/user/home", name="user_homepage")
+     */
+    public function userHomeAction()
+    {
+        // Check access
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED', null, 'Vous devez être connecté pour voir accéder à cette page !');
+        $user = $this->getUser();
+
+        // List of current trips
+        $em = $this->getDoctrine()->getManager();
+        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "current");
+
+        return $this->render('pages/user/userhome.html.twig', array(
+            'trips' => $trips,
+        ));
+    }
+
     /**
      * Edit the user's photo
      * @Route("/profile/photo", name="user_photo_edit")
      */
     public function editPhotoAction(Request $request)
     {
+        // Check access
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED', null, 'Vous devez être connecté pour accéder à cette page !');
+
         $user = $this->getUser();
-        if (!is_object($user)) {
-            throw new AccessDeniedException('This user does not have access to this section.');
-        }
 
         $form = $this->createForm(new PhotoType(), $user);
 
@@ -69,7 +89,7 @@ class UserController extends Controller
             'success',
             'Merci, votre adresse email est maintenant confirmée.'
         );
-        $url = $this->generateUrl('fos_user_profile_edit');
+        $url = $this->generateUrl('user_homepage');
         return new RedirectResponse($url);
     }
 
@@ -79,12 +99,11 @@ class UserController extends Controller
      */
     public function sendConfirmationMailAction()
     {
-        $userManager = $this->get('fos_user.user_manager');
+        // Check access
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED', null, 'Vous devez être connecté pour accéder à cette page !');
 
+        $userManager = $this->get('fos_user.user_manager');
         $user = $this->getUser();
-        if (!is_object($user)) {
-            throw new AccessDeniedException('This user does not have access to this section.');
-        }
 
         if (null === $user->getConfirmationToken()) {
             $user->setConfirmationToken($this->get('fos_user.util.token_generator')->generateToken());
@@ -119,10 +138,10 @@ class UserController extends Controller
      */
     public function unsubscribeAction(Request $request)
     {
+        // Check access
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED', null, 'Vous devez être connecté pour accéder à cette page !');
+
         $user = $this->getUser();
-        if (!is_object($user)) {
-            throw new AccessDeniedException('This user does not have access to this section.');
-        }
 
         $form = $this->createFormBuilder()
             ->add('unsubscribe', 'checkbox', array(
@@ -188,8 +207,43 @@ class UserController extends Controller
         ));
     }
 
+    /**
+     * List the user's current trips
+     * @Route("/user/trips", name="user_current_trips")
+     */
+    public function listCurrentTripsAction()
+    {
+        // Check access
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED', null, 'Vous devez être connecté pour voir accéder à cette page !');
+        $user = $this->getUser();
 
+        $em = $this->getDoctrine()->getManager();
+        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "current");
 
+        return $this->render('pages/user/trips.html.twig', array(
+            'trips' => $trips,
+            'h1' => "Vos trajets",
+        ));
+    }
+
+    /**
+     * List the user's current trips
+     * @Route("/user/trips/old", name="user_old_trips")
+     */
+    public function listOldTripsAction()
+    {
+        // Check access
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED', null, 'Vous devez être connecté pour voir accéder à cette page !');
+        $user = $this->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "old");
+
+        return $this->render('pages/user/trips.html.twig', array(
+            'trips' => $trips,
+            'h1' => "Vos anciens trajets",
+        ));
+    }
 
 }
 

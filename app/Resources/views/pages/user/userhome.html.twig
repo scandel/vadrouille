@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block headline %}Votre espace{% endblock %}
+
+{% block content %}
+ <div class="row">
+    <div class="col-sm-12">
+
+        {# Menu Espace Utilisateur#}
+        <div class="col-sm-3">
+            <ul class="nav nav-pills nav-stacked">
+                <li><a href="{{ path('user_current_trips') }}">Trajets</a></li>
+                <li><a href="{{ path('user_old_trips') }}">Trajets Passés</a></li>
+
+                <li><a href="{{ path('fos_user_profile_edit') }}">Profil</a></li>
+                <li><a href="{{ path('fos_user_change_password') }}">Mot de passe</a></li>
+                <li><a href="{{ path('user_photo_edit') }}">Photo</a></li>
+                <li><a href="{{ path('car_list') }}">Voiture</a></li>
+                <li><a href="{{ path('user_unsubscribe') }}">Désinscription</a></li>
+            </ul>
+        </div>
+
+        {# colonne principale #}
+        <div class="col-sm-9">
+
+            {#<p><strong>{{ pagination.total }} covoiturages trouvés</strong></p>
+
+            {# Pagination
+            {% include "components/pagination.html.twig" %}#}
+
+            {# Trajets #}
+            <h2>Vos trajets</h2>
+            <table class="table table-striped table-hover" width="100%">
+            {% for trip in trips %}
+                {% set stops = trip.stops %}
+                {#{% set driver = trip.driver %}#}
+                {% include "components/tripline.html.twig" %}
+            {% endfor %}
+            </table>
+
+            <h2>Votre profil</h2>
+
+
+        </div>
+   </div>
+    </div>
+{% endblock content %}

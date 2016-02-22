@@ -9,6 +9,9 @@ use Doctrine\ORM\EntityRepository;
  */
 class TripRepository extends EntityRepository
 {
+    /**
+     * Search trips based on search criteria     *
+     */
     public function search(TripSearch $tripSearch)
     {
         // DBAL query builder
@@ -81,4 +84,58 @@ class TripRepository extends EntityRepository
             return null;
         }
     }
+
+    /**
+     * Search trips of a given $user
+     *
+     * @param User $user
+     * @param string $mode : "current", "old", or "all"
+     * @return array|null
+     */
+    public function tripsOfUser(User $user, $mode="all")
+    {
+        // Trips are linked to Persons, so fetch Person by User...
+        if (!$user || !$user->getPerson()) {
+            return null;
+        }
+        $person = $user->getPerson();
+
+        // DBAL query builder
+        $qb= $this->getEntityManager()->getConnection()->createQueryBuilder();
+        $parameters = array();
+
+        $qb->select('t.id')
+            ->from('Trips', 't')
+            ->where('t.person_id = :personId');
+        $parameters['personId'] = $person->getId();
+
+        // Mode : all, current, or old
+        switch ($mode) {
+            case "current":
+                $qb->andWhere('t.current = 1');
+                $qb->orderBy('t.next_datetime');
+                break;
+            case "old":
+                $qb->andWhere('t.current = 0');
+                $qb->orderBy('t.next_datetime', 'desc');
+                break;
+            default:
+                $qb->orderBy('t.next_datetime', 'desc');
+        }
+
+        $qb->setParameters($parameters);
+
+        $ids =  $qb->execute()->fetchAll();
+        if ($ids) {
+            $trips = array();
+            foreach ($ids as $id) {
+                $trips[] = $this->find($id);
+            }
+            return $trips;
+        }
+        else {
+            return null;
+        }
+    }
+
 }

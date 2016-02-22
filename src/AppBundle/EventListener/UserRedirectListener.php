@@ -35,8 +35,8 @@ class UserRedirectListener implements EventSubscriberInterface
     {
         // Get route given in $_POST['_redirect'], if existent
         $request = Request::createFromGlobals();
-        $route = $request->request->get('_redirect', 'fos_user_profile_edit');
-        $route = ($route) ? $route : 'fos_user_profile_edit';
+        $route = $request->request->get('_redirect', 'user_homepage');
+        $route = ($route) ? $route : 'user_homepage';
 
         $url = $this->router->generate($route);
 
