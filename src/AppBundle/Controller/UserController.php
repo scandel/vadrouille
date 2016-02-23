@@ -209,39 +209,74 @@ class UserController extends Controller
 
     /**
      * List the user's current trips
+     * Paginated (?page=x)
+     *
      * @Route("/user/trips", name="user_current_trips")
      */
-    public function listCurrentTripsAction()
+    public function listCurrentTripsAction(Request $request)
     {
         // Check access
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED', null, 'Vous devez être connecté pour voir accéder à cette page !');
         $user = $this->getUser();
 
+        // Page of results
+        $page = $request->query->get('page',1);
+
         $em = $this->getDoctrine()->getManager();
-        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "current");
+
+        // Paginated results here !
+        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "current",$page, 5);
+
+        $pagination = array(
+            'route' => 'user_current_trips',
+            'route_params' => array(),
+            'word' =>'Trajets',
+            'total' => count($trips), // total of query results (not only those listed on the page)
+            'page' => $page,
+            'pages_count' => ceil(count($trips) / 5),
+            'per_page' => 5
+        );
 
         return $this->render('pages/user/trips.html.twig', array(
             'trips' => $trips,
             'h1' => "Vos trajets",
+            'pagination' => $pagination,
         ));
     }
 
     /**
-     * List the user's current trips
+     * List the user's old trips
+     * Paginated (?page=x)
      * @Route("/user/trips/old", name="user_old_trips")
      */
-    public function listOldTripsAction()
+    public function listOldTripsAction(Request $request)
     {
         // Check access
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED', null, 'Vous devez être connecté pour voir accéder à cette page !');
         $user = $this->getUser();
 
+        // Page of results
+        $page = $request->query->get('page',1);
+
         $em = $this->getDoctrine()->getManager();
-        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "old");
+
+        // Paginated results here !
+        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "old",$page, 5);
+
+        $pagination = array(
+            'route' => 'user_current_trips',
+            'route_params' => array(),
+            'word' =>'Trajets',
+            'total' => count($trips), // total of query results (not only those listed on the page)
+            'page' => $page,
+            'pages_count' => ceil(count($trips) / 5),
+            'per_page' => 5
+        );
 
         return $this->render('pages/user/trips.html.twig', array(
             'trips' => $trips,
             'h1' => "Vos anciens trajets",
+            'pagination' => $pagination,
         ));
     }
 

@@ -135,6 +135,7 @@ class Trip
         $this->depDate = new \DateTime('now');
         $this->beginDate = new \DateTime('now');
         $this->endDate = new \DateTime('now');
+        $this->endDate->add(new \DateInterval('P1M'));
         $this->nextDateTime = new \DateTime('now');
     }
 
