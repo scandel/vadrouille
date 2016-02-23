@@ -8488,6 +8488,12 @@ form .control-label.required:after {
 .trip-stops .arr .time {
   color: #d90465;
 }
+.regular-days {
+  display: inline-block;
+  margin-left: 5px;
+  font-style: italic;
+  color: #555555;
+}
 .price-and-places p.lead {
   margin-bottom: 0;
   font-size: 28px;
