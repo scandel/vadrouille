@@ -12,6 +12,7 @@ use Craue\FormFlowBundle\Event\FormFlowEvent;
 use Craue\FormFlowBundle\Form\FormFlowEvents;
 use AppBundle\Form\Person\PersonType;
 use AppBundle\Form\Person\PersonGuestType;
+use AppBundle\Form\Stop\StopHiddenType;
 
 class TripType extends AbstractType
 {
@@ -103,6 +104,12 @@ class TripType extends AbstractType
                             'label' => false
                         ));
                     }
+
+                    // Put again stops to modify stop times
+                    $builder->add('stops', 'collection', array(
+                        'type' => StopHiddenType::class ,
+                        'by_reference' => false
+                    ));
 
                     break;
             }

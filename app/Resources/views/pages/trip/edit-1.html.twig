@@ -58,7 +58,7 @@
         {#-- The map --#}
         {#=============#}
 
-        <div id='map_container' class="col-sm-6 col-sm-push-6">
+        <div id='map_container' class="col-sm-5 col-sm-push-7">
             <div id="map">
                 <div id="spinner" style="display: none;">
                     <img src="/bundles/app/img/icons/bigspinner.gif">
@@ -79,7 +79,7 @@
         {#-- The form --#}
         {#==============#}
 
-        <div class="form-block col-sm-6 col-sm-pull-6">
+        <div class="form-block col-sm-7 col-sm-pull-5">
 
             <h2>Votre trajet</h2>
             {{ form_row(form.regular, {'class': 'radio-inline'}) }}
@@ -104,6 +104,7 @@
                 <li>
                     {{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}
                     {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
+                    {{ form_row(form.stops[0].time) }}
                     {{ form_row(form.stops[0].lat) }}
                     {{ form_row(form.stops[0].lng) }}
                 </li>
@@ -111,6 +112,7 @@
                 <li>
                     {{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}
                     {{ form_row(form.stops[1].place, {'label': 'Lieu de dépose :'}) }}
+                    {{ form_row(form.stops[1].time) }}
                     {{ form_row(form.stops[1].lat) }}
                     {{ form_row(form.stops[1].lng) }}
                 </li>

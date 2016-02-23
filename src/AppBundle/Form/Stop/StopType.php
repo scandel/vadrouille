@@ -37,19 +37,8 @@ class StopType extends AbstractType
             'attr' => array('placeholder' => 'N\'importe où'),
         ));
 
-        /*$hours = range(0,23);
-        $minutes = range(0,55,5);
+        $builder->add('time', 'hidden');
 
-        $builder->add('time', 'time', array(
-            'label' => 'Heure : ',
-            'required' => false,
-            'placeholder' => '---',
-            'input'  => 'datetime',
-            'widget' => 'choice',
-            'hours' => $hours,
-            'minutes' => $minutes,
-        ));
-*/
         $builder->add('lat', 'hidden');
 
         $builder->add('lng', 'hidden');

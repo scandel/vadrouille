@@ -35,6 +35,12 @@
     <h2>Commentaire</h2>
     {{ form_row(form.comment, {'label':'Commentaire :'}) }}
 
+    {# Hidden fields (times - modified by JS) #}
+    {% set nstops = form.stops|length %}
+    {% for i in 0..(nstops-1) %}
+       {{ form_widget(form.stops[i]) }}
+    {% endfor %}
+
     {{ form_rest(form) }}
 
     <div class="col-sm-8 col-sm-push-4">

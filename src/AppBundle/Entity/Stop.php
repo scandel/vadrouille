@@ -62,9 +62,9 @@ class Stop
     private $lng;
 
     /**
-     * @var Datetime : the time from departure (first stop)
+     * @var : the time interval from departure (first stop) in seconds
      *
-     * @ORM\Column(name="time", type="time", nullable=true)
+     * @ORM\Column(name="time", type="integer", nullable=true)
      */
     private $time;
 
