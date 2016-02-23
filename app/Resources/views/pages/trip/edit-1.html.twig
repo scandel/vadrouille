@@ -81,10 +81,20 @@
 
         <div class="form-block col-sm-6 col-sm-pull-6">
 
+            <h2>Votre trajet</h2>
+            {{ form_row(form.regular, {'class': 'radio-inline'}) }}
+            <div class="if_unique">{{ form_row(form.depDate) }}</div>
+            <div class="if_regular">{{ form_row(form.days) }}</div>
+            <div class="if_regular">
+                {{ form_row(form.beginDate, {'label': 'A partir du :'}) }}
+                {{ form_row(form.endDate, {'label': 'Jusqu\'au :'}) }}
+            </div>
+
             <h2>Votre parcours</h2>
-            {# todo : Changer le label dans le prototype (Ville étape...) #}
-            <ul class="stops" data-prototype="{{ form_widget(form.stops.vars.prototype)|e }}">
                 {# itère sur chaque stop existant #}
+                {# todo : Changer le label dans le prototype (Ville étape...) #}
+
+            <ul class="stops" data-prototype="{{ form_widget(form.stops.vars.prototype)|e }}">
                 {% set nstops = form.stops|length %}
 
                 {# Départ et arrivée #}
@@ -94,6 +104,7 @@
                     {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
                     {{ form_row(form.stops[0].lat) }}
                     {{ form_row(form.stops[0].lng) }}
+                    {{ form_row(form.depTime, {'label': 'Heure de départ :'}) }}
                 </li>
                 <h3>Arrivée</h3>
                 <li>
@@ -110,21 +121,8 @@
                        {{ form_widget(form.stops[i]) }}
                    </li>
                 {% endfor %}
-            </ul>
+                </ul>
          </div>
-    </div>
-
-    <div class="col-sm-12">
-        <h2>Date et Heure</h2>
-        {{ form_row(form.regular, {'class': 'radio-inline'}) }}
-        <div class="if_unique">{{ form_row(form.depDate) }}</div>
-        <div class="if_regular">{{ form_row(form.days) }}</div>
-        {{ form_row(form.depTime) }}
-        <div class="if_regular">
-            {{ form_row(form.beginDate) }}
-            {{ form_row(form.endDate) }}
-        </div>
-
     </div>
 
     {{ form_rest(form) }}
