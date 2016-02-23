@@ -223,9 +223,10 @@ class UserController extends Controller
         $page = $request->query->get('page',1);
 
         $em = $this->getDoctrine()->getManager();
+        $maxTrips = $this->container->getParameter('max_trips_user_page');
 
         // Paginated results here !
-        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "current",$page, 5);
+        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "current",$page, $maxTrips);
 
         $pagination = array(
             'route' => 'user_current_trips',
@@ -233,8 +234,8 @@ class UserController extends Controller
             'word' =>'Trajets',
             'total' => count($trips), // total of query results (not only those listed on the page)
             'page' => $page,
-            'pages_count' => ceil(count($trips) / 5),
-            'per_page' => 5
+            'pages_count' => ceil(count($trips) / $maxTrips),
+            'per_page' => $maxTrips
         );
 
         return $this->render('pages/user/trips.html.twig', array(
@@ -259,9 +260,10 @@ class UserController extends Controller
         $page = $request->query->get('page',1);
 
         $em = $this->getDoctrine()->getManager();
+        $maxTrips = $this->container->getParameter('max_trips_user_page');
 
         // Paginated results here !
-        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "old",$page, 5);
+        $trips = $em->getRepository('AppBundle:Trip')->tripsOfUser($user, "old",$page, $maxTrips);
 
         $pagination = array(
             'route' => 'user_current_trips',
@@ -269,8 +271,8 @@ class UserController extends Controller
             'word' =>'Trajets',
             'total' => count($trips), // total of query results (not only those listed on the page)
             'page' => $page,
-            'pages_count' => ceil(count($trips) / 5),
-            'per_page' => 5
+            'pages_count' => ceil(count($trips) / $maxTrips),
+            'per_page' => $maxTrips
         );
 
         return $this->render('pages/user/trips.html.twig', array(
