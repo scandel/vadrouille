@@ -16,19 +16,32 @@
 
             <h1>{{ h1 }}</h1>
 
-            {#<p><strong>{{ pagination.total }} covoiturages trouvés</strong></p>
+            <p><strong>{{ pagination.total }} covoiturages trouvés</strong></p>
 
-            {# Pagination
-            {% include "components/pagination.html.twig" %}#}
+            {% if pagination.total > 0 %}
+                {# Pagination #}
+                <div class="pull-right">
+                    {% include "components/pagination.html.twig" %}
+                </div>
 
-            <table class="table table-striped table-hover" width="100%">
-            {% for trip in trips %}
-                {% set stops = trip.stops %}
-                {#{% set driver = trip.driver %}#}
-                {% include "components/tripline.html.twig" %}
-            {% endfor %}
-            </table>
-            {# {{ dump(trips) }} #}
+                <table class="table table-striped table-hover" width="100%">
+                {% for trip in trips %}
+                    {% set stops = trip.stops %}
+                    {#{% set driver = trip.driver %}#}
+                    {% include "components/tripline.html.twig" %}
+                {% endfor %}
+                </table>
+                {# {{ dump(trips) }} #}
+
+                {# Pagination #}
+                <div class="pull-right">
+                    {% include "components/pagination.html.twig" %}
+                </div>
+            {% else  %}
+                {# Pas de résultats #}
+                <p>Désolé, pas de résultats !</p>
+            {% endif %}
+
         </div>
    </div>
     </div>

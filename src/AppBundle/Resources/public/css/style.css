@@ -8389,6 +8389,13 @@ body {
   border-radius: 0px;
   background-image: none;
 }
+.pagination-count {
+  display: inline-block;
+  margin: 26px 0;
+  padding-left: 0;
+  padding-right: 20px;
+  float: left;
+}
 ul#header-menu {
   margin: 20px 0;
   position: relative;

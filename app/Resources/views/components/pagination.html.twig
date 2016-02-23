@@ -1,0 +1,52 @@
+{#===== Pagination component ======#}
+
+{# pagination object must contain :
+- route : name of the route to paginate
+- route_params : query_parameters of the route
+- word : word like "Trajets" in "Trajets 1 à 5 sur 293"
+- page : actual page
+- total : total nb of results
+- pages_count : total nb of pages
+- per_page : number of results per page
+
+#}
+
+<nav>
+    {% if pagination.word is defined %}
+        <span class="pagination-count">
+            {{ pagination.word }}
+            <strong>{{ (pagination.page-1) * pagination.per_page + 1 }} -
+                {{ min(pagination.page * pagination.per_page, pagination.total) }}</strong>
+            sur <strong>{{ pagination.total }}</strong>
+        </span>
+    {% endif %}
+    {% if pagination.pages_count > 1 %}
+        <ul class="pagination pagination-sm">
+            {% if pagination.page>1 %}
+                <li>
+                    <a href="{{ path(pagination.route,pagination.route_params|merge({'page': 1})) }}"
+                   aria-label="Première page">
+                        <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+                    </a>
+                </li>
+            {% endif %}
+            {#display p numbers only from p-3 to p+3 but don't go <1 or >pages_count#}
+            {% for p in range(max(pagination.page-3, 1),
+            min(pagination.page+3, pagination.pages_count)) %}
+                <li {% if p == pagination.page %} class="active"{% endif %}>
+                    <a  href="{{ path(pagination.route,
+                        pagination.route_params|merge({'page': p})) }}">{{ p }}
+                    </a>
+                </li>
+            {% endfor %}
+            {% if pagination.page<pagination.pages_count %}
+                <li>
+                    <a href="{{ path(pagination.route,
+                    pagination.route_params|merge({'page': pagination.pages_count})) }}" aria-label="Dernière page">
+                        <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    {% endif %}
+</nav>

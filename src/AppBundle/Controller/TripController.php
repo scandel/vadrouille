@@ -286,11 +286,15 @@ class TripController extends Controller
 
     /**
      * Lists all Trip entities.
+     * Paginated (?page=x)
      *
      * @Route("/", name="covoiturage_find")
      */
     public function listAction(Request $request)
     {
+        // Page of results
+        $page = $request->query->get('page',1);
+
         $tripSearch = new TripSearch();
 
         $tripSearchForm =  $this->createForm('app_trip_search', $tripSearch, array(
@@ -302,12 +306,24 @@ class TripController extends Controller
         $tripSearch = $tripSearchForm->getData();
 
         $em = $this->getDoctrine()->getManager();
-        $trips = $em->getRepository('AppBundle:Trip')->search($tripSearch);
+        // Paginated results here !
+        $trips = $em->getRepository('AppBundle:Trip')->search($tripSearch, $page, 5);
+
+        $pagination = array(
+            'route' => 'covoiturage_find', // Todo : replace by the actual route (ex covoiturage/paris/lyon)
+            'route_params' => array(),
+            'word' =>'Trajets',
+            'total' => count($trips), // total of query results (not only those listed on the page)
+            'page' => $page,
+            'pages_count' => ceil(count($trips) / 5),
+            'per_page' => 5
+        );
 
         return $this->render('pages/trip/list.html.twig', array(
             'h1' => "Tous les covoiturages",
+            'form' => $tripSearchForm->createView(),
             'trips' => $trips,
-            'form' => $tripSearchForm->createView()
+            'pagination' => $pagination,
         ));
 
     }
