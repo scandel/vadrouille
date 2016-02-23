@@ -8,6 +8,14 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+    # ----- Twig
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+            - { name: twig.extension }
+
+    # ------ App
+
     app.form.registration:
         class: AppBundle\Form\User\RegistrationType
         tags:
