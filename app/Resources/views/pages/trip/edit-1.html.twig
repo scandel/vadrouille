@@ -85,12 +85,14 @@
             {{ form_row(form.regular, {'class': 'radio-inline'}) }}
             <div class="if_unique">{{ form_row(form.depDate) }}</div>
             <div class="if_regular">{{ form_row(form.days) }}</div>
+            {{ form_row(form.depTime, {'label': 'Heure de départ :'}) }}
+            <em>Vous pourrez préciser l'heure d'arrivée à l'étape suivante.</em>
             <div class="if_regular">
                 {{ form_row(form.beginDate, {'label': 'A partir du :'}) }}
                 {{ form_row(form.endDate, {'label': 'Jusqu\'au :'}) }}
             </div>
 
-            <h2>Votre parcours</h2>
+            <h2>Votre itinéraire</h2>
                 {# itère sur chaque stop existant #}
                 {# todo : Changer le label dans le prototype (Ville étape...) #}
 
@@ -104,7 +106,6 @@
                     {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
                     {{ form_row(form.stops[0].lat) }}
                     {{ form_row(form.stops[0].lng) }}
-                    {{ form_row(form.depTime, {'label': 'Heure de départ :'}) }}
                 </li>
                 <h3>Arrivée</h3>
                 <li>
