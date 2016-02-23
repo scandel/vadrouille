@@ -11,15 +11,14 @@
             <time datetime='{{ trip.nextDateTime|date("Y-m-d H:i:s") }}' class="h4">Demain - {{ trip.nextDateTime|date("H\\hi") }}</time>
         {% else %}
             <time datetime='{{ trip.nextDateTime|date("Y-m-d H:i:s") }}' class="h4">{{ trip.nextDateTime|localizeddate('full','full',NULL,NULL,"EEEE d MMMM - HH'h'mm")|capitalize }}</time>
-    {% endif %}
-
-    {# Régulier #}
-        {% if trip.regular %}
-            <div class="days">
-                {{ trip.days|join(',')  }}
-            </div>
         {% endif %}
 
+        {# Régulier #}
+        {% if trip.regular %}
+            <div class="days">
+                Tous les {{ trip.days|dayjoin(', ', true) }}.
+            </div>
+        {% endif %}
 
         {# Tableau des étapes #}
         {% set depTime = trip.depTime %}

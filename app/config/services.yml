@@ -8,9 +8,16 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
-    # ----- Twig
+    # ----- Twig Vendor
     twig.extension.intl:
         class: Twig_Extensions_Extension_Intl
+        tags:
+            - { name: twig.extension }
+
+    # ----- Twig App
+    app.twig_extension:
+        class: AppBundle\Twig\AppExtension
+        public: false
         tags:
             - { name: twig.extension }
 
