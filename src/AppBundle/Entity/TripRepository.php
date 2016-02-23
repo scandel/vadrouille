@@ -20,7 +20,7 @@ class TripRepository extends EntityRepository
      * @param int $perPage
      * @return array|null
      */
-    public function search(TripSearch $tripSearch, $page=1, $perPage=5)
+    public function search(TripSearch $tripSearch, $page=1, $perPage=10)
     {
         // ORM Query Builder
         $qb= $this->getEntityManager()->createQueryBuilder();
@@ -89,7 +89,7 @@ class TripRepository extends EntityRepository
      * @param string $mode : "current", "old", or "all"
      * @return array|null
      */
-    public function tripsOfUser(User $user, $mode="all", $page=1, $perPage=5)
+    public function tripsOfUser(User $user, $mode="all", $page=1, $perPage=10)
     {
         // Trips are linked to Persons, so fetch Person by User...
         if (!$user || !$user->getPerson()) {

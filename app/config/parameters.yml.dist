@@ -22,3 +22,7 @@ parameters:
     contact_email: contact@vadrouille-covoiturage.com
     from_email: contact@vadrouille-covoiturage.com
     from_name: Vadrouille Covoiturage
+
+    # Pagination parameters
+    max_trips_search_page: 5
+    max_trips_user_page: 5
