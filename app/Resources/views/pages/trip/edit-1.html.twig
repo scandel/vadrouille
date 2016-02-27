@@ -66,8 +66,8 @@
             </div>
             <div id="map_legend">
                 <p>Voir:
-                    <a id='dep_center' href='' title='Cliquez pour centrer la carte sur le point de départ'>Départ</a> -
-                    <a id='arr_center' href='' title='Cliquez pour centrer la carte sur le lieu d arrivée'>Arrivée</a> -
+                    <a id='stops_0_center' href='' title='Cliquez pour centrer la carte sur le point de départ'>Départ</a> -
+                    <a id='stops_1_center' href='' title='Cliquez pour centrer la carte sur le lieu d arrivée'>Arrivée</a> -
                     <a id='trip_center' href='' title='Cliquez pour voir tout le trajet'>Trajet</a> |
                     Distance: <strong><span id='distance'>0</span></strong> -
                     Durée: <strong><span id='time'>0</span></strong>
@@ -104,6 +104,7 @@
                 <li>
                     {{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}
                     {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
+                    {{ form_row(form.stops[0].city_details) }}
                     {{ form_row(form.stops[0].time) }}
                     {{ form_row(form.stops[0].lat) }}
                     {{ form_row(form.stops[0].lng) }}
@@ -112,6 +113,7 @@
                 <li>
                     {{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}
                     {{ form_row(form.stops[1].place, {'label': 'Lieu de dépose :'}) }}
+                    {{ form_row(form.stops[1].city_details) }}
                     {{ form_row(form.stops[1].time) }}
                     {{ form_row(form.stops[1].lat) }}
                     {{ form_row(form.stops[1].lng) }}

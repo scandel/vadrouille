@@ -4,6 +4,7 @@
 
 // Nb max d'étapes
 var max_stops = 5
+var maxmax = 200;
 
 // Récupère le div qui contient la collection de tags
 var collectionHolder = $('ul.stops');
@@ -32,7 +33,7 @@ if (typeof L !== 'undefined') {
 // Array of stops positions
 // 0 = departure, 1 = arrival, 2+ = intermediate stops
 var pos= new Array();
-for (var i=0; i < 200; i++){
+for (var i=0; i < maxmax; i++){
     pos['app_trip_edit_stops_' + i] = new Object;
     pos['app_trip_edit_stops_' + i].set = false;
 }
@@ -141,6 +142,11 @@ function addStopFormDeleteLink($stopFormLi) {
             $('#add_stop').attr('disabled', false);
         }
 
+        // Recalcule l'itiéraire
+        if ((pos['app_trip_edit_stops_0'].set == true) && (pos['app_trip_edit_stops_1'].set == true)) {
+            Itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
+        }
+
     });
 }
 
@@ -176,7 +182,7 @@ function MapInit() {
  * Met un marqueur sur le point de RV;
  * ne change pas l'affichage de la carte
  *
- * @param stop : 0..6
+ * @param stop : 'app_trip_edit_stops_x'
  */
 function MapPutMarker(stop) {
     if (typeof L !== 'undefined') {
@@ -206,9 +212,9 @@ function MapPutMarker(stop) {
             icon: icon
         }).addTo(markerLayer);
 
-        /*markers[stop].on('click', function () {
+        markers[stop].on('click', function () {
          MapCenter(stop);
-         });*/
+         });
 
         // console.log(markers);
     }
@@ -225,7 +231,185 @@ function MapRemoveMarker(stop) {
 }
 
 
+/**
+ * Calcule le trajet, affiche l'itinéraire sur la carte,
+ * centre sur l'itinéraire, et affiche les infos trajet
+ * Calcule les temps de parcours (Aller-Retour : met les mêmes temps)
+ *
+ */
+function Itinerary() {
 
+    // On nettoie
+    ClearPaths();
+    if ($('#map-error') != null) {
+        $('#map-error').remove();
+    }
+
+    // On affiche le spinner
+    $("#spinner").show();
+
+    // Calcul itinéraire
+    var iti = [pos['app_trip_edit_stops_0'].center];
+    for (i = 2; i < maxmax ; i++)
+    {
+        //console.log('i=' + i + ', set : '+ pos['app_trip_edit_stops_'+i].set + ' lat: '+
+        //    $('#app_trip_edit_stops_'+i+'_lat').val() + ' lng: ' + $('#app_trip_edit_stops_'+i+'_lng').val());
+        if ((pos['app_trip_edit_stops_'+i].set)
+            && !isNaN(parseFloat($('#app_trip_edit_stops_'+i+'_lat').val()))
+            && !isNaN(parseFloat($('#app_trip_edit_stops_'+i+'_lng').val())))
+            iti.push(pos['app_trip_edit_stops_'+i].center) ;
+    }
+    iti.push(pos['app_trip_edit_stops_1'].center) ;
+
+    console.log(iti);
+
+    var options = {
+        vehicle: L.Mappy.RouteModes.CAR, // PEDESTRIAN, BIKE, MOTORBIKE
+        cost: "length", // or "time" or "price"
+        gascost: 1.0,
+        gas: "petrol", // or diesel, lpg
+        nopass: 0, // 1 pour un trajet sans col
+        notoll: 0, // 1 pour un trajet sans péage
+        caravane: 0, // 1 pour un trajet avec caravane
+        infotraffic: 0 // 1 pour un trajet avec trafic
+    };
+
+    L.Mappy.Services.route(iti,
+        options,
+        // Callback de succès
+        function(results) {
+
+            // On enregistre le parcours
+            currentRoadbook = results.routes.route;
+
+            // on re-nettoie pour si il y a eu deux lancements rapprochés
+            ClearPaths();
+
+            polyline = L.polyline(results.routes.route["polyline-definition"].polyline).addTo(map);
+            // zoom the map to the polyline
+            map.fitBounds(polyline.getBounds());
+
+            // Temps et distance actualisés
+            console.log("Route : ",results.routes.route);
+
+
+            travel_time = results.routes.route.summary['time'];
+            var time = sprintf("%dh%02d",Math.floor(travel_time/3600),Math.floor((travel_time/60)%60));
+            $("#time").text(time);
+
+            var mylength = Math.floor(results.routes.route.summary['length']/1000) + "km";
+            $("#distance").text(mylength);
+
+            $("#spinner").hide();
+
+            // Update temps de parcours
+            UpdateTimes(currentRoadbook);
+        },
+        // Callback d'erreur
+        function() {
+            // Error during route calculation
+            map.setView(france.center , france.zoom );
+            $("#spinner").hide();
+
+            // Ajout message d'erreur direct sur la carte
+            var error = $('<div>').attr({
+                'id' : 'map-error',
+                'class' : 'map-error alert alert-danger',
+            }).text("Erreur de calcul d'itinéraire !");
+            $('#map').append(error);
+        }
+    );
+}
+
+/**
+ * Efface les layers de type "_path"
+ */
+function ClearPaths() {
+    for(i in map._layers) {
+        if(map._layers[i]._path != undefined) {
+            try {
+                map.removeLayer(map._layers[i]);
+            }
+            catch(e) {
+                // debug("problem with " + e + map._layers[i]);
+            }
+        }
+    }
+}
+
+/**
+ * Remplit les temps de parcours (hidden) pour les différentes étapes
+ * @param roadbook
+ */
+function UpdateTimes(roadbook) {
+
+    if (roadbook==null) {
+        Itinerary();
+        return;
+    }
+
+    // Update temps total
+    var total_time = roadbook.summary.time;
+    total_time = Math.round(total_time/300)*300 ; // arrondi à 5 minutes près
+    // Update temps total
+    $('#app_trip_edit_stops_1_time').val(total_time);
+
+    // Les temps des différentes étapes
+    var nActions = roadbook.actions.action.length;
+
+    // Calcul n°s des étapes
+    var steps = new Array();
+    var index = 0;
+    for (var i=2; i < maxmax; i++){
+       if ( pos['app_trip_edit_stops_' + i].set ) {
+           steps[index] = i;
+           index++;
+       }
+    }
+
+    var index = 0;
+    for (var i = 0 ; i <nActions ; i++) {
+        if (roadbook.actions.action[i].type == 'waypoint') {
+            // debug(roadbook.actions.action[i]);
+            travel_time = parseInt(roadbook.actions.action[i].sec) ;
+            travel_time = Math.round(travel_time/300)*300 ; // arrondi à 5 minutes pr?s
+            // Update temps étape
+            $('#app_trip_edit_stops_'+steps[index]+'_time').val(travel_time);
+            index++;
+          }
+    }
+}
+
+/**
+ * Centre la carte sur le point de départ, arrivée, ou étape
+ * @param item  : 'dep', 'arr', 'stepX'
+ */
+function MapCenter(item) {
+    console.log("MapCenter ", item);
+    if (!pos[item].set) {
+        switch (item)
+        {
+            case 'dep': alert('Vous devez d\'abord définir votre ville et lieu de départ');  break;
+            case 'arr':  alert('Vous devez d\'abord définir votre ville et lieu d\'arrivée');  break;
+            case 'step1':
+            case 'step2':
+            case 'step3':
+            case 'step4':
+            case 'step5':  alert('Vous devez d\'abord définir votre ville et lieu d\'étape');  break;
+            default:
+        }
+    }
+    else
+        map.setView(pos[item].center, 9);
+}
+
+
+/**
+ * Centre la carte sur le trajet global
+ */
+function MapTripCenter() {
+    map.fitBounds(polyline.getBounds());
+}
 
 /*========= recherche, vérification, update villes ============*/
 
@@ -254,7 +438,7 @@ function UpdateCity(item, uiItem) {
     $('#'+item+'_lng').val(uiItem.lng);
 
     // Les détails (code postal, pays) pour la géoloc
-    // $('#'+item+'_city_details').val(city_details);
+    $('#'+item+'_city_details').val(uiItem.postcode);
 
     // Effacer le pt de RV (placeholder "N'importe où")
     $('#'+item+'_place').val('');
@@ -303,7 +487,7 @@ function OnPlaceUpdate(item,zoom,iti) {
                 MapPutMarker(item); // Met un marqueur sur le point de RV; ne change pas l'affichage de la carte
                 // si les lieux de d?part et d'arriv?e sont connus tous deux, calcule et affiche l'itin?raire
                 if (iti && (pos['app_trip_edit_stops_0'].set == true) && (pos['app_trip_edit_stops_1'].set == true)) {
-                    // Itinerary(); // Calcule le trajet, centre la carte sur le trajet, ?crit les infos trajet
+                    Itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
                 }
             }
             if (zoom >= 0) {
@@ -373,6 +557,19 @@ jQuery(document).ready(function() {
         }
     };
 
+    //---- Liens de centrage de la carte ----
+    $.each(['stops_0','stops_1'],function(index, item) {
+        $('#'+item+'_center').click(function(e) {
+            e.preventDefault();
+            MapCenter('app_trip_edit_'+item);
+        });
+    });
+    $('#trip_center').click(function(e) {
+        e.preventDefault();
+        if (travel_time!=0) MapTripCenter();
+        else alert('Vous devez d\'abord définir complètement votre trajet');
+    });
+
     //---- On "City" Change ----
 
     // Change select behavior
@@ -393,7 +590,7 @@ jQuery(document).ready(function() {
         input_item = $(this).attr('id').replace('_city_name', '');
         console.log("Changement ", input_item);
         if ( $(this).val().trim() == '' ){
-            $.each(['city_id',/*'city_details',*/ 'place','lat','lng'], function(index, what) {
+            $.each(['city_id','city_details', 'place','lat','lng'], function(index, what) {
                 $('#'+input_item+'_'+what).val('');
             });
         }

@@ -26,7 +26,7 @@ function timePickerInit(timePicker) {
 }
 
 $(document).ready(function() {
-console.log('I m ready');
+    console.log('I m ready');
     /**
      * Datepickers
      * Bootstrap Datepicker

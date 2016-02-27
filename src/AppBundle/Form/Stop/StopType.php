@@ -42,6 +42,12 @@ class StopType extends AbstractType
         $builder->add('lat', 'hidden');
 
         $builder->add('lng', 'hidden');
+
+        // For geolocalistaion
+        $builder->add('city_details', 'hidden', array(
+            'mapped' => false,
+        ));
+
     }
 
     /**
