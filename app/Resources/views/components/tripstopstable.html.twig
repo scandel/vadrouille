@@ -7,7 +7,11 @@
     {% set class_line = 'myclass' %}
 
     <tr{{ class_line ? (' class="' ~ class_line ~ '"')|raw }}>
-        <td class="time">{{ (stop == stops[0] ) ? depTime|date("H\\hi") : "- - -" }}</td>
+        <td class="time">
+            {{ (stop == stops[0] ) ? depTime|date("H\\hi") :
+                ( stop.time ) ? depTime|date_modify("+" ~ stop.time ~ "seconds")|date("H\\hi") :
+                    "- - - - -" }}
+        </td>
         <td class="place"><span>{{ stop.city.name|upper }}</span>{{ (stop.place) ? ', ' ~ stop.place }}</td>
     </tr>
 {% endfor %}
