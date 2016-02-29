@@ -640,4 +640,17 @@ class User extends BaseUser
         return $this->updated;
     }
 
+
+    /**
+     * Set person
+     *
+     * @param \AppBundle\Entity\Person $person
+     * @return User
+     */
+    public function setPerson(\AppBundle\Entity\Person $person = null)
+    {
+        $this->person = $person;
+
+        return $this;
+    }
 }

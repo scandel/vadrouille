@@ -302,8 +302,9 @@ function Itinerary() {
 
             $("#spinner").hide();
 
-            // Update temps de parcours
-            UpdateTimes(currentRoadbook);
+            // Store roadbook
+            $('#app_trip_edit_mappyRoadbook').val(JSON.stringify(currentRoadbook));
+
         },
         // Callback d'erreur
         function() {

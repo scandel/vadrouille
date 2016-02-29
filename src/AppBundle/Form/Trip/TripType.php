@@ -4,6 +4,7 @@ namespace AppBundle\Form\Trip;
 
 use AppBundle\Form\Stop\StopType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormEvent;
@@ -91,6 +92,10 @@ class TripType extends AbstractType
                         'hours' => $hours,
                         'minutes' => $minutes,
                     ));
+
+                    // Mappy Roadbook
+                    $builder->add('mappyRoadbook', HiddenType::class);
+
                     break;
                 case 2:
                     // 2nd part of the form
@@ -110,6 +115,9 @@ class TripType extends AbstractType
                         'type' => StopHiddenType::class ,
                         'by_reference' => false
                     ));
+
+                    // Mappy Roadbook
+                    $builder->add('mappyRoadbook', HiddenType::class);
 
                     break;
             }

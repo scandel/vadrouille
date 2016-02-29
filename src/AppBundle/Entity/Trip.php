@@ -113,6 +113,13 @@ class Trip
     private $comment;
 
     /**
+     * @var string : serialized JS roadbook object (from Mappy)
+     *
+     * @ORM\Column(name="mappy_roadbook", type="text", nullable=true)
+     */
+    private $mappyRoadbook;
+
+    /**
      * @var \DateTime $created
      *
      * @Gedmo\Timestampable(on="create")
@@ -582,5 +589,28 @@ class Trip
     public function getPerson()
     {
         return $this->person;
+    }
+
+    /**
+     * Set mappyRoadbook
+     *
+     * @param string $mappyRoadbook
+     * @return Trip
+     */
+    public function setMappyRoadbook($mappyRoadbook)
+    {
+        $this->mappyRoadbook = $mappyRoadbook;
+
+        return $this;
+    }
+
+    /**
+     * Get mappyRoadbook
+     *
+     * @return string 
+     */
+    public function getMappyRoadbook()
+    {
+        return $this->mappyRoadbook;
     }
 }
