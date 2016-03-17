@@ -193,9 +193,11 @@ function MapPageInit() {
 
         //---- Init markers : pour les stops remplis  ---
         // They are already ordered by delta
-         $.each(pos, function (index, stop) {
-            var type = (index == 0) ? 'dep' : (index == (pos.length-1)) ? 'arr' : null;
-            MapPutMarker(index, type);
+        $.each(pos, function (index, stop) {
+            if (typeof pos[index] !== 'undefined') {
+                var type = (index == 0) ? 'dep' : (index == (pos.length - 1)) ? 'arr' : null;
+                MapPutMarker(index, type);
+            }
         });
 
         //---- Liens de centrage de la carte ----

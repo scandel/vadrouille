@@ -52,16 +52,27 @@
         </div>
 
         <div class="col-sm-4">
+
             <h3>Récapitulatif</h3>
+
             <div id='map_container'>
                 {{ block('map') }}
             </div>
+
+            <div id='stop_times'>
+                {# Stops : first one is dep, second is arr, and after it is intermediary stops #}
+                <ul>
+                {% for index, stop in trip.stops %}
+                    <li>{{ index }} : {{ stop.city.name }}</li>
+                {% endfor %}
+                </ul>
+            </div>
         </div>
 
-        {# Hidden fields (times - modified by JS) #}
-        {% set nstops = form.stops|length %}
-        {% for i in 0..(nstops-1) %}
-           {{ form_widget(form.stops[i]) }}
+        {# Hidden fields (times - modified by JS)
+        {% set nstops = form.stops|length %}#}
+        {% for stop in form.stops %}
+           {{ form_widget(stop) }}
         {% endfor %}
 
         {{ form_rest(form) }}
