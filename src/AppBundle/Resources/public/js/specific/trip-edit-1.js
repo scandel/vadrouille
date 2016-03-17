@@ -2,10 +2,6 @@
  * JS for the "edit trip" page
  */
 
-// Nb max d'étapes
-var max_stops = 5
-var maxmax = 200;
-
 // Récupère le div qui contient la collection de tags
 var collectionHolder = $('ul.stops');
 // Indice pour numéroter les nouvelles étapes
@@ -15,42 +11,11 @@ var iter = collectionHolder.find('.deletable').length+2;
 var $addStopLink = $('<div class="col-sm-8 col-sm-push-4"><button id="add_stop" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Ajouter une étape</button></div>');
 var $newLinkLi = $('<li></li>').append($addStopLink);
 
-// Carto
-var map, markerLayer;
-var polyline = null;
-var markers = new Array();
-var travel_time=0;
-// var activeSteps = 0; // nb d'étapes actives (visibles - meme si vides)
-var currentRoadbook = null;
-var modify = 0;
-
-if (typeof L !== 'undefined') {
-    france = new Object;
-    france.center = L.latLng(46.40, 2.60); // (3.082418, 45.777168);
-    france.zoom = 3;
-}
-
-// Array of stops positions
+// Array of stops positions (defined in trip-map.js)
 // 0 = departure, 1 = arrival, 2+ = intermediate stops
-var pos= new Array();
 for (var i=0; i < maxmax; i++){
     pos['app_trip_edit_stops_' + i] = new Object;
     pos['app_trip_edit_stops_' + i].set = false;
-}
-
-if (typeof L !== 'undefined') {
-    //Extend the Default marker class
-    var RedIcon = L.Icon.Default.extend({
-        options: {
-            iconUrl: '/bundles/app/img/icons/marker-icon_red.png'
-        }
-    });
-
-    var GreenIcon = L.Icon.Default.extend({
-        options: {
-            iconUrl: '/bundles/app/img/icons/marker-icon_green.png'
-        }
-    });
 }
 
 /*  ==== Adding New stops ======  */
@@ -150,86 +115,7 @@ function addStopFormDeleteLink($stopFormLi) {
     });
 }
 
-/*=======  Fonctions Mappy pour le départ et l'arrivée ================*/
-
-/**
- * Initialisation carte
- *
- */
-function MapInit() {
-
-    if (typeof L !== 'undefined') {
-        // Création de la carte
-        map = new L.Mappy.Map('map', {
-            center: france.center,
-            zoom: france.zoom,
-            layersControl: false,
-            logoControl: {
-                dir: "/bundles/app/mappy/images/"
-            }
-        });
-
-        // Instantiation du token pour utiliser le service de route
-        L.Mappy.setToken("nbgQVKjuZyTf4Xp/oddeUjQZXtPzwBqZylL5hyS+pzuqM1Lge5kASz+cCeRN/+6FatA3ADO6/mWuxlNsPshDTQ==");
-
-        /* Cadre Pour les marqueurs */
-        markerLayer = L.layerGroup().addTo(map);
-    }
-}
-
-
-/**
- * Met un marqueur sur le point de RV;
- * ne change pas l'affichage de la carte
- *
- * @param stop : 'app_trip_edit_stops_x'
- */
-function MapPutMarker(stop) {
-    if (typeof L !== 'undefined') {
-        // console.log("Marker ",stop,pos[stop]);
-        switch (stop) {
-            case 'app_trip_edit_stops_0':
-                var icon = new GreenIcon();
-                var tooltip = 'Cliquez pour centrer la carte sur le point de départ.';
-                break;
-            case 'app_trip_edit_stops_1':
-                var icon = new RedIcon();
-                var tooltip = 'Cliquez pour centrer la carte sur le point d \'arrivée.';
-                break;
-            default:
-                var icon = new L.Icon.Default();
-                var tooltip = 'Cliquez pour centrer la carte sur l\'étape.';
-                break;
-        }
-
-        if (pos[stop].set) {
-            markerLayer.removeLayer(markers[stop]);
-        }
-        else pos[stop].set = true;
-
-        markers[stop] = L.marker(pos[stop].center, {
-            title: tooltip,
-            icon: icon
-        }).addTo(markerLayer);
-
-        markers[stop].on('click', function () {
-         MapCenter(stop);
-         });
-
-        // console.log(markers);
-    }
-}
-
-/**
- * Remove a marker
- * @param stop  : 'app_trip_edit_stops_x'
- */
-function MapRemoveMarker(stop) {
-    markerLayer.removeLayer(markers[stop]);
-    markers[stop]=null;
-    pos[stop].set = false;
-}
-
+/*=======  Fonctions Mappy  ================*/
 
 /**
  * Calcule le trajet, affiche l'itinéraire sur la carte,
@@ -338,37 +224,6 @@ function ClearPaths() {
     }
 }
 
-/**
- * Centre la carte sur le point de départ, arrivée, ou étape
- * @param item  : 'dep', 'arr', 'stepX'
- */
-function MapCenter(item) {
-    console.log("MapCenter ", item);
-    if (!pos[item].set) {
-        switch (item)
-        {
-            case 'dep': alert('Vous devez d\'abord définir votre ville et lieu de départ');  break;
-            case 'arr':  alert('Vous devez d\'abord définir votre ville et lieu d\'arrivée');  break;
-            case 'step1':
-            case 'step2':
-            case 'step3':
-            case 'step4':
-            case 'step5':  alert('Vous devez d\'abord définir votre ville et lieu d\'étape');  break;
-            default:
-        }
-    }
-    else
-        map.setView(pos[item].center, 9);
-}
-
-
-/**
- * Centre la carte sur le trajet global
- */
-function MapTripCenter() {
-    map.fitBounds(polyline.getBounds());
-}
-
 /*========= recherche, vérification, update villes ============*/
 
 /**
@@ -405,9 +260,6 @@ function UpdateCity(item, uiItem) {
     if ( !(isNaN(uiItem.lat)) && uiItem.lat!=0) {
         OnPlaceUpdate(item, -1, true);
     }
-
-    // Change le nom dans les temps de parcours
-    // UpdateStepNamesForTimes();
 }
 
 
@@ -442,7 +294,9 @@ function OnPlaceUpdate(item,zoom,iti) {
             pos[item].center = L.latLng(lat, lng);
 
             if (change) {
-                MapPutMarker(item); // Met un marqueur sur le point de RV; ne change pas l'affichage de la carte
+                var type = (item == 'app_trip_edit_stops_0') ? 'dep' :
+                    (item == 'app_trip_edit_stops_1') ? 'arr' : null ;
+                MapPutMarker(item, type); // Met un marqueur sur le point de RV; ne change pas l'affichage de la carte
                 // si les lieux de d?part et d'arriv?e sont connus tous deux, calcule et affiche l'itin?raire
                 if (iti && (pos['app_trip_edit_stops_0'].set == true) && (pos['app_trip_edit_stops_1'].set == true)) {
                     Itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
@@ -504,22 +358,29 @@ jQuery(document).ready(function() {
 
 
     //---- Init Map ----
-    MapInit();
+
+    if ($('#app_trip_edit_mappyRoadbook').val() != '') {
+        currentRoadbook = JSON.parse($('#app_trip_edit_mappyRoadbook').val());
+        MapInit(currentRoadbook);
+    }
+    else {
+        MapInit();
+    }
 
     //---- Init markers : Si les villes sont déjà remplies  ---
-    for (var i=0; i < 200; i++){
+    for (var i=0; i < maxmax; i++){
         var item = 'app_trip_edit_stops_' + i;
         var cityid = parseInt($('#'+item+'_city_id').val());
         if ( !(isNaN(cityid)) && cityid!=0) {
-            OnPlaceUpdate(item,-1,true);
+            OnPlaceUpdate(item,-1,false); // don't draw itinerary
         }
-    };
+    }
 
     //---- Liens de centrage de la carte ----
-    $.each(['stops_0','stops_1'],function(index, item) {
+    $.each(['dep','arr'],function(index, item) {
         $('#'+item+'_center').click(function(e) {
             e.preventDefault();
-            MapCenter('app_trip_edit_'+item);
+            MapCenter('app_trip_edit_stops_'+index);
         });
     });
     $('#trip_center').click(function(e) {

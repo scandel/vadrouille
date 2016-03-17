@@ -95,7 +95,6 @@ function MapInit(roadbook = null) {
     }
 }
 
-
 /**
  * Met un marqueur sur le point de RV;
  * ne change pas l'affichage de la carte
@@ -138,6 +137,18 @@ function MapPutMarker(stop, type = null) {
     }
 }
 
+
+/**
+ * Remove a marker
+ * @param stop  : index of pos
+ */
+function MapRemoveMarker(stop) {
+    markerLayer.removeLayer(markers[stop]);
+    markers[stop]=null;
+    pos[stop].set = false;
+}
+
+
 /**
  * Centre la carte sur le point de départ, arrivée, ou étape
  * @param item  : l'index de pos
@@ -159,7 +170,10 @@ function MapTripCenter() {
     map.fitBounds(polyline.getBounds());
 }
 
-jQuery(document).ready(function() {
+/**
+ * Execute on page load, except on trip form page 1
+ */
+function MapPageInit() {
 
     //-- Fill time if given in stops
     if (typeof arr_time !== 'undefined' && parseInt(arr_time) > 0) {
@@ -204,5 +218,4 @@ jQuery(document).ready(function() {
             else alert('Le trajet n\'est pas défini !');
         });
     }
-
-});
+}

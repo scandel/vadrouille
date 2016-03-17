@@ -30,6 +30,7 @@
                 pos[{{ key }}].center = L.latLng({{ stop.lat }}, {{ stop.lng }});
              {% endfor %}
          }
+         MapPageInit();
      </script>
 {% endblock %}
 
