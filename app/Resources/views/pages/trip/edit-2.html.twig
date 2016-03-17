@@ -9,8 +9,20 @@
 #}
 
 {% extends 'base.html.twig' %}
+{% use 'components/tripmap.html.twig' %}
 
 {% form_theme form 'forms/bootstrap_3_horizontal_layout_4_8.html.twig' %}
+
+{# Leaflet and Mappy CSS and JS #}
+{% block head_style %}
+    {{ parent() }}
+    {{ block('map_styles') }}
+{% endblock head_style %}
+
+{% block head_script %}
+    {{ parent() }}
+    {{ block('head_map_scripts') }}
+{% endblock head_script %}
 
 {% block headline %}Proposer un covoiturage{% endblock %}
 
@@ -22,35 +34,58 @@
         {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
     </div>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <div class="row">
+        {{ form_start(form) }}
 
-    {# Person if not a connected user #}
-    {% if form.person is defined %}
-        <h2>Vous</h2>
-        {{ form_widget(form.person.guest) }}
-    {% endif %}
+            <div class="col-sm-8">
+            {{ form_errors(form) }}
 
-    {# Comment #}
-    <h2>Commentaire</h2>
-    {{ form_row(form.comment, {'label':'Commentaire :'}) }}
+            {# Person if not a connected user #}
+            {% if form.person is defined %}
+                <h2>Vous</h2>
+                {{ form_widget(form.person.guest) }}
+            {% endif %}
 
-    {# Hidden fields (times - modified by JS) #}
-    {% set nstops = form.stops|length %}
-    {% for i in 0..(nstops-1) %}
-       {{ form_widget(form.stops[i]) }}
-    {% endfor %}
+            {# Comment #}
+            <h2>Commentaire</h2>
+            {{ form_row(form.comment, {'label':'Commentaire :'}) }}
+        </div>
 
-    {{ form_rest(form) }}
+        <div class="col-sm-4">
+            <h3>Récapitulatif</h3>
+            <div id='map_container'>
+                {{ block('map') }}
+            </div>
+        </div>
 
-    <div class="col-sm-8 col-sm-push-4">
-        {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' with {
-            craue_formflow_button_class_last: 'btn btn-primary',
-            craue_formflow_button_class_back: 'btn btn-default pull-left',
-            craue_formflow_button_class_reset: 'hidden',
-        } %}
+        {# Hidden fields (times - modified by JS) #}
+        {% set nstops = form.stops|length %}
+        {% for i in 0..(nstops-1) %}
+           {{ form_widget(form.stops[i]) }}
+        {% endfor %}
+
+        {{ form_rest(form) }}
+
+        <div class="col-sm-8 col-sm-push-4">
+            {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' with {
+                craue_formflow_button_class_last: 'btn btn-primary',
+                craue_formflow_button_class_back: 'btn btn-default pull-left',
+                craue_formflow_button_class_reset: 'hidden',
+            } %}
+        </div>
+        {{ form_end(form) }}
     </div>
-    {{ form_end(form) }}
 </div>
 
 {% endblock content %}
+
+
+{% block body_end %}
+    {{ block('map_scripts') }}
+    {% javascripts 'bundles/app/js/specific/trip-edit-2.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {# todo : bad bad bad : parceque les étapes ne sont pas dans l'ordre !!!!#}
+    {{ block('inline_map_scripts') }}
+
+{% endblock body_end %}

@@ -123,6 +123,7 @@ class TripController extends Controller
         return $this->render('pages/trip/edit-'.$flowStep.'.html.twig', array(
             'form' => $form->createView(),
             'flow' => $flow,
+            'trip' => $trip,
         ));
     }
 
@@ -135,23 +136,23 @@ class TripController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('AppBundle:Trip')->find($id);
+        $trip = $em->getRepository('AppBundle:Trip')->find($id);
 
-        if (!$entity) {
+        if (!$trip) {
             throw $this->createNotFoundException('Unable to find Trip entity.');
         }
 
         // Change l'ordre des étapes : met l'arrivée en deuxième
-        $nstops = $entity->getStops()->count();
+        $nstops = $trip->getStops()->count();
         if ($nstops > 2) {
-            $arr = $entity->getStops()->remove($nstops-1);
+            $arr = $trip->getStops()->remove($nstops-1);
             for ($i=$nstops-1; $i>1; $i--) {
-                $entity->getStops()->set($i, $entity->getStops()->get($i-1)) ;
+                $trip->getStops()->set($i, $trip->getStops()->get($i-1)) ;
             }
-            $entity->getStops()->set(1,$arr);
+            $trip->getStops()->set(1,$arr);
         }
 
-        //$form = $this->createEditForm($entity);
+        //$form = $this->createEditForm($trip);
 
         //$form->handleRequest($request);
 
@@ -159,7 +160,7 @@ class TripController extends Controller
 
         // Création du "flow" (formulaire en plusieurs étapes)
         $flow = $this->get('app.form.flow.trip');
-        $flow->bind($entity);
+        $flow->bind($trip);
 
         // form of the current step
         $form = $flow->createForm();
@@ -173,15 +174,15 @@ class TripController extends Controller
             } else {
 
                 // Remet les étapes du formulaire dans l'ordre (Départ - Etapes 1..n - Arrivée)
-                $nstops = $entity->getStops()->count();
+                $nstops = $trip->getStops()->count();
                 if ($nstops > 2) {
-                    $arr = $entity->getStops()->remove(1);
-                    $entity->getStops()->add($arr);
+                    $arr = $trip->getStops()->remove(1);
+                    $trip->getStops()->add($arr);
                 }
 
                 $delta = 1;
-                foreach ($entity->getStops() as $stop) {
-                    $stop->setTrip($entity);
+                foreach ($trip->getStops() as $stop) {
+                    $stop->setTrip($trip);
                     $stop->setDelta($delta);
                     $delta++;
                     if ($stop->getLat() == 0 || $stop->getLng() == 0) {
@@ -195,7 +196,7 @@ class TripController extends Controller
                 // Enlève de la bse les stops qui ont été enlevés
                 // -- les n°s des stops du formulaire
                 $stops_form = array();
-                foreach ($entity->getStops() as $stop) {
+                foreach ($trip->getStops() as $stop) {
                     if (is_numeric($stop->getId()))
                         $stops_form[] = $stop->getId();
                 }
@@ -205,7 +206,7 @@ class TripController extends Controller
                     'SELECT s.id
                     FROM AppBundle:Stop s
                     WHERE s.trip = :trip_id'
-                )->setParameter('trip_id', $entity->getId());
+                )->setParameter('trip_id', $trip->getId());
 
                 $results = $query->getResult();
                 $stops_base = array();
@@ -228,7 +229,7 @@ class TripController extends Controller
                     'Votre annonce a bien été modifiée.'
                 );
 
-                return $this->redirect($this->generateUrl('covoiturage_edit', array('id' => $entity->getId())));
+                return $this->redirect($this->generateUrl('covoiturage_edit', array('id' => $trip->getId())));
             }
         }
 
@@ -236,6 +237,7 @@ class TripController extends Controller
         return $this->render('pages/trip/edit-'.$flowStep.'.html.twig', array(
             'form' => $form->createView(),
             'flow' => $flow,
+            'trip' => $trip,
         ));
      }
 
