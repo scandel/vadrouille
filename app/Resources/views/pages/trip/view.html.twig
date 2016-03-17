@@ -1,0 +1,32 @@
+{# Page View of a trip #}
+{% extends 'base.html.twig' %}
+{% use 'components/tripmap.html.twig' %}
+
+{# Leaflet and Mappy CSS and JS #}
+{% block head_style %}
+    {{ parent() }}
+    {{ block('map_styles') }}
+{% endblock head_style %}
+
+{% block head_script %}
+    {{ parent() }}
+    {{ block('head_map_scripts') }}
+{% endblock head_script %}
+
+{% block headline %}Covoiturage XXX{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div id='map_container' class="col-sm-6 col-sm-push-3">
+            {{ block('map') }}
+         </div>
+    </div>
+
+    {{ dump(trip) }}
+
+{% endblock content %}
+
+{% block body_end %}
+    {{ block('map_scripts') }}
+    {{ block('inline_map_scripts') }}
+{% endblock body_end %}

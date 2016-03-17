@@ -262,26 +262,17 @@ class TripController extends Controller
     /**
      * Finds and displays a Trip entity.
      *
-     * @Route("/{id}", name="covoiturage_show")
-     * @Method("GET")
-     * @Template()
+     * @Route("/{id}", name="covoiturage_view")
      */
-    public function showAction($id)
+    public function viewAction(Trip $trip)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('AppBundle:Trip')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Trip entity.');
+        if (!$trip) {
+            throw $this->createNotFoundException('Covoiturage non trouvé.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
+        return $this->render('pages/trip/view.html.twig', array(
+            'trip' => $trip,
+        ));
     }
 
     /**
