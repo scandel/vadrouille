@@ -25,9 +25,6 @@ class TripFlow extends FormFlow {
                 'label' => 'Etape 2',
                 'form_type' => 'AppBundle\Form\Trip\TripType',
             ),
-                array(
-                'label' => 'Confirmation',
-            ),
         );
     }
 }
