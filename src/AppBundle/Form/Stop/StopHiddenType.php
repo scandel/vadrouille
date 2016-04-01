@@ -22,6 +22,7 @@ class StopHiddenType extends AbstractType
     {
         $builder
             //->add('city','hidden')
+            ->add('delta', 'hidden')
             ->add('place', 'hidden')
             ->add('time', 'hidden')
             ->add('lat', 'hidden')

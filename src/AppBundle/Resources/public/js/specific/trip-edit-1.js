@@ -100,6 +100,9 @@ function addStopFormDeleteLink($stopFormLi) {
         // supprime l'élément li pour le formulaire de tag
         $stopFormLi.remove();
 
+        // recalcule les delta
+        orderStops(collectionHolder);
+
         // supprime le marker de l'étape
         MapRemoveMarker(item);
 
@@ -113,6 +116,20 @@ function addStopFormDeleteLink($stopFormLi) {
         }
 
     });
+}
+
+/**
+ * Update delta hidden field, based on order created by the user when he sorts
+ */
+function orderStops(collectionHolder) {
+    var delta = 1;
+    console.log("orderStops");
+    collectionHolder.find('.deletable').each(function() {
+        console.log($(this).find("[id$='_city_name']").val(), delta);
+        $(this).find("[id$='_delta']").val(delta);
+        delta++;
+    });
+    $('#app_trip_edit_stops_1_delta').val(delta);
 }
 
 /*=======  Fonctions Mappy  ================*/
@@ -134,8 +151,10 @@ function Itinerary() {
     // On affiche le spinner
     $("#spinner").show();
 
-    // Calcul itinéraire
-    var iti = [pos['app_trip_edit_stops_0'].center];
+    // Calcul itinéraire : ordre en fonction des deltas
+    var iti = [];
+    // Départ
+    iti[0] = pos['app_trip_edit_stops_0'].center;
     for (i = 2; i < maxmax ; i++)
     {
         //console.log('i=' + i + ', set : '+ pos['app_trip_edit_stops_'+i].set + ' lat: '+
@@ -143,9 +162,9 @@ function Itinerary() {
         if ((pos['app_trip_edit_stops_'+i].set)
             && !isNaN(parseFloat($('#app_trip_edit_stops_'+i+'_lat').val()))
             && !isNaN(parseFloat($('#app_trip_edit_stops_'+i+'_lng').val())))
-            iti.push(pos['app_trip_edit_stops_'+i].center) ;
+            iti[$('#app_trip_edit_stops_'+i+'_delta').val()] = pos['app_trip_edit_stops_'+i].center ;
     }
-    iti.push(pos['app_trip_edit_stops_1'].center) ;
+    iti[$('#app_trip_edit_stops_1_delta').val()] = pos['app_trip_edit_stops_1'].center ;
 
     console.log(iti);
 
@@ -329,9 +348,23 @@ jQuery(document).ready(function() {
         // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
         addStopForm(collectionHolder, $newLinkLi);
 
+        // Recalcule les deltas
+        orderStops(collectionHolder);
+
         // Si on est au max d'éléments, disable l'élément
         if (collectionHolder.find('.deletable').length >= max_stops) {
             $('#add_stop').attr('disabled', 'disabled');
+        }
+    });
+
+    // Rend les élements étapes triables (JQuery UI Sortable)
+    $('#sortable').sortable({
+        containment: "parent",
+        stop: function( event, ui ) {
+            // Ecrit les delta en fonction de la position
+            orderStops(collectionHolder);
+            // Recalcule l'itinéraire
+            Itinerary();
         }
     });
 
@@ -423,6 +456,5 @@ jQuery(document).ready(function() {
             url: "/covoiturage/mode-invite-ok"
         });
     });
-
 
 });

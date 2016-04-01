@@ -28,11 +28,9 @@ class Stop
     private $trip;
 
     /**
-     * @var integer
-     *
      * @ORM\Column(name="delta", type="smallint")
      */
-    private $delta = 1;
+    private $delta;
 
     /**
      * @ORM\ManyToOne(targetEntity="City")

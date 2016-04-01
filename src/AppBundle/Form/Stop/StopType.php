@@ -37,6 +37,8 @@ class StopType extends AbstractType
             'attr' => array('placeholder' => 'N\'importe où'),
         ));
 
+        $builder->add('delta', 'hidden');
+
         $builder->add('time', 'hidden');
 
         $builder->add('lat', 'hidden');

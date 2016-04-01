@@ -8529,6 +8529,12 @@ table.trip-details td {
 }
 #post-trip ul.stops li {
   list-style-type: none;
+  border: 1px solid #fff;
+}
+#post-trip ul.stops li:hover {
+  background-color: #eeeeee;
+  border: 1px solid #e3e3e3;
+  cursor: move;
 }
 #post-trip #spinner {
   left: 45%;

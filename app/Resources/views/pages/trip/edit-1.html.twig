@@ -80,37 +80,35 @@
                 {# itère sur chaque stop existant #}
                 {# todo : Changer le label dans le prototype (Ville étape...) #}
 
-            <ul class="stops" data-prototype="{{ form_widget(form.stops.vars.prototype)|e }}">
+
+            {# Départ et arrivée #}
+            <h3>Départ</h3>
+                {{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}
+                {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
+                {{ form_row(form.stops[0].delta) }}
+                {{ form_row(form.stops[0].city_details) }}
+                {{ form_row(form.stops[0].time) }}
+                {{ form_row(form.stops[0].lat) }}
+                {{ form_row(form.stops[0].lng) }}
+            <h3>Arrivée</h3>
+                {{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}
+                {{ form_row(form.stops[1].place, {'label': 'Lieu de dépose :'}) }}
+                {{ form_row(form.stops[1].delta) }}
+                {{ form_row(form.stops[1].city_details) }}
+                {{ form_row(form.stops[1].time) }}
+                {{ form_row(form.stops[1].lat) }}
+                {{ form_row(form.stops[1].lng) }}
+
+            {# Etapes #}
+            <h3>Etapes</h3>
+            <ul id="sortable" class="stops" data-prototype="{{ form_widget(form.stops.vars.prototype)|e }}">
                 {% set nstops = form.stops|length %}
-
-                {# Départ et arrivée #}
-                <h3>Départ</h3>
-                <li>
-                    {{ form_row(form.stops[0].city, {'label': 'Ville de départ :'}) }}
-                    {{ form_row(form.stops[0].place, {'label': 'Lieu de RV :'}) }}
-                    {{ form_row(form.stops[0].city_details) }}
-                    {{ form_row(form.stops[0].time) }}
-                    {{ form_row(form.stops[0].lat) }}
-                    {{ form_row(form.stops[0].lng) }}
-                </li>
-                <h3>Arrivée</h3>
-                <li>
-                    {{ form_row(form.stops[1].city, {'label': 'Ville d\'arrivée :'}) }}
-                    {{ form_row(form.stops[1].place, {'label': 'Lieu de dépose :'}) }}
-                    {{ form_row(form.stops[1].city_details) }}
-                    {{ form_row(form.stops[1].time) }}
-                    {{ form_row(form.stops[1].lat) }}
-                    {{ form_row(form.stops[1].lng) }}
-                </li>
-
-                {# Etapes #}
-                <h3>Etapes</h3>
                 {% for i in 2..(nstops-1) if nstops > 2 %}
-                   <li class="deletable">
-                       {{ form_widget(form.stops[i]) }}
-                   </li>
+                <li class="deletable">
+                   {{ form_widget(form.stops[i]) }}
+                </li>
                 {% endfor %}
-                </ul>
+            </ul>
          </div>
     </div>
 

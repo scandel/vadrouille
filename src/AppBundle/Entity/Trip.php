@@ -261,10 +261,11 @@ class Trip
 
     /**
      * Order $stops by delta
+     * @var $setDelta bool : if true, re-num deltas
      *
      * @ORM\PostLoad
      */
-    public function orderStops()
+    public function orderStops($setDeltas = false)
     {
         $stops = array();
         foreach($this->stops as $stop) {
@@ -272,7 +273,12 @@ class Trip
         }
         ksort($stops);
         $this->stops->clear();
+        $delta = 0;
         foreach($stops as $stop) {
+            if ($setDeltas) {
+                $stop->setDelta($delta);
+                $delta++;
+            }
             $this->stops->add($stop);
         }
     }

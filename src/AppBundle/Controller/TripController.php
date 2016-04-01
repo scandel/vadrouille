@@ -62,8 +62,10 @@ class TripController extends Controller
 
         // On ajoute deux arrêts vides pour qu'ils soient affichés
         $stop1 = new Stop();
+        $stop1->setDelta(0);
         $trip->getStops()->add($stop1);
         $stop2 = new Stop();
+        $stop2->setDelta(1);
         $trip->getStops()->add($stop2);
 
         // Création du "flow" (formulaire en plusieurs étapes)
@@ -84,18 +86,8 @@ class TripController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($trip);
 
-                // Remet les étapes dans l'ordre (Départ - Etapes 1..n - Arrivée)
-                $nstops = $trip->getStops()->count();
-                if ($nstops > 2) {
-                    $arr = $trip->getStops()->remove(1);
-                    $trip->getStops()->add($arr);
-                }
-
-                $delta = 1;
                 foreach ($trip->getStops() as $stop) {
                     $stop->setTrip($trip);
-                    $stop->setDelta($delta);
-                    $delta++;
                     if ($stop->getLat() == null || $stop->getLng() == null) {
                         // set lat and lng to the ones of the city
                         $stop->setLat($stop->getCity()->getLat());
@@ -135,7 +127,6 @@ class TripController extends Controller
     public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $trip = $em->getRepository('AppBundle:Trip')->find($id);
 
         if (!$trip) {
@@ -152,12 +143,6 @@ class TripController extends Controller
             $trip->getStops()->set(1,$arr);
         }
 
-        //$form = $this->createEditForm($trip);
-
-        //$form->handleRequest($request);
-
-        // if ($form->isValid()) {
-
         // Création du "flow" (formulaire en plusieurs étapes)
         $flow = $this->get('app.form.flow.trip');
         $flow->bind($trip);
@@ -173,24 +158,16 @@ class TripController extends Controller
                 $form = $flow->createForm();
             } else {
 
-                // Remet les étapes du formulaire dans l'ordre (Départ - Etapes 1..n - Arrivée)
-                $nstops = $trip->getStops()->count();
-                if ($nstops > 2) {
-                    $arr = $trip->getStops()->remove(1);
-                    $trip->getStops()->add($arr);
-                }
-
-                $delta = 1;
+                // Traite les étapes
                 foreach ($trip->getStops() as $stop) {
-                    $stop->setTrip($trip);
-                    $stop->setDelta($delta);
-                    $delta++;
                     if ($stop->getLat() == 0 || $stop->getLng() == 0) {
                         // set lat and lng to the ones of the city
                         $stop->setLat($stop->getCity()->getLat());
                         $stop->setLng($stop->getCity()->getLng());
                     }
-                    // $em->persist($stop);
+                    // Useful when a new stop is added
+                    $stop->setTrip($trip);
+                    $em->persist($stop);
                 }
 
                 // Enlève de la bse les stops qui ont été enlevés
@@ -221,6 +198,9 @@ class TripController extends Controller
                     $stop = $em->getRepository('AppBundle:Stop')->find($stop_id);
                     $em->remove($stop);
                 }
+
+                // Remet dans l'ordre ceux qui restent, et les renumérote
+                $trip->orderStops(true);
 
                 $em->flush();
 

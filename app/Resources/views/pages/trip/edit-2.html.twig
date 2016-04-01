@@ -63,7 +63,7 @@
                 {# Stops : first one is dep, second is arr, and after it is intermediary stops #}
                 <ul>
                 {% for index, stop in trip.stops %}
-                    <li>{{ index }} : {{ stop.city.name }}</li>
+                    <li>{{ index }} : {{ stop.city.name }} - delta = {{ stop.delta }}</li>
                 {% endfor %}
                 </ul>
             </div>
