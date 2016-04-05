@@ -143,9 +143,11 @@ function MapPutMarker(stop, type = null) {
  * @param stop  : index of pos
  */
 function MapRemoveMarker(stop) {
-    markerLayer.removeLayer(markers[stop]);
-    markers[stop]=null;
-    pos[stop].set = false;
+    if (typeof markers[stop] !== 'undefined') {
+        markerLayer.removeLayer(markers[stop]);
+        markers[stop]=null;
+        pos[stop].set = false;
+    }
 }
 
 

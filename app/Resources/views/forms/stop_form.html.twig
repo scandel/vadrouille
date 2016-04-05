@@ -1,0 +1,8 @@
+{% use "bootstrap_3_layout.html.twig" %}
+
+{# Add the form-stop class to compounds widgets #}
+{# See effects in content.less / content.css #}
+{%- block form_widget_compound -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-stop')|trim}) %}
+    {{- parent() -}}
+{%- endblock form_widget_compound -%}

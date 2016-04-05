@@ -8439,6 +8439,42 @@ form .control-label.required:after {
   right: 5px;
   top: 7px;
 }
+.form-stop:before,
+.form-stop:after {
+  content: " ";
+  display: table;
+}
+.form-stop:after {
+  clear: both;
+}
+.form-stop:before,
+.form-stop:after {
+  content: " ";
+  display: table;
+}
+.form-stop:after {
+  clear: both;
+}
+.form-stop .form-group {
+  display: block;
+  float: left;
+  width: 42%;
+  margin-left: 0;
+  margin-right: 12px;
+}
+.form-stop .control-label {
+  display: -webkit-flex;
+  display: flex;
+}
+.form-stop .control-label.required:after {
+  position: relative;
+  right: -3px;
+  top: -2px;
+}
+.form-stop .remove-button {
+  position: relative;
+  top: 27px;
+}
 #search-form {
   padding: 20px 5px;
   background-color: #eeeeee;
@@ -8524,12 +8560,31 @@ table.trip-details td {
   padding-bottom: 6px;
   padding-top: 6px;
 }
+#post-trip #map_container {
+  margin-top: 20px;
+}
 #post-trip ul.stops {
   padding-left: 0 ;
 }
 #post-trip ul.stops li {
   list-style-type: none;
   border: 1px solid #fff;
+}
+#post-trip ul.stops li:before,
+#post-trip ul.stops li:after {
+  content: " ";
+  display: table;
+}
+#post-trip ul.stops li:after {
+  clear: both;
+}
+#post-trip ul.stops li:before,
+#post-trip ul.stops li:after {
+  content: " ";
+  display: table;
+}
+#post-trip ul.stops li:after {
+  clear: both;
 }
 #post-trip ul.stops li:hover {
   background-color: #eeeeee;

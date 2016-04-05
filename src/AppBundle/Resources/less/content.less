@@ -282,6 +282,43 @@ form .control-label.required:after {
 }
 
 // ----------------------------------------------
+// Forms : Stops
+// ----------------------------------------------
+
+.form-stop {
+  .clearfix();
+
+  .form-group {
+    display: block;
+    float: left;
+    width: 42%;
+    margin-left: 0;
+    margin-right: @padding-base-horizontal;
+  }
+
+  // Required labels (beware of flex !!!)
+  .control-label {
+    display: -webkit-flex;
+    display: flex;
+  }
+  .control-label.required:after {
+    position: relative;
+    right: -3px;
+    top: -2px;
+  }
+
+  .remove-button {
+    position: relative;
+    top: 27px;
+    //&:hover {
+    //  color:
+    // }
+  }
+
+}
+
+
+// ----------------------------------------------
 // Trip Search Fom
 // ----------------------------------------------
 
@@ -405,11 +442,16 @@ table.trip-details {
 
 #post-trip {
 
+  #map_container {
+    margin-top: @line-height-computed;
+  }
+
   ul.stops {
     padding-left: 0 ;
     li {
       list-style-type: none;
       border: 1px solid #fff;
+      .clearfix();
       &:hover {
         background-color: @gray-lighter;
         border: 1px solid @gray-light;

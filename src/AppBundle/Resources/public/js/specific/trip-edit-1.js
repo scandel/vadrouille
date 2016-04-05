@@ -8,8 +8,7 @@ var collectionHolder = $('ul.stops');
 var iter = collectionHolder.find('.deletable').length+2;
 
 // ajoute un lien « add a tag »
-var $addStopLink = $('<div class="col-sm-8 col-sm-push-4"><button id="add_stop" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Ajouter une étape</button></div>');
-var $newLinkLi = $('<li></li>').append($addStopLink);
+var $addStopLink = $('<button id="add_stop" class="btn btn-default"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Ajouter une étape</button>');
 
 // Array of stops positions (defined in trip-map.js)
 // 0 = departure, 1 = arrival, 2+ = intermediate stops
@@ -20,7 +19,7 @@ for (var i=0; i < maxmax; i++){
 
 /*  ==== Adding New stops ======  */
 
-function addStopForm(collectionHolder, $newLinkLi) {
+function addStopForm(collectionHolder) {
     // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
     var prototype = collectionHolder.attr('data-prototype');
 
@@ -30,7 +29,7 @@ function addStopForm(collectionHolder, $newLinkLi) {
 
     // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
     var $newFormLi = $('<li class="deletable"></li>').append(newForm);
-    $newLinkLi.before($newFormLi);
+    collectionHolder.append($newFormLi);
 
     // ajoute un lien de suppression au nouveau formulaire
     addStopFormDeleteLink($newFormLi);
@@ -89,11 +88,13 @@ function addStopForm(collectionHolder, $newLinkLi) {
 }
 
 function addStopFormDeleteLink($stopFormLi) {
-    var $removeFormA = $('<div class="row"><div class="col-sm-8 col-sm-push-4 clearfix"><button class="btn btn-link btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Supprimer cette étape</button></div></div>');
-    $stopFormLi.append($removeFormA);
+    // var $removeForm = $('<div class="row"><div class="col-sm-8 col-sm-push-4 clearfix"><button class="btn btn-link btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Supprimer cette étape</button></div></div>');
+    var $removeForm = $('<button class="btn remove-button" title="Supprimer cette étape" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>');
+    $stopFormLi.children().first().append($removeForm);
+    $removeForm.tooltip();
     var item = $stopFormLi.children().first().attr('id');
 
-    $removeFormA.on('click', function(e) {
+    $removeForm.on('click', function(e) {
         // empêche le lien de créer un « # » dans l'URL
         e.preventDefault();
 
@@ -103,12 +104,11 @@ function addStopFormDeleteLink($stopFormLi) {
         // recalcule les delta
         orderStops(collectionHolder);
 
+        // Reactive le bouton "ajouter une étape" (si il était désactivé)
+        $('#add_stop').prop('disabled', false);
+
         // supprime le marker de l'étape
         MapRemoveMarker(item);
-
-        if (collectionHolder.find('.deletable').length < max_stops) {
-            $('#add_stop').attr('disabled', false);
-        }
 
         // Recalcule l'itiéraire
         if ((pos['app_trip_edit_stops_0'].set == true) && (pos['app_trip_edit_stops_1'].set == true)) {
@@ -148,6 +148,11 @@ function Itinerary() {
         $('#map-error').remove();
     }
 
+    // Il faut que le départ et l'arrivée soient définis
+    if (!(pos['app_trip_edit_stops_0'].set && pos['app_trip_edit_stops_1'].set)) {
+        return;
+    }
+
     // On affiche le spinner
     $("#spinner").show();
 
@@ -155,8 +160,7 @@ function Itinerary() {
     var iti = [];
     // Départ
     iti[0] = pos['app_trip_edit_stops_0'].center;
-    for (i = 2; i < maxmax ; i++)
-    {
+    for (i = 2; i < maxmax ; i++) {
         //console.log('i=' + i + ', set : '+ pos['app_trip_edit_stops_'+i].set + ' lat: '+
         //    $('#app_trip_edit_stops_'+i+'_lat').val() + ' lng: ' + $('#app_trip_edit_stops_'+i+'_lng').val());
         if ((pos['app_trip_edit_stops_'+i].set)
@@ -166,7 +170,15 @@ function Itinerary() {
     }
     iti[$('#app_trip_edit_stops_1_delta').val()] = pos['app_trip_edit_stops_1'].center ;
 
-    console.log(iti);
+    // Tri sur les deltas, suppression des indices vides
+    var sortedIti = [];
+    for (i = 0; i< maxmax; i++) {
+        if (typeof iti[i] !== 'undefined') {
+            sortedIti.push(iti[i]);
+        }
+    }
+
+    console.log(sortedIti);
 
     var options = {
         vehicle: L.Mappy.RouteModes.CAR, // PEDESTRIAN, BIKE, MOTORBIKE
@@ -179,7 +191,7 @@ function Itinerary() {
         infotraffic: 0 // 1 pour un trajet avec trafic
     };
 
-    L.Mappy.Services.route(iti,
+    L.Mappy.Services.route(sortedIti,
         options,
         // Callback de succès
         function(results) {
@@ -332,6 +344,9 @@ function OnPlaceUpdate(item,zoom,iti) {
 
 jQuery(document).ready(function() {
 
+    // Active les tooltip
+    $('[data-toggle="tooltip"]').tooltip();
+
     // ajoute un lien de suppression à tous les éléments li de
     // formulaires de tag existants
     collectionHolder.find('.deletable').each(function() {
@@ -339,21 +354,21 @@ jQuery(document).ready(function() {
     });
 
     // ajoute l'ancre « ajouter un tag » et li à la balise ul
-    collectionHolder.append($newLinkLi);
+    collectionHolder.after($addStopLink);
 
     $addStopLink.on('click', function(e) {
         // empêche le lien de créer un « # » dans l'URL
         e.preventDefault();
 
         // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
-        addStopForm(collectionHolder, $newLinkLi);
+        addStopForm(collectionHolder);
 
         // Recalcule les deltas
         orderStops(collectionHolder);
 
         // Si on est au max d'éléments, disable l'élément
         if (collectionHolder.find('.deletable').length >= max_stops) {
-            $('#add_stop').attr('disabled', 'disabled');
+            $('#add_stop').prop('disabled', 'disabled');
         }
     });
 
