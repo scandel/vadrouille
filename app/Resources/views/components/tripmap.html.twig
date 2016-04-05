@@ -20,11 +20,11 @@
 
 {% block inline_map_scripts %}
      <script type="text/javascript">
-         {% set arr = trip.stops|last %}
+         {% set arr = trip.stops|sortbydelta|last %}
          var arr_time = {{ arr.time ?: 0  }};
          if (typeof L !== 'undefined') {
              var roadbook = JSON.parse('{{ trip.mappyRoadbook|escape('js') }}');
-             {% for key, stop in  trip.stops %}
+             {% for key, stop in  trip.stops|sortbydelta %}
                 pos[{{ key }}] = new Object;
                 pos[{{ key }}].set = false;
                 pos[{{ key }}].center = L.latLng({{ stop.lat }}, {{ stop.lng }});

@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Twig;
+use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
@@ -19,6 +20,7 @@ class AppExtension extends \Twig_Extension {
         return array(
             new \Twig_SimpleFilter('day', array($this, 'dayFilter')),
             new \Twig_SimpleFilter('dayjoin', array($this, 'dayJoinFilter')),
+            new \Twig_SimpleFilter('sortbydelta', array($this, 'sortByDelta')),
         );
     }
 
@@ -59,6 +61,35 @@ class AppExtension extends \Twig_Extension {
     {
         $days = array_map('AppBundle\Twig\AppExtension::dayFilter',$days, array_fill(0,count($days),$plural) );
         return implode($glue, $days);
+    }
+
+    /**
+     * Sorts an array by then given key (delta) of the value
+     * (value = multidimensional values)
+     *
+     * @param $array : multidimensional array to sort
+     * @param bool|false $reverse
+     * @return string
+     */
+    public static function sortByDelta($array, $reverse = false)
+    {
+        $cmp = function ($a, $b) {
+            global  $reverse;
+            if ($a->getDelta() ==  $b->getDelta()) {
+                return 0;
+            }
+            if ($reverse) {
+                return ($a->getDelta() > $b->getDelta()) ? -1 : 1;
+            }
+            return ($a->getDelta() < $b->getDelta()) ? -1 : 1;
+        };
+
+        if ($array instanceof ArrayCollection) {
+            $array = $array->toArray();
+        }
+        usort($array, $cmp);
+
+        return $array;
     }
 
     public function getName()

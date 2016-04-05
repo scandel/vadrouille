@@ -24,15 +24,10 @@
     {{ block('head_map_scripts') }}
 {% endblock head_script %}
 
-{% block headline %}Proposer un covoiturage{% endblock %}
+{% block headline %}Proposer un covoiturage <small>(étape 2/2)</small>{% endblock %}
 
 {% block content %}
 <div id="post-trip">
-
-    {# Etapes #}
-    <div>
-        {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
-    </div>
 
     <div class="row">
         {{ form_start(form) }}
@@ -62,7 +57,7 @@
             <div id='stop_times'>
                 {# Stops : first one is dep, second is arr, and after it is intermediary stops #}
                 <ul>
-                {% for index, stop in trip.stops %}
+                {% for index, stop in trip.stops|sortbydelta %}
                     <li>{{ index }} : {{ stop.city.name }} - delta = {{ stop.delta }}</li>
                 {% endfor %}
                 </ul>
