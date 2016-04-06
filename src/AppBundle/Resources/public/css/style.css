@@ -8439,42 +8439,6 @@ form .control-label.required:after {
   right: 5px;
   top: 7px;
 }
-.form-stop:before,
-.form-stop:after {
-  content: " ";
-  display: table;
-}
-.form-stop:after {
-  clear: both;
-}
-.form-stop:before,
-.form-stop:after {
-  content: " ";
-  display: table;
-}
-.form-stop:after {
-  clear: both;
-}
-.form-stop .form-group {
-  display: block;
-  float: left;
-  width: 42%;
-  margin-left: 0;
-  margin-right: 12px;
-}
-.form-stop .control-label {
-  display: -webkit-flex;
-  display: flex;
-}
-.form-stop .control-label.required:after {
-  position: relative;
-  right: -3px;
-  top: -2px;
-}
-.form-stop .remove-button {
-  position: relative;
-  top: 27px;
-}
 #search-form {
   padding: 20px 5px;
   background-color: #eeeeee;
@@ -8565,10 +8529,11 @@ table.trip-details td {
 }
 #post-trip ul.stops {
   padding-left: 0 ;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 #post-trip ul.stops li {
   list-style-type: none;
-  border: 1px solid #fff;
 }
 #post-trip ul.stops li:before,
 #post-trip ul.stops li:after {
@@ -8586,10 +8551,48 @@ table.trip-details td {
 #post-trip ul.stops li:after {
   clear: both;
 }
-#post-trip ul.stops li:hover {
-  background-color: #eeeeee;
-  border: 1px solid #e3e3e3;
+#post-trip .form-stop:before,
+#post-trip .form-stop:after {
+  content: " ";
+  display: table;
+}
+#post-trip .form-stop:after {
+  clear: both;
+}
+#post-trip .form-stop:before,
+#post-trip .form-stop:after {
+  content: " ";
+  display: table;
+}
+#post-trip .form-stop:after {
+  clear: both;
+}
+#post-trip .form-stop .form-group {
+  display: block;
+  float: left;
+  width: 42%;
+  margin-left: 0;
+  margin-right: 12px;
+}
+#post-trip .form-stop .control-label {
+  display: -webkit-flex;
+  display: flex;
+}
+#post-trip .form-stop .control-label.required:after {
+  position: relative;
+  right: -3px;
+  top: -2px;
+}
+#post-trip .form-stop .remove-button,
+#post-trip .form-stop .move-button {
+  position: relative;
+  top: 34px;
+}
+#post-trip .form-stop .move-button:hover {
   cursor: move;
+}
+#post-trip .form-stop.move-hover {
+  background-color: lightyellow;
 }
 #post-trip #spinner {
   left: 45%;

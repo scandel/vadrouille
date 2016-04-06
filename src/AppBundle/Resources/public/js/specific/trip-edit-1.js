@@ -34,6 +34,9 @@ function addStopForm(collectionHolder) {
     // ajoute un lien de suppression au nouveau formulaire
     addStopFormDeleteLink($newFormLi);
 
+    // Et un bouton pour drag n dropper l'élément
+    addStopFormMoveButton($newFormLi);
+
     // ajoute l'autocompletion dans le nouveau formulaire
     $newFormLi.find('.city-autocomplete').each(function() {
         var input_name, input_id ;
@@ -88,8 +91,7 @@ function addStopForm(collectionHolder) {
 }
 
 function addStopFormDeleteLink($stopFormLi) {
-    // var $removeForm = $('<div class="row"><div class="col-sm-8 col-sm-push-4 clearfix"><button class="btn btn-link btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Supprimer cette étape</button></div></div>');
-    var $removeForm = $('<button class="btn remove-button" title="Supprimer cette étape" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>');
+    var $removeForm = $('<button class="remove-button btn btn-xs btn-link" title="Supprimer cette étape" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>');
     $stopFormLi.children().first().append($removeForm);
     $removeForm.tooltip();
     var item = $stopFormLi.children().first().attr('id');
@@ -115,6 +117,39 @@ function addStopFormDeleteLink($stopFormLi) {
             Itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
         }
 
+    });
+}
+
+function addStopFormMoveButton($stopFormLi) {
+    // doit être un lien et pas un bouton, pour pouvoir être une poignée (handle)
+    var $moveForm = $('<a class="move-button btn btn-xs btn-link" ' +
+        'title="Cliquez et maintenez appuyé pour réordonner les étapes" data-toggle="tooltip" data-placement="top">' +
+        '<span class="glyphicon glyphicon-move" aria-hidden="true"></span></a>');
+    $stopFormLi.children().first().append($moveForm);
+    $moveForm.tooltip();
+
+    $moveForm.hover(
+        // in
+        function() {
+             $( this ).parent().addClass('move-hover');
+        },
+        // out
+        function() {
+            $( this ).parent().removeClass('move-hover');
+        }
+    );
+    $moveForm.mousedown(function() {
+        // cache le tooltip sinon il se positionne mal lors du drag and drop
+        $( this ).tooltip('hide');
+    });
+    $moveForm.mouseup(function() {
+        // Enlève la classe jaune
+        $( this ).parent().removeClass('move-hover');
+    });
+
+    $moveForm.on('click', function(e) {
+        // empêche le lien de créer un « # » dans l'URL
+        e.preventDefault();
     });
 }
 
@@ -351,6 +386,7 @@ jQuery(document).ready(function() {
     // formulaires de tag existants
     collectionHolder.find('.deletable').each(function() {
         addStopFormDeleteLink($(this));
+        addStopFormMoveButton($(this));
     });
 
     // ajoute l'ancre « ajouter un tag » et li à la balise ul
@@ -375,6 +411,7 @@ jQuery(document).ready(function() {
     // Rend les élements étapes triables (JQuery UI Sortable)
     $('#sortable').sortable({
         containment: "parent",
+        handle: ".move-button",
         stop: function( event, ui ) {
             // Ecrit les delta en fonction de la position
             orderStops(collectionHolder);
