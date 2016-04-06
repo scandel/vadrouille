@@ -54,6 +54,22 @@
                 {{ block('map') }}
             </div>
 
+            <div id='summary'>
+                Date : <strong>
+                {# Régulier #}
+                {% if trip.regular %}
+                    tous les {{ trip.days|dayjoin(', ', true) }}.
+                {% else %}
+                    {{ trip.depDate|localizeddate('full','full',NULL,NULL,"EEEE d MMMM") }}
+                {% endif %}
+                </strong>
+                <br>
+                Heure de départ : <strong>
+                        {{ trip.depTime|date("H\\hi") }}
+                </strong>
+
+            </div>
+
             <div id='stop_times'>
                 {# Stops : first one is dep, second is arr, and after it is intermediary stops #}
                 <ul>
