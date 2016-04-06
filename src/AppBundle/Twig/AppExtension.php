@@ -84,11 +84,13 @@ class AppExtension extends \Twig_Extension {
             return ($a->getDelta() < $b->getDelta()) ? -1 : 1;
         };
 
-        if ($array instanceof ArrayCollection) {
+        if (method_exists($array, "toArray")) {
             $array = $array->toArray();
         }
-        usort($array, $cmp);
 
+        if (is_array($array)) {
+            usort($array, $cmp);
+        }
         return $array;
     }
 
