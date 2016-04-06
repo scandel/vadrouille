@@ -260,6 +260,14 @@ class Trip
     }
 
     /**
+     * @return int : number of stops
+     */
+    public function numberOfStops()
+    {
+        return count($this->stops);
+    }
+
+    /**
      * Order $stops by delta
      * @var $setDelta bool : if true, re-num deltas
      *

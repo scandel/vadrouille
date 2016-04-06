@@ -39,7 +39,7 @@ class StopType extends AbstractType
 
         $builder->add('delta', 'hidden');
 
-        $builder->add('time', 'hidden');
+        // $builder->add('time', 'hidden');
 
         $builder->add('lat', 'hidden');
 

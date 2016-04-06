@@ -4,7 +4,9 @@ namespace AppBundle\Form\Trip;
 
 use AppBundle\Form\Stop\StopType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormEvent;
@@ -109,6 +111,29 @@ class TripType extends AbstractType
                             'label' => false
                         ));
                     }
+
+                    // Non mapped fields for price manipulation
+
+                    $diffPrices = array();
+                    $prices = array();
+                    foreach ($trip->getStops() as $stop) {
+                        $prices[$stop->getDelta()] = $stop->getPrice();
+                    }
+                    ksort($prices);
+                    $prices = array_values($prices);
+                    for ($i = 0; $i < count($prices)-1; $i++) {
+                        $diffPrices[] = max(0, (int) $prices[$i+1] - (int) $prices[$i]);
+                    }
+
+                    $builder->add('pricediff', CollectionType::class, array(
+                        'mapped' => false,
+                        'entry_type' => MoneyType::class,
+                        'entry_options' => array(
+                            'currency' => 'EUR',
+                            'scale' => 0,
+                        ),
+                        'data' => $diffPrices,
+                    ));
 
                     // Put again stops to modify stop times
                     $builder->add('stops', 'collection', array(

@@ -67,6 +67,13 @@ class Stop
     private $time;
 
     /**
+     * @var : the price from departure, to this stop
+     *
+     * @ORM\Column(name="price", type="integer", nullable=true)
+     */
+    private $price;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -260,5 +267,28 @@ class Stop
     public function getTime()
     {
         return $this->time;
+    }
+
+    /**
+     * Set price
+     *
+     * @param integer $price
+     * @return Stop
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * Get price
+     *
+     * @return integer 
+     */
+    public function getPrice()
+    {
+        return $this->price;
     }
 }

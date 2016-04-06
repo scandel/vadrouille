@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Stop;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -23,10 +24,12 @@ class StopHiddenType extends AbstractType
         $builder
             //->add('city','hidden')
             ->add('delta', 'hidden')
-            ->add('place', 'hidden')
+            //->add('place', 'hidden')
             ->add('time', 'hidden')
+            ->add('price', 'hidden')
             ->add('lat', 'hidden')
-            ->add('lng', 'hidden');
+            ->add('lng', 'hidden')
+        ;
     }
 
     /**

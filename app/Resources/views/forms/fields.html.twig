@@ -44,3 +44,19 @@
         {% endfor -%}
     </div>
 {% endblock daysOfWeek_widget %}
+
+{# Override money widget to make it behave like an integer field, not negative#}
+{% block money_widget -%}
+    <div class="input-group">
+        {% set prepend = '{{' == money_pattern[0:2] %}
+        {% if not prepend %}
+            <span class="input-group-addon">{{ money_pattern|replace({ '{{ widget }}':''}) }}</span>
+        {% endif %}
+        {%- set type = type|default('number') -%}
+        {%  set attr = attr|merge({'min': '0'}) %}
+        {{- block('form_widget_simple') -}}
+        {% if prepend %}
+            <span class="input-group-addon">{{ money_pattern|replace({ '{{ widget }}':''}) }}</span>
+        {% endif %}
+    </div>
+{%- endblock money_widget %}

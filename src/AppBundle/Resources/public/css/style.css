@@ -8606,6 +8606,9 @@ table.trip-details td {
 #post-trip .time-block {
   padding-top: 7px;
 }
+#post-trip-2 #stop_prices input {
+  text-align: right;
+}
 .user-photo-form button[type=submit] {
   margin-top: 15px;
 }

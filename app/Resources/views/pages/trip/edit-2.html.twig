@@ -27,13 +27,38 @@
 {% block headline %}Proposer un covoiturage <small>(étape 2/2)</small>{% endblock %}
 
 {% block content %}
-<div id="post-trip">
+<div id="post-trip-2">
 
     <div class="row">
+
+        {{ dump(form) }}
+
         {{ form_start(form) }}
 
             <div class="col-sm-8">
             {{ form_errors(form) }}
+
+            {# Hidden fields (times - prices - modified by JS)
+            {% set nstops = form.stops|length %}#}
+            {% for stop in form.stops %}
+                {{ form_widget(stop) }}
+            {% endfor %}
+
+            {# Prices #}
+            <h2>Prix demandé</h2>
+
+            {% set sortedStops = trip.stops|sortbydelta %}
+
+            <div id='stop_prices'>
+                <ul>
+                    {% for index, stop in sortedStops if index != 0 %}
+                        {{ form_row(form.pricediff[index-1], {
+                            'label': sortedStops[index-1].city.name ~ ' - ' ~ stop.city.name ~ ' :'
+                            })
+                        }}
+                    {% endfor %}
+                </ul>
+            </div>
 
             {# Person if not a connected user #}
             {% if form.person is defined %}
@@ -71,7 +96,6 @@
             </div>
 
             <div id='stop_times'>
-                {# Stops : first one is dep, second is arr, and after it is intermediary stops #}
                 <ul>
                 {% for index, stop in trip.stops|sortbydelta %}
                     <li>{{ index }} : {{ stop.city.name }} - delta = {{ stop.delta }}</li>
@@ -79,12 +103,6 @@
                 </ul>
             </div>
         </div>
-
-        {# Hidden fields (times - modified by JS)
-        {% set nstops = form.stops|length %}#}
-        {% for stop in form.stops %}
-           {{ form_widget(stop) }}
-        {% endfor %}
 
         {{ form_rest(form) }}
 
