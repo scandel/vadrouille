@@ -106,6 +106,9 @@ function addStopFormDeleteLink($stopFormLi) {
         // recalcule les delta
         orderStops(collectionHolder);
 
+        // remet à zéro les prix
+        clearPrices();
+
         // Reactive le bouton "ajouter une étape" (si il était désactivé)
         $('#add_stop').prop('disabled', false);
 
@@ -217,7 +220,7 @@ function Itinerary() {
 
     var options = {
         vehicle: L.Mappy.RouteModes.CAR, // PEDESTRIAN, BIKE, MOTORBIKE
-        cost: "length", // or "time" or "price"
+        cost: "time", // or "length" or "price"
         gascost: 1.0,
         gas: "petrol", // or diesel, lpg
         nopass: 0, // 1 pour un trajet sans col
@@ -375,7 +378,15 @@ function OnPlaceUpdate(item,zoom,iti) {
     }
 }
 
+/*========= remise à zéro ============*/
 
+/**
+ * Remet à '' tous les prix des étapes
+ * pour déclencher le calcul auto à l'étape suivante
+ */
+function clearPrices() {
+    $('input[id^=app_trip_edit_stops_][id$=_price]').val('');
+}
 
 jQuery(document).ready(function() {
 
@@ -402,10 +413,14 @@ jQuery(document).ready(function() {
         // Recalcule les deltas
         orderStops(collectionHolder);
 
+        // Remet les prix à zéro
+        clearPrices();
+
         // Si on est au max d'éléments, disable l'élément
         if (collectionHolder.find('.deletable').length >= max_stops) {
             $('#add_stop').prop('disabled', 'disabled');
         }
+
     });
 
     // Rend les élements étapes triables (JQuery UI Sortable)
@@ -415,6 +430,10 @@ jQuery(document).ready(function() {
         stop: function( event, ui ) {
             // Ecrit les delta en fonction de la position
             orderStops(collectionHolder);
+
+            // Remet les prix à zéro
+            clearPrices()
+
             // Recalcule l'itinéraire
             Itinerary();
         }

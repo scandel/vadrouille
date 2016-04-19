@@ -31,8 +31,6 @@
 
     <div class="row">
 
-        {{ dump(form) }}
-
         {{ form_start(form) }}
 
             <div class="col-sm-8">
@@ -58,6 +56,12 @@
                         }}
                     {% endfor %}
                 </ul>
+                {% if trip.stops|length > 2 %}
+                    <div class="row strong">
+                        <div class="col-sm-4 text-right"><strong>Total :</strong></div>
+                        <div id="total" class="col-sm-8 text-right"></div>
+                    </div>
+                {% endif %}
             </div>
 
             {# Person if not a connected user #}

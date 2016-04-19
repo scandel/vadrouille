@@ -8439,6 +8439,9 @@ form .control-label.required:after {
   right: 5px;
   top: 7px;
 }
+input.loading {
+  background: transparent url("../img/icons/spinner.gif") 2% center no-repeat;
+}
 #search-form {
   padding: 20px 5px;
   background-color: #eeeeee;
