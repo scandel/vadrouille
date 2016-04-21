@@ -108,6 +108,8 @@ function addStopFormDeleteLink($stopFormLi) {
 
         // remet à zéro les prix
         clearPrices();
+        // et les temps de parcours
+        clearTimes();
 
         // Reactive le bouton "ajouter une étape" (si il était désactivé)
         $('#add_stop').prop('disabled', false);
@@ -366,6 +368,9 @@ function OnPlaceUpdate(item,zoom,iti) {
                 var type = (item == 'app_trip_edit_stops_0') ? 'dep' :
                     (item == 'app_trip_edit_stops_1') ? 'arr' : null ;
                 MapPutMarker(item, type); // Met un marqueur sur le point de RV; ne change pas l'affichage de la carte
+                // remet à 0 les temps de parcours et les prix
+                clearPrices();
+                clearTimes();
                 // si les lieux de d?part et d'arriv?e sont connus tous deux, calcule et affiche l'itin?raire
                 if (iti && (pos['app_trip_edit_stops_0'].set == true) && (pos['app_trip_edit_stops_1'].set == true)) {
                     Itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
@@ -386,6 +391,14 @@ function OnPlaceUpdate(item,zoom,iti) {
  */
 function clearPrices() {
     $('input[id^=app_trip_edit_stops_][id$=_price]').val('');
+}
+
+/**
+ * Remet à '' tous les temps des étapes
+ * pour déclencher le calcul auto à l'étape suivante
+ */
+function clearTimes() {
+    $('input[id^=app_trip_edit_stops_][id$=_time]').val('');
 }
 
 jQuery(document).ready(function() {
@@ -415,6 +428,8 @@ jQuery(document).ready(function() {
 
         // Remet les prix à zéro
         clearPrices();
+        // et les temps de parcours
+        clearTimes();
 
         // Si on est au max d'éléments, disable l'élément
         if (collectionHolder.find('.deletable').length >= max_stops) {
@@ -432,7 +447,9 @@ jQuery(document).ready(function() {
             orderStops(collectionHolder);
 
             // Remet les prix à zéro
-            clearPrices()
+            clearPrices();
+            // et les temps de parcours
+            clearTimes();
 
             // Recalcule l'itinéraire
             Itinerary();

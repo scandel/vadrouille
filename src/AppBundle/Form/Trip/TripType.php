@@ -135,7 +135,7 @@ class TripType extends AbstractType
                         'data' => $diffPrices,
                     ));
 
-                    // Put again stops to modify stop times
+                    // Put again stops to modify stop times and prices
                     $builder->add('stops', 'collection', array(
                         'type' => StopHiddenType::class ,
                         'by_reference' => false

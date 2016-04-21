@@ -21,6 +21,7 @@ class AppExtension extends \Twig_Extension {
             new \Twig_SimpleFilter('day', array($this, 'dayFilter')),
             new \Twig_SimpleFilter('dayjoin', array($this, 'dayJoinFilter')),
             new \Twig_SimpleFilter('sortbydelta', array($this, 'sortByDelta')),
+            new \Twig_SimpleFilter('secondsfrommidnight', array($this, 'secondsFromMidnight')),
         );
     }
 
@@ -92,6 +93,21 @@ class AppExtension extends \Twig_Extension {
             usort($array, $cmp);
         }
         return $array;
+    }
+
+    /**
+     * Returns the number of seconds from OOhOO
+     *
+     * @param \DateTime $time
+     * @return number
+     */
+    public static function secondsFromMidnight(\DateTime $time)
+    {
+        $h = (int) date_format($time, 'H');
+        $m = (int) date_format($time, 'i');
+        $s = (int) date_format($time, 's');
+
+        return 3600 * $h + 60 * $m + $s ;
     }
 
     public function getName()

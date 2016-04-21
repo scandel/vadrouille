@@ -15,6 +15,18 @@ function findStopFormElementByDelta(delta) {
     return null;
 }
 
+/**
+ * Transforme une chaîne en entier ;
+ * si erreur de parseInt, renvoie 0
+ * @param str
+ * @returns {Number}
+ */
+function parseIntOrZero(str) {
+    var int = parseInt(str, 10);
+    int = isNaN(int) ? 0 : int;
+    return int;
+}
+
 /*=======  Calcul des prix  ================*/
 
 /**
@@ -35,7 +47,7 @@ function setPricesFromDiff() {
     var nbOfStops = $('div[id^=app_trip_edit_stops_]').length;
     for (var delta=0; delta < nbOfStops; delta++) {
         findStopFormElementByDelta(delta).find('input[id$=price]').val(price);
-        price += parseInt(diffs[delta]);
+        price += parseIntOrZero(diffs[delta]);
     }
 }
 
@@ -46,7 +58,7 @@ function setTotal() {
     if ( $('#total').length ) {
         var total = 0;
         $('#stop_prices input').each(function () {
-            total += parseInt($(this).val());
+            total += parseIntOrZero($(this).val());
         });
         console.log("total : ", total);
         $('#total').html('<strong>' + total + ' €</strong>');
@@ -159,45 +171,104 @@ function priceFromRoadbook(roadbook, gasCost = 1.5) {
 /*=======  Temps des étapes  ================*/
 
 /**
+ * Affiche les temps de passage, ainsi que les boutons + / -,
+ * en fonction des durées indiquées dans les champs hidden des stops
+ */
+function setTimesFromDurations() {
+
+    var nbOfStops = $('div[id^=app_trip_edit_stops_]').length;
+    var depTime = parseIntOrZero($('#dep_time').html());
+
+    for (var delta=1; delta < nbOfStops; delta++) {
+        var deltaTime = parseIntOrZero(findStopFormElementByDelta(delta).find('input[id$=time]').val());
+        var time = depTime + deltaTime;
+
+        var days = Math.floor(time / 86400);
+        var hour = Math.floor( (time / 3600) % 24 );
+        var min = Math.floor( (time / 60 ) % 60 );
+
+        var time = sprintf("%dh%02d", hour, min);
+        if ( days > 0 ) {
+            time += ' (à j+' + days + ')';
+        }
+
+        var timeElement = $('#time-' + delta);
+        timeElement.text(time);
+    }
+}
+
+/**
+ * Ajoute les boutons + et - 5 minutes
+ * @param delta
+ */
+function addButtonsPlusMinus5Minutes(delta, nbOfStops) {
+
+    var buttonPlus = $('<button type="button" class="btn btn-link btn-sm" aria-label="Plus 5 minutes">' +
+        '<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>' +
+        '</button>');
+    var buttonMinus = $('<button type="button" class="btn btn-link btn-sm" aria-label="Moins 5 minutes">' +
+        '<span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>' +
+        '</button>');
+
+    $('#time-buttons-'+delta).append(buttonPlus);
+    $('#time-buttons-'+delta).append(buttonMinus);
+
+    buttonPlus.on('click', function(e) {
+        e.preventDefault();
+        for (var i = delta; i < nbOfStops; i++) {
+            var time = parseIntOrZero(findStopFormElementByDelta(i).find('input[id$=time]').val());
+            console.log('Plus', i, time);
+            time += 300;
+            findStopFormElementByDelta(i).find('input[id$=time]').val(time);
+        }
+        setTimesFromDurations();
+    });
+
+    buttonMinus.on('click', function(e) {
+        e.preventDefault();
+        var limit = parseIntOrZero(findStopFormElementByDelta(delta-1).find('input[id$=time]').val());
+        var time1 = parseIntOrZero(findStopFormElementByDelta(delta).find('input[id$=time]').val());
+        if (time1 >= limit + 300) {
+            for (var i = delta; i < nbOfStops; i++) {
+                var time = parseIntOrZero(findStopFormElementByDelta(i).find('input[id$=time]').val());
+                console.log('Plus', i, time);
+                time = (time < limit + 300) ? limit : time - 300;
+                findStopFormElementByDelta(i).find('input[id$=time]').val(time);
+            }
+            setTimesFromDurations();
+        }
+    });
+}
+
+
+/**
  * Remplit les temps de parcours (hidden) pour les différentes étapes
  * @param roadbook
  */
 function updateTimes(roadbook) {
-
     if (roadbook==null) {
-        Itinerary();
         return;
     }
 
     // Update temps total
+    var nbOfStops = $('div[id^=app_trip_edit_stops_]').length;
     var total_time = roadbook.summary.time;
     total_time = Math.round(total_time/300)*300 ; // arrondi à 5 minutes près
     // Update temps total
-    $('#app_trip_edit_stops_1_time').val(total_time);
+    findStopFormElementByDelta(nbOfStops-1).find('input[id$=time]').val(total_time);
 
     // Les temps des différentes étapes
     var nActions = roadbook.actions.action.length;
-
-    // Calcul n°s des étapes
-    var steps = new Array();
-    var index = 0;
-    for (var i=2; i < maxmax; i++){
-       if ( pos['app_trip_edit_stops_' + i].set ) {
-           steps[index] = i;
-           index++;
-       }
-    }
-
-    var index = 0;
+    var delta = 1;
     for (var i = 0 ; i <nActions ; i++) {
         if (roadbook.actions.action[i].type == 'waypoint') {
             // debug(roadbook.actions.action[i]);
-            travel_time = parseInt(roadbook.actions.action[i].sec) ;
-            travel_time = Math.round(travel_time/300)*300 ; // arrondi à 5 minutes pr?s
+            var travel_time = parseIntOrZero(roadbook.actions.action[i].sec) ;
+            travel_time = Math.round(travel_time/300)*300 ; // arrondi à 5 minutes près
             // Update temps étape
-            $('#app_trip_edit_stops_'+steps[index]+'_time').val(travel_time);
-            index++;
-          }
+            findStopFormElementByDelta(delta).find('input[id$=time]').val(travel_time);
+            delta++;
+        }
     }
 }
 
@@ -207,11 +278,12 @@ jQuery(document).ready(function() {
 
    var currentRoadbook = JSON.parse($('#app_trip_edit_mappyRoadbook').val());
     // console.log(currentRoadbook);
+    var nbOfStops = $('div[id^=app_trip_edit_stops_]').length;
+    // console.log('Nb stops: ', nbOfStops);
+
+    // ===== Prix =========
 
     // Calcul auto du prix
-    var nbOfStops = $('div[id^=app_trip_edit_stops_]').length;
-    console.log('Nb stops: ', nbOfStops);
-
     // Soit tout est rempli, soit rien n'est rempli ; pas de demi-mesure car trop compliqué.
     // On vérifie donc uniquement le dernier stop
     if (findStopFormElementByDelta(nbOfStops-1).find('input[id$=price]').val() == '') {
@@ -235,7 +307,6 @@ jQuery(document).ready(function() {
         setTotal();
     }
 
-
     // Empêche l'utilisateur de rentrer manuellement autre chose que des
     // entiers positifs dans les champs prix différentiels
     $('#stop_prices input').blur( function(){
@@ -254,5 +325,19 @@ jQuery(document).ready(function() {
         setTotal();
     });
 
+    // ========== Temps de parcours ==========
+
+    // Si le temps d'arrivée n'est pas rempli, on remplit automatiquement
+    var arrTime = parseIntOrZero(findStopFormElementByDelta(nbOfStops-1).find('input[id$=time]').val());
+    if (arrTime == 0) {
+        updateTimes(currentRoadbook);
+    }
+    // Sinon on se contente d'initialiser les temps d'arrivée
+    setTimesFromDurations();
+
+    // Créée les boutons +/- des temps
+    for (var delta=1; delta < nbOfStops; delta++) {
+        addButtonsPlusMinus5Minutes(delta, nbOfStops);
+    }
 
 });

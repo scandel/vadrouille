@@ -38,7 +38,7 @@ class StopType extends AbstractType
         ));
 
         $builder->add('delta', 'hidden');
-        // $builder->add('time', 'hidden');
+        $builder->add('time', 'hidden');
         $builder->add('price', 'hidden');
         $builder->add('lat', 'hidden');
         $builder->add('lng', 'hidden');

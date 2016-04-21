@@ -96,13 +96,15 @@
                 Heure de départ : <strong>
                         {{ trip.depTime|date("H\\hi") }}
                 </strong>
-
             </div>
+
+            <div id="dep_time" class="hidden">{{ trip.depTime|secondsfrommidnight }}</div>
 
             <div id='stop_times'>
                 <ul>
-                {% for index, stop in trip.stops|sortbydelta %}
-                    <li>{{ index }} : {{ stop.city.name }} - delta = {{ stop.delta }}</li>
+                {% for index, stop in trip.stops|sortbydelta if stop.delta > 0 %}
+                    <li>{{ stop.city.name }} : <span id="time-{{ stop.delta }}"></span>
+                        <span id="time-buttons-{{ stop.delta }}"></span></li>
                 {% endfor %}
                 </ul>
             </div>
