@@ -88,6 +88,38 @@ function addStopForm(collectionHolder) {
     // Initialise le timepicker
     timePickerInit($newFormLi.find('.timepicker').first());
 
+    // ajoute un bouton de localisation pour l'adresse
+    addLocalizeButton($newFormLi.find('.address'));
+    // et fait la geoloc au blur sur l'adresse
+    $newFormLi.find('.address').blur(function() {
+       if ($(this).val()) {
+           var input_item = $(this).attr('id').replace('_place', '');
+           localize(input_item, true); // Mode silent
+       }
+    });
+}
+
+function addLocalizeButton($addressInput) {
+    console.log('addLocalizeButton');
+    var $localizeButton = $("<span class='inside-input glyphicon glyphicon-map-marker' title='Cliquez pour localiser'></span>");
+    $addressInput.wrap("<div class='btn-group'></div>").after($localizeButton);
+    if (!$addressInput.val()) {
+        $localizeButton.hide();
+    }
+
+    // Show / Hide button depending if address input is empty
+    $addressInput.keyup(function () {
+        $(this).next().toggle(Boolean($(this).val()));
+    });
+    $addressInput.blur(function () {
+        $(this).next().toggle(Boolean($(this).val()));
+    });
+
+    // Localize
+    $localizeButton.click(function () {
+        var input_item = $(this).prev().attr('id').replace('_place', '');
+        localize(input_item, false);
+    });
 }
 
 function addStopFormDeleteLink($stopFormLi) {
@@ -318,6 +350,8 @@ function UpdateCity(item, uiItem) {
     $('#'+item+'_city_id').val(uiItem.id);
 
     // Coordonnées
+    $('#'+item+'_city_lat').val(uiItem.lat);
+    $('#'+item+'_city_lng').val(uiItem.lng);
     $('#'+item+'_lat').val(uiItem.lat);
     $('#'+item+'_lng').val(uiItem.lng);
 
@@ -333,6 +367,146 @@ function UpdateCity(item, uiItem) {
     }
 }
 
+/**
+ * Vérifie où est un point de RV
+ * Modifie les champs lat et lng
+ * et (dé)place le marqueur sur la carte
+ *
+ * @param item
+ * @param strict :
+ *      false => pas d'avertissement si pas trouvé, simplement on ne fait rien
+ *      true => avertit si aucun pt trouvé, et propose les choix si plusieurs trouvés
+ * @param centermap :
+ *      true => centre et zoom ( ? l'?chelle des rues ) sur le lieu
+ *      false => ne change pas l'affichage de la carte
+ * @returns {boolean}
+ *
+ * TRANSITION : SPinner
+ * Transformer les alertes en modals
+ */
+function localize(item, silent = false) {
+
+    console.log("localize "+item+" silent : "+silent);
+    var errorMessage = '';
+
+    // ville et ses  détails (code postal...)
+    var city = $('#'+item+'_city_name').val().trim();
+    var citydetails = $('#'+item+'_city_details').val().trim();
+    var address = $('#'+item+'_place').val().trim();
+
+    // Tests
+    if (address.length == 0 )  {
+        errorMessage += 'Entrez une adresse ou un lieu simple (gare, mairie...) dans le champ "Lieu" !';
+    }
+    if (city.length == 0) {
+        errorMessage = 'Veuillez entrer une ville dans le champ "Ville".';
+    }
+
+    if (errorMessage.length > 0) {
+        if (!silent) {
+            alert(errorMessage);
+        }
+        return;
+    }
+    else {
+        address += ', ' + citydetails  + ' ' + city;  // Exemple : 133 bd St-Michel, 75000 Paris
+
+        // Service de géocodage Mappy
+        L.Mappy.Services.geocode(address,
+            // Callback de succès
+            function (results) {
+                var n = results.length;
+                var result;
+
+                if (n == 0) { // pas de résultats
+                    if (!silent) {
+                        alert("Désolé, le lieu que vous avez indiqué n'est pas reconnu; " +
+                            "veuillez entrer une ville dans le champ \"Ville \" et une adresse " +
+                            "ou un lieu simple (gare, mairie...) dans le champ \"Lieu\".");
+                    }
+                    return;
+                }
+                else if (n > 1) { // plusieurs résultats
+                     if (silent) {
+                         return;
+                     }
+                     else {
+                        // créer une liste et la positionner sous le champ de recherche
+                        var choices = $("<ul>").attr({
+                            'id': 'choices',
+                            'class': 'choices-list',
+                            'styles': {'width': '300px'}
+                        });
+                        $('#'+item+'_place').after(choices);
+
+                        for (var i = 0; i < n; i += 1) {
+                            var option = $("<li>")
+                                .attr("id", i + '_choice')
+                                .attr("class", "choices-list-item")
+                                .append($("<a>").text( results[i].name )) ;
+
+                            // Soulignage au passage souris
+                            option.on('mouseover', function () {
+                                $(this).addClass('choices-state-focus');
+                            });
+                            option.on('mouseout', function () {
+                                $(this).removeClass('choices-state-focus');
+                            });
+                            // Choix option
+                            option.click (function () {
+                                var choice = parseInt($(this).attr('id').replace('_choice',''));
+                                // console.log("Choix ",choice);
+                                result = results[choice]; // On selectionne le bon pour la suite
+                                $('#choices').remove(); // On d?truit la liste de choix
+                                // Remplissage : lat, lng, nom
+                                var coords = result.Point.coordinates.split(",").reverse();
+                                $('#'+item + '_lat').val(coords[0]);
+                                $('#'+item + '_lng').val(coords[1]);
+                                $('#'+item + '_place').val(result.name);
+
+                                // Marqueur
+                                // PLace le marqueur et zoome
+                                var zoom = 9;
+                                OnPlaceUpdate(item, zoom, true);
+                            });
+                            choices.append(option);
+                        }
+                        // Click outside = close element
+                        $(document).click(function(event) {
+                            if(!$(event.target).closest('#choices').length) {
+                                if($('#choices').is(":visible")) {
+                                    $('#choices').remove();
+                                }
+                            }
+                        })
+                    }
+                }
+                // Un seul choix
+                else if (n == 1) {
+                    result = results[0];
+                    var coords = result.Point.coordinates.split(",").reverse();
+                    $('#' + item + '_lat').val( coords[0] );
+                    $('#' + item + '_lng').val( coords[1] );
+                    // PLace le marqueur et zoome
+                    if ( !silent ) {
+                        var zoom = 9;
+                        OnPlaceUpdate(item, zoom, true);
+                    }
+                    else
+                        OnPlaceUpdate(item, -1, true);
+                }
+            },
+            // Callback d'erreur
+            function () {
+                // Error during geocoding
+                if (!silent) {
+                    alert('Désolé, nous ne sommes pas parvenus à localiser cette adresse.');
+                }
+                return;
+            }
+        );
+    }
+}
 
 /**
  * Place un marqueur sur le lieu ;
@@ -406,6 +580,20 @@ jQuery(document).ready(function() {
     // Active les tooltip
     $('[data-toggle="tooltip"]').tooltip();
 
+    // Champs adresse
+    $('input.address').each(function() {
+        // Ajoute le bouton "localiser" aux champs de type adresse
+        addLocalizeButton($(this));
+
+        // et fait la geoloc au blur sur l'adresse
+        $(this).blur(function() {
+            if ($(this).val()) {
+                var input_item = $(this).attr('id').replace('_place', '');
+                localize(input_item, true); // Mode silent
+            }
+        });
+    });
+
     // ajoute un lien de suppression à tous les éléments li de
     // formulaires de tag existants
     collectionHolder.find('.deletable').each(function() {
@@ -435,7 +623,6 @@ jQuery(document).ready(function() {
         if (collectionHolder.find('.deletable').length >= max_stops) {
             $('#add_stop').prop('disabled', 'disabled');
         }
-
     });
 
     // Rend les élements étapes triables (JQuery UI Sortable)

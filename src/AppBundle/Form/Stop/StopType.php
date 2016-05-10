@@ -34,7 +34,10 @@ class StopType extends AbstractType
         $builder->add('place', 'text', array(
             'label' => 'Lieu ou adresse :',
             'required' => false,
-            'attr' => array('placeholder' => 'N\'importe où'),
+            'attr' => array(
+                'placeholder' => 'N\'importe où',
+                'class' => 'address',
+                ),
         ));
 
         $builder->add('delta', 'hidden');
@@ -45,6 +48,12 @@ class StopType extends AbstractType
 
         // For geolocalistaion
         $builder->add('city_details', 'hidden', array(
+            'mapped' => false,
+        ));
+        $builder->add('city_lat', 'hidden', array(
+            'mapped' => false,
+        ));
+        $builder->add('city_lng', 'hidden', array(
             'mapped' => false,
         ));
 

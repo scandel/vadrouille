@@ -8439,6 +8439,17 @@ form .control-label.required:after {
   right: 5px;
   top: 7px;
 }
+.inside-input {
+  position: absolute;
+  right: 5px;
+  top: 0;
+  bottom: 0;
+  height: 14px;
+  margin: auto;
+  font-size: 14px;
+  cursor: pointer;
+  color: #ccc;
+}
 input.loading {
   background: transparent url("../img/icons/spinner.gif") 2% center no-repeat;
 }
