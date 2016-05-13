@@ -71,8 +71,11 @@
             {% endif %}
 
             {# Comment #}
-            <h2>Commentaire</h2>
-            {{ form_row(form.comment, {'label':'Commentaire :'}) }}
+            <h2>Détails du trajet</h2>
+                {{ form_row(form.places) }}
+                {{ form_row(form.bags) }}
+                {{ form_row(form.contact) }}
+                {{ form_row(form.comment, {'label':'Commentaire :'}) }}
         </div>
 
         <div class="col-sm-4">

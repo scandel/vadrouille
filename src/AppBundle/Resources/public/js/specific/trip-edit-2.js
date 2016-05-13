@@ -341,4 +341,24 @@ jQuery(document).ready(function() {
         addButtonsPlusMinus5Minutes(delta, nbOfStops);
     }
 
+    // ============ Détails ====================
+
+    // Empêche l'utilisateur de rentrer manuellement autre chose que des
+    // entiers en dehors des bornes min et max dans les champs de type number
+    // s'applique aux places
+    $('#app_trip_edit_places').blur( function(){
+        var v = parseInt( $(this).val(), 10) ;
+        var min = $(this).attr('min');
+        var max = $(this).attr('max');
+
+        if (min != undefined && v < min) {
+            $(this).val(min);
+        }
+        else if (max != undefined && v > max) {
+            $(this).val(max);
+        }
+        else if (isNaN(v)) {
+           $(this).val(min);
+        }
+    });
 });

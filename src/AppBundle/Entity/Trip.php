@@ -106,6 +106,34 @@ class Trip
     private $nextDateTime;
 
     /**
+     * @var integer: Number of places proposed
+     *
+     * @ORM\Column(name="places", type="integer")
+     */
+    private $places = 3;
+
+    /**
+     * @var boolean : trip is full booked
+     *
+     * @ORM\Column(name="full", type="boolean")
+     */
+    private $full = false;
+
+    /**
+     * @var text : Choice small, medium, big
+     *
+     * @ORM\Column(name="bags", type="string", length=6)
+     */
+    private $bags = 'medium';
+
+    /**
+     * @var text : contact mode, Choice phone, email, both
+     *
+     * @ORM\Column(name="contact", type="string", length=5)
+     */
+    private $contact = 'both';
+
+    /**
      * @var string
      *
      * @ORM\Column(name="comment", type="text", nullable=true)
@@ -626,5 +654,97 @@ class Trip
     public function getMappyRoadbook()
     {
         return $this->mappyRoadbook;
+    }
+
+    /**
+     * Set places
+     *
+     * @param integer $places
+     * @return Trip
+     */
+    public function setPlaces($places)
+    {
+        $this->places = $places;
+
+        return $this;
+    }
+
+    /**
+     * Get places
+     *
+     * @return integer 
+     */
+    public function getPlaces()
+    {
+        return $this->places;
+    }
+
+    /**
+     * Set full
+     *
+     * @param boolean $full
+     * @return Trip
+     */
+    public function setFull($full)
+    {
+        $this->full = $full;
+
+        return $this;
+    }
+
+    /**
+     * Get full
+     *
+     * @return boolean 
+     */
+    public function getFull()
+    {
+        return $this->full;
+    }
+
+    /**
+     * Set bags
+     *
+     * @param string $bags
+     * @return Trip
+     */
+    public function setBags($bags)
+    {
+        $this->bags = $bags;
+
+        return $this;
+    }
+
+    /**
+     * Get bags
+     *
+     * @return string 
+     */
+    public function getBags()
+    {
+        return $this->bags;
+    }
+
+    /**
+     * Set contact
+     *
+     * @param string $contact
+     * @return Trip
+     */
+    public function setContact($contact)
+    {
+        $this->contact = $contact;
+
+        return $this;
+    }
+
+    /**
+     * Get contact
+     *
+     * @return string 
+     */
+    public function getContact()
+    {
+        return $this->contact;
     }
 }

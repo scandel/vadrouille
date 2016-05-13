@@ -7,6 +7,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormEvent;
@@ -103,6 +105,41 @@ class TripType extends AbstractType
                     // 2nd part of the form
                     // Comment
                     $builder->add('comment', null, array('required' => false));
+
+                    // Places
+                    $builder->add('places', IntegerType::class, array(
+                        'label' => 'Places proposées :',
+                        'attr' => array(
+                            'min' => 1,
+                            'max' => 8,
+                        )
+                    ));
+
+                    // Bags
+                    $builder->add('bags',  ChoiceType::class, array(
+                        'label' => 'Taille des bagages :',
+                        'choices' => array(
+                            'Petits' => 'small',
+                            'Moyens' =>'medium',
+                            'Grands' => 'big',
+                        ),
+                        'choices_as_values' => true,
+                        'expanded' => false,
+                        'multiple' => false,
+                    ));
+
+                    // Contact
+                    $builder->add('contact',  ChoiceType::class, array(
+                        'label' => 'Modes de contact :',
+                        'choices' => array(
+                            'Téléphone et email' => 'both',
+                            'Téléphone seulement' =>'phone',
+                            'Email seulement' => 'email',
+                        ),
+                        'choices_as_values' => true,
+                        'expanded' => false,
+                        'multiple' => false,
+                    ));
 
                     // Person
                     if (!$trip->getPerson() || $trip->getPerson()->isGuest()) {
