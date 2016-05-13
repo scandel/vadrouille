@@ -569,27 +569,33 @@ function onPlaceUpdate(item,zoom,iti) {
     if ( !(isNaN(lat)) && !(isNaN(lng))) {
         if (typeof L !== 'undefined') {
             // Est-ce que l'on change de position ?
-            var change = true;
-            if (pos[item].set) {
-                var distance = pos[item].center.distanceTo(L.latLng(lat,lng));
-                if (distance<10) // 10 m : on ne change pas
-                    change = false ;
+            var newpos = false;
+            var change = false;
+            if (!pos[item].set) {
+                newpos = true;
             }
-
-
+            else {
+                console.log('pos[item].set');
+                var distance = pos[item].center.distanceTo(L.latLng(lat,lng));
+                if (distance>10) // 10 m : on ne change pas
+                    change = true ;
+            }
             pos[item].center = L.latLng(lat, lng);
 
-            if (change) {
+            if (newpos || change) {
+                console.log('onPlaceUpdate change/newpos ' + item);
                 var type = (item == 'app_trip_edit_stops_0') ? 'dep' :
                     (item == 'app_trip_edit_stops_1') ? 'arr' : null ;
                 MapPutMarker(item, type); // Met un marqueur sur le point de RV; ne change pas l'affichage de la carte
-                // remet à 0 les temps de parcours et les prix
-                clearPrices();
-                clearTimes();
-                // si les lieux de d?part et d'arriv?e sont connus tous deux, calcule et affiche l'itin?raire
+                 // si les lieux de d?part et d'arriv?e sont connus tous deux, calcule et affiche l'itin?raire
                 if (iti && (pos['app_trip_edit_stops_0'].set == true) && (pos['app_trip_edit_stops_1'].set == true)) {
                     itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
                 }
+            }
+            if (change) {
+                // remet à 0 les temps de parcours et les prix
+                clearPrices();
+                clearTimes();
             }
             if (zoom >= 0) {
                 map.setView([lat, lng], zoom);

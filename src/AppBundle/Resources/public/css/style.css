@@ -8620,7 +8620,8 @@ table.trip-details td {
 #post-trip .time-block {
   padding-top: 7px;
 }
-#post-trip-2 #stop_prices input {
+#post-trip-2 #stop_prices input,
+#post-trip-2 #app_trip_edit_places {
   text-align: right;
 }
 .user-photo-form button[type=submit] {
