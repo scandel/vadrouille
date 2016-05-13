@@ -272,6 +272,7 @@ function updateTimes(roadbook) {
     }
 }
 
+/*=======  Initialisation  ================*/
 
 jQuery(document).ready(function() {
     console.log('Ready !');

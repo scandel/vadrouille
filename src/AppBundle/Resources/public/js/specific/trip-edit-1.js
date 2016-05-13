@@ -1,5 +1,5 @@
 /*
- * JS for the "edit trip" page
+ * JS for the "edit trip" form, page 1
  */
 
 // Récupère le div qui contient la collection de tags
@@ -19,86 +19,116 @@ for (var i=0; i < maxmax; i++){
 
 /*  ==== Adding New stops ======  */
 
+/**
+ * Ajoute un nouveau formulaire d'étape
+ * Va avec la gestion des collections de formulaires et "allow_add"
+ *
+ * @param collectionHolder
+ */
 function addStopForm(collectionHolder) {
-    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+    // Récupère l'élément ayant l'attribut data-prototype
     var prototype = collectionHolder.attr('data-prototype');
 
     // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
     // la longueur de la collection courante
     var newForm = prototype.replace(/__name__/g, iter++);
 
-    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+    // Affiche le formulaire dans la page dans un li, à la fin de la liste
     var $newFormLi = $('<li class="deletable"></li>').append(newForm);
     collectionHolder.append($newFormLi);
 
     // ajoute un lien de suppression au nouveau formulaire
     addStopFormDeleteLink($newFormLi);
 
-    // Et un bouton pour drag n dropper l'élément
+    // Et un bouton pour drag'n'dropper l'élément
     addStopFormMoveButton($newFormLi);
 
     // ajoute l'autocompletion dans le nouveau formulaire
-    $newFormLi.find('.city-autocomplete').each(function() {
-        var input_name, input_id ;
-        input_name = $(this).attr('id') ;
-        input_item = input_name.replace('_city_name', '');
-        input_id = input_name.replace('_city_name', '_city_id');
-        $(this).autocomplete({
-            //source: AJAX_WRAP+'?name=city_complete',
-            source: function( request, response ) {
-                var firstLetters = request.term;
-                if ( firstLetters in cache ) {
-                    response( cache[ firstLetters ] );
-                    return;
-                }
+    addCityAutocompletion($newFormLi.find('.city-autocomplete'));
 
-                $.getJSON( '/app_dev.php/ville/completer/' + firstLetters, null, function( data, status, xhr ) {
-                    cache[ firstLetters ] = data;
-                    response( data );
+    // Ajoute les comportements de localisation au champ d'adresse
+    addLocalization($newFormLi.find('.address'));
+}
+
+/**
+ * Add city autocompletion to city inputs
+ *
+ * @param $cityInput
+ */
+function addCityAutocompletion($cityInput) {
+    var input_name, input_id, input_item ;
+    input_name = $cityInput.attr('id') ;
+    input_item = input_name.replace('_city_name', '');
+    input_id = input_name.replace('_city_name', '_city_id');
+    $cityInput.autocomplete({
+        //source: AJAX_WRAP+'?name=city_complete',
+        source: function( request, response ) {
+            var firstLetters = request.term;
+            if ( firstLetters in cache ) {
+                response( cache[ firstLetters ] );
+                return;
+            }
+
+            $.getJSON( '/app_dev.php/ville/completer/' + firstLetters, null, function( data, status, xhr ) {
+                cache[ firstLetters ] = data;
+                response( data );
+            });
+        },
+        minLength: 1,
+
+        select: function( event, ui ) {
+            event.preventDefault();
+            console.log("Selection ", input_item);
+            console.log(ui.item);
+            if (!$('#'+input_id).val() || $('#'+input_id).val() != ui.item.id) {
+                updateCity(input_item, ui.item);
+            }
+        },
+
+        change: function( event, ui ) {
+            console.log("Changement ", input_item);
+            if ( $(this).val().trim() == '' ) {
+                $.each(['city_id', /*'city_details',*/ 'place', 'lat', 'lng'], function (index, what) {
+                    $('#' + input_item + '_' + what).val('');
                 });
-            },
-            minLength: 1,
+            }
+        }
 
-            select: function( event, ui ) {
-                event.preventDefault();
-                console.log("Selection ", input_item);
-                console.log(ui.item);
-                if (!$('#'+input_id).val() || $('#'+input_id).val() != ui.item.id) {
-                    UpdateCity(input_item, ui.item);
-                }
-            },
+    }).autocomplete( "instance" )._renderItem = function (ul, item) {
+        // Style menu items with flags
+        return $("<li>")
+            .append('<a><img src="/bundles/app/img/flags/' + item.country+ '.png"> ' + item.name + ' (' + item.postcode + ')</a>')
+            .appendTo(ul.addClass('autocomplete-city-row'));
+    };
+}
 
-            change: function( event, ui ) {
-                console.log("Changement ", input_item);
-                if ( $(this).val().trim() == '' ) {
-                    $.each(['city_id', /*'city_details',*/ 'place', 'lat', 'lng'], function (index, what) {
-                        $('#' + input_item + '_' + what).val('');
-                    });
-                }
-            },
+/**
+ * Add localization behaviors to adresses inputs
+ *
+ * @param $addressInput
+ */
+function addLocalization($addressInput) {
+    // Ajoute le bouton "localiser" aux champs de type adresse
+    addLocalizeButton($addressInput);
 
-        }).autocomplete( "instance" )._renderItem = function (ul, item) {
-            // Style menu items with flags
-            return $("<li>")
-                .append('<a><img src="/bundles/app/img/flags/' + item.country+ '.png"> ' + item.name + ' (' + item.postcode + ')</a>')
-                .appendTo(ul.addClass('autocomplete-city-row'));
-        };
-    });
-
-    // Initialise le timepicker
-    timePickerInit($newFormLi.find('.timepicker').first());
-
-    // ajoute un bouton de localisation pour l'adresse
-    addLocalizeButton($newFormLi.find('.address'));
     // et fait la geoloc au blur sur l'adresse
-    $newFormLi.find('.address').blur(function() {
-       if ($(this).val()) {
-           var input_item = $(this).attr('id').replace('_place', '');
-           localize(input_item, true); // Mode silent
-       }
+    $addressInput.blur(function() {
+        var input_item = $addressInput.attr('id').replace('_place', '');
+        if ($addressInput.val()) {
+            localize(input_item, true); // Mode silent
+        }
+        else {
+            resetToCityPosition(input_item);
+        }
     });
 }
 
+/**
+ * Add a "localize me" button inside a address input
+ * which is shown only when the input is non-empty
+ *
+ * @param $addressInput
+ */
 function addLocalizeButton($addressInput) {
     console.log('addLocalizeButton');
     var $localizeButton = $("<span class='inside-input glyphicon glyphicon-map-marker' title='Cliquez pour localiser'></span>");
@@ -122,6 +152,11 @@ function addLocalizeButton($addressInput) {
     });
 }
 
+/**
+ * Add a button to delete a whole stop form
+ *
+ * @param $stopFormLi
+ */
 function addStopFormDeleteLink($stopFormLi) {
     var $removeForm = $('<button class="remove-button btn btn-xs btn-link" title="Supprimer cette étape" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>');
     $stopFormLi.children().first().append($removeForm);
@@ -151,12 +186,17 @@ function addStopFormDeleteLink($stopFormLi) {
 
         // Recalcule l'itiéraire
         if ((pos['app_trip_edit_stops_0'].set == true) && (pos['app_trip_edit_stops_1'].set == true)) {
-            Itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
+            itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
         }
 
     });
 }
 
+/**
+ * Add a button to move (reorder) a stop form
+ *
+ * @param $stopFormLi
+ */
 function addStopFormMoveButton($stopFormLi) {
     // doit être un lien et pas un bouton, pour pouvoir être une poignée (handle)
     var $moveForm = $('<a class="move-button btn btn-xs btn-link" ' +
@@ -209,13 +249,13 @@ function orderStops(collectionHolder) {
 /**
  * Calcule le trajet, affiche l'itinéraire sur la carte,
  * centre sur l'itinéraire, et affiche les infos trajet
- * Calcule les temps de parcours (Aller-Retour : met les mêmes temps)
+ * Calcule les temps de parcours
  *
  */
-function Itinerary() {
+function itinerary() {
 
     // On nettoie
-    ClearPaths();
+    clearPaths();
     if ($('#map-error') != null) {
         $('#map-error').remove();
     }
@@ -249,7 +289,6 @@ function Itinerary() {
             sortedIti.push(iti[i]);
         }
     }
-
     console.log(sortedIti);
 
     var options = {
@@ -272,7 +311,7 @@ function Itinerary() {
             currentRoadbook = results.routes.route;
 
             // on re-nettoie pour si il y a eu deux lancements rapprochés
-            ClearPaths();
+            clearPaths();
 
             polyline = L.polyline(results.routes.route["polyline-definition"].polyline).addTo(map);
             // zoom the map to the polyline
@@ -280,7 +319,6 @@ function Itinerary() {
 
             // Temps et distance actualisés
             console.log("Route : ",results.routes.route);
-
 
             travel_time = results.routes.route.summary['time'];
             var time = sprintf("%dh%02d",Math.floor(travel_time/3600),Math.floor((travel_time/60)%60));
@@ -314,7 +352,7 @@ function Itinerary() {
 /**
  * Efface les layers de type "_path"
  */
-function ClearPaths() {
+function clearPaths() {
     for(i in map._layers) {
         if(map._layers[i]._path != undefined) {
             try {
@@ -334,12 +372,10 @@ function ClearPaths() {
  * Fait toutes les opérations nécessaires :
  *
  * @param item : ex : 'app_trip_edit_stops_0'
- * @param cityid
- * @param city_name
- * @param city_details (postcode)
+ * @param uiItem : response of autocompletion
  *
  */
-function UpdateCity(item, uiItem) {
+function updateCity(item, uiItem) {
 
     // console.log("Update City");
 
@@ -363,7 +399,7 @@ function UpdateCity(item, uiItem) {
 
     // Placer le marqueur
     if ( !(isNaN(uiItem.lat)) && uiItem.lat!=0) {
-        OnPlaceUpdate(item, -1, true);
+        onPlaceUpdate(item, -1, true);
     }
 }
 
@@ -373,16 +409,10 @@ function UpdateCity(item, uiItem) {
  * et (dé)place le marqueur sur la carte
  *
  * @param item
- * @param strict :
+ * @param silent :
  *      false => pas d'avertissement si pas trouvé, simplement on ne fait rien
- *      true => avertit si aucun pt trouvé, et propose les choix si plusieurs trouvés
- * @param centermap :
- *      true => centre et zoom ( ? l'?chelle des rues ) sur le lieu
- *      false => ne change pas l'affichage de la carte
- * @returns {boolean}
- *
- * TRANSITION : SPinner
- * Transformer les alertes en modals
+ *      true => avertit si aucun pt trouvé, et propose les choix si plusieurs trouvés.
+ *      Zoome sur la carte quand trouvé.
  */
 function localize(item, silent = false) {
 
@@ -406,7 +436,6 @@ function localize(item, silent = false) {
         if (!silent) {
             alert(errorMessage);
         }
-        return;
     }
     else {
         address += ', ' + citydetails  + ' ' + city;  // Exemple : 133 bd St-Michel, 75000 Paris
@@ -424,13 +453,9 @@ function localize(item, silent = false) {
                             "veuillez entrer une ville dans le champ \"Ville \" et une adresse " +
                             "ou un lieu simple (gare, mairie...) dans le champ \"Lieu\".");
                     }
-                    return;
                 }
                 else if (n > 1) { // plusieurs résultats
-                     if (silent) {
-                         return;
-                     }
-                     else {
+                     if (!silent) {
                         // créer une liste et la positionner sous le champ de recherche
                         var choices = $("<ul>").attr({
                             'id': 'choices',
@@ -467,7 +492,7 @@ function localize(item, silent = false) {
                                 // Marqueur
                                 // PLace le marqueur et zoome
                                 var zoom = 9;
-                                OnPlaceUpdate(item, zoom, true);
+                                onPlaceUpdate(item, zoom, true);
                             });
                             choices.append(option);
                         }
@@ -490,10 +515,10 @@ function localize(item, silent = false) {
                     // PLace le marqueur et zoome
                     if ( !silent ) {
                         var zoom = 9;
-                        OnPlaceUpdate(item, zoom, true);
+                        onPlaceUpdate(item, zoom, true);
                     }
                     else
-                        OnPlaceUpdate(item, -1, true);
+                        onPlaceUpdate(item, -1, true);
                 }
             },
             // Callback d'erreur
@@ -502,9 +527,25 @@ function localize(item, silent = false) {
                 if (!silent) {
                     alert('Désolé, nous ne sommes pas parvenus à localiser cette adresse.');
                 }
-                return;
             }
         );
+    }
+}
+
+/**
+ * Reinitialise les coordonnées d'une étape à celle du centre de la ville
+ * @param item
+ */
+
+function resetToCityPosition(item) {
+    // Remet les coordonnées à celle de la ville
+    var citylat = $('#'+item+'_city_lat').val();
+    var citylng = $('#'+item+'_city_lng').val();
+    if (citylat && citylng) {
+        $('#' + item + '_lat').val(citylat);
+        $('#' + item + '_lng').val(citylng);
+        // Repositionne le marqueur
+        onPlaceUpdate(item, -1, true);
     }
 }
 
@@ -519,7 +560,7 @@ function localize(item, silent = false) {
  * @param zoom
  * @param iti
  */
-function OnPlaceUpdate(item,zoom,iti) {
+function onPlaceUpdate(item,zoom,iti) {
 
     var lat = parseFloat($('#'+item+'_lat').val());
     var lng = parseFloat($('#'+item+'_lng').val());
@@ -547,7 +588,7 @@ function OnPlaceUpdate(item,zoom,iti) {
                 clearTimes();
                 // si les lieux de d?part et d'arriv?e sont connus tous deux, calcule et affiche l'itin?raire
                 if (iti && (pos['app_trip_edit_stops_0'].set == true) && (pos['app_trip_edit_stops_1'].set == true)) {
-                    Itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
+                    itinerary(); // Calcule le trajet, centre la carte sur le trajet, écrit les infos trajet
                 }
             }
             if (zoom >= 0) {
@@ -575,6 +616,8 @@ function clearTimes() {
     $('input[id^=app_trip_edit_stops_][id$=_time]').val('');
 }
 
+/*========= Initialisation  ============*/
+
 jQuery(document).ready(function() {
 
     // Active les tooltip
@@ -582,16 +625,7 @@ jQuery(document).ready(function() {
 
     // Champs adresse
     $('input.address').each(function() {
-        // Ajoute le bouton "localiser" aux champs de type adresse
-        addLocalizeButton($(this));
-
-        // et fait la geoloc au blur sur l'adresse
-        $(this).blur(function() {
-            if ($(this).val()) {
-                var input_item = $(this).attr('id').replace('_place', '');
-                localize(input_item, true); // Mode silent
-            }
-        });
+        addLocalization($(this)); 
     });
 
     // ajoute un lien de suppression à tous les éléments li de
@@ -639,7 +673,7 @@ jQuery(document).ready(function() {
             clearTimes();
 
             // Recalcule l'itinéraire
-            Itinerary();
+            itinerary();
         }
     });
 
@@ -680,7 +714,7 @@ jQuery(document).ready(function() {
         var item = 'app_trip_edit_stops_' + i;
         var cityid = parseInt($('#'+item+'_city_id').val());
         if ( !(isNaN(cityid)) && cityid!=0) {
-            OnPlaceUpdate(item,-1,false); // don't draw itinerary
+            onPlaceUpdate(item,-1,false); // don't draw itinerary
         }
     }
 
@@ -707,7 +741,7 @@ jQuery(document).ready(function() {
         console.log("Selection ", input_item);
         console.log(ui.item);
         if (!$('#'+input_id).val() || $('#'+input_id).val() != ui.item.id) {
-            UpdateCity(input_item, ui.item);
+            updateCity(input_item, ui.item);
         }
     });
 
