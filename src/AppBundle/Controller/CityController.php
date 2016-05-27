@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Form\City\CityType;
+use Elastica\Query\QueryString;
 
 /**
  * Class CityController
@@ -25,16 +26,15 @@ class CityController extends Controller
     */
     public function completeAction($firstLetters)
     {
-        $em = $this->getDoctrine()->getManager();
-        // Normalise first letters
-        $firstLetters =  $this->get('app.slug')->genericSlug($firstLetters);
-        // Search
-        $cities = $em->getRepository('AppBundle:City')->searchByFirstLetters($firstLetters);
+        $elastica = $this->container->get('fos_elastica.manager');
+        $searchRepository = $elastica->getRepository('AppBundle:City');
+
+        $cities = $searchRepository->searchByNameOrPostcode($firstLetters,10);
+
         $locale = $this->get('translator')->getLocale();
-
         $json = array();
-        foreach($cities as $city) {
 
+        foreach($cities as $city) {
             $cityName = $city->getMainName($locale)->getName() ;
             $countryCode = $city->getCountry()->getCode();
             if ($countryCode == "FR") {

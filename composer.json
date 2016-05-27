@@ -30,7 +30,8 @@
         "sonata-project/doctrine-orm-admin-bundle": "2.*",
         "doctrine/doctrine-fixtures-bundle": "^2.2",
         "stof/doctrine-extensions-bundle": "^1.2",
-        "craue/formflow-bundle": "~3.0@dev"
+        "craue/formflow-bundle": "~3.0@dev",
+        "friendsofsymfony/elastica-bundle": "^3.1"
      },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
