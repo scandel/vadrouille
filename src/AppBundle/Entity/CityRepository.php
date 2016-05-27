@@ -45,9 +45,9 @@ class CityRepository extends Repository
             "country = doc['country.code'].value;
             note = doc['note'].value;
             if (country == here) {
-                return _score * note * turbo / max
+                return note * turbo / max
              };
-             return _score * note / max;",
+             return note / max;", // on peut aussi multiplier par _score, mais les résultats sont parfois bizzares
             array(
                 "here" => "fr",   // Minuscules !!! très très important !!!
                 "turbo" => 20,
