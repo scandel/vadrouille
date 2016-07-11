@@ -54,7 +54,7 @@
 
     {# Zone actions#}
     <div class="col-xs-2 text-center">
-        <a class="btn btn-default btn-sm" href="{{ path('covoiturage_view', { 'id': trip.id }) }}"><span class="glyphicon glyphicon-circle-arrow-right"></span></a><br>
+        <a class="btn btn-default btn-sm" href="{{ app.request.baseUrl ~ trip.url }}"><span class="glyphicon glyphicon-circle-arrow-right"></span></a><br>
         <a class="btn btn-default btn-sm" href="{{ path('covoiturage_delete', { 'id': trip.id }) }}"><span class="glyphicon glyphicon-remove"></span></a><br>
         <a class="btn btn-default btn-sm" href="{{ path('covoiturage_edit', { 'id': trip.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
     </div>

@@ -319,7 +319,6 @@ class Trip
         }
     }
 
-
     /**
      * Set depTime
      *
@@ -746,5 +745,71 @@ class Trip
     public function getContact()
     {
         return $this->contact;
+    }
+
+    /**
+     * Constructs trip url.
+     * $stop1 and $stop2 are optional arguments describing which stops are departure and arrival
+     * (if null, first and last stops will be used)
+     * Si env=dev, rajout du app_dev.php dans le twig
+     *
+     * @param $stop1 : Stop | string (stop city slug) | integer, delta (nb of the stop in the stops :  0 = first, 1 = second ...)
+     * @param $stop2 : Stop | string (stop city slug) | integer, delta (nb of the stop in the stops : 0 = first, 1 = second ...)
+     *
+     * returns string : the trip url, like : /covoiturage/stop1-city-name-slug/stop2-city-name-slug/tripid
+     */
+    public function getUrl($stop1 = null, $stop2 = null) {
+
+        // get stops as an array
+        $this->orderStops();
+        $stops = $this->stops->getValues();
+
+        // Stop 1 or first
+        if ($stop1 == null) {
+            $stop1 = $this->stops->first();
+        }
+        else {
+            $stop1exists = false;
+            foreach ($stops as $stop) {
+                if (   ($stop1 instanceof Stop && $stop1->getId() == $stop->getId())
+                    || (is_integer($stop1) && $stop1 == $stop->getDelta())  // We expect a delta)
+                    || (is_string($stop1) && $stop1 = $stop->getCity()->getSlug()) ) {
+                    $stop1exists = true;
+                    $stop1 = $stop;
+                    break;
+                }
+            }
+            if (!$stop1exists) {
+                $stop1 = $this->stops->first();
+            }
+        }
+
+        // Stop 2 or last
+        if ($stop2 == null) {
+            $stop2 = $this->stops->last();
+        }
+        else {
+            $stop2exists = false;
+            foreach ($stops as $stop) {
+                if (   ($stop2 instanceof Stop && $stop2->getId() == $stop->getId())
+                    || (is_integer($stop2) && $stop2 == $stop->getDelta())  // We expect a delta)
+                    || (is_string($stop2) && $stop2 = $stop->getCity()->getSlug()) ) {
+                    $stop2exists = true;
+                    $stop2 = $stop;
+                    break;
+                }
+            }
+            if (!$stop2exists) {
+                $stop2 = $this->stops->last();
+            }
+        }
+
+        // Build url
+        $url = '/covoiturage'
+             . '/' . $stop1->getCity()->getSlug()
+             . '/' . $stop2->getCity()->getSlug()
+             . '/' . $this->getId();
+
+        return $url;
     }
 }

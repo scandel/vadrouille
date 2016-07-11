@@ -243,14 +243,19 @@ class TripController extends Controller
 
     /**
      * Finds and displays a Trip entity.
+     * city1 and city2 parameters are city slugs of the trip stops.
+     * id is trip id.
      *
-     * @Route("/{id}", name="covoiturage_view")
+     * @Route("/{city1}/{city2}/{id}", name="covoiturage_view")
      */
-    public function viewAction(Trip $trip)
+    public function viewAction($city1, $city2, $id)
     {
-        if (!$trip) {
+        $em = $this->getDoctrine()->getManager();
+        $trip = $em->getRepository('AppBundle:Trip')->find($id);
+
+        /*if (!$trip) {
             throw $this->createNotFoundException('Covoiturage non trouvé.');
-        }
+        }*/
 
         return $this->render('pages/trip/view.html.twig', array(
             'trip' => $trip,
