@@ -27,6 +27,7 @@ class AppKernel extends Kernel
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Craue\FormFlowBundle\CraueFormFlowBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
+            new Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle(),
             // Admin
             new Sonata\CoreBundle\SonataCoreBundle(),
             new Sonata\BlockBundle\SonataBlockBundle(),

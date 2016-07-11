@@ -36,6 +36,13 @@ class Country
     private $note;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="languages", type="simple_array")
+     */
+    private $languages;
+
+    /**
      * Set code
      *
      * @param string $code

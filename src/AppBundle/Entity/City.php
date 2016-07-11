@@ -22,7 +22,7 @@ class City
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="CityName", mappedBy="city")
+     * @ORM\OneToMany(targetEntity="CityName", mappedBy="city", cascade={"persist", "remove"})
      */
     private $names;
 
@@ -293,6 +293,14 @@ class City
         $this->names->removeElement($name);
     }
 
+    /**
+     * Returns the main name (entity CityName) of the city (if it has sevral ones),
+     * for given language.
+     * If language is not specified, returns main name or any name in any language existing.
+     *
+     * @param string $language
+     * @return mixed|null|string
+     */
     public function getMainName($language = "")
     {
         $namesInLanguage = array();
@@ -313,15 +321,42 @@ class City
             return $this->names->first();
         }
         else {
-            return null;
+            return '';
         }
     }
 
+    /**
+     * Returns the main name (string) of the city (if it has sevral ones),
+     * for given language.
+     * If language is not specified, returns main name or any name in any language existing.
+     *
+     * @param string $language
+     * @return string
+     */
     public function getName($language = "")
     {
         $mainName = $this->getMainName($language);
         if ($mainName) {
             return $mainName->getName();
+        }
+        else {
+            return "";
+        }
+    }
+
+     /**
+     * Returns the main name slug (string) of the city (if it has sevral ones),
+     * for given language.
+     * If language is not specified, returns main name slug or any name slug in any language existing.
+     *
+     * @param string $language
+     * @return string
+     */
+    public function getSlug($language = "")
+    {
+        $mainName = $this->getMainName($language);
+        if ($mainName) {
+            return $mainName->getSlug();
         }
         else {
             return "";

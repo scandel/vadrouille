@@ -3,12 +3,14 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * CityName
  *
  * @ORM\Table(name="CitiesNames")
- * @ORM\Entity(repositoryClass="AppBundle\Entity\CityNameRepository")
+ * @ORM\Entity
+ * @UniqueEntity("slug")
  */
 class CityName
 {
@@ -42,9 +44,19 @@ class CityName
     private $normName;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $slugNotUnique;
+
+    /**
+     * @ORM\Column(name="slug", type="string", length=255, unique=true, nullable=true)
+     */
+    private $slug;
+
+    /**
      * @var string
      *
-     * @ORM\Column(name="language", type="string", length=5, )
+     * @ORM\Column(name="language", type="string", length=5)
      */
     private $language = 'fr';
 
@@ -188,5 +200,51 @@ class CityName
     public function getMain()
     {
         return $this->main;
+    }
+
+    /**
+     * Set slugNotUnique
+     *
+     * @param string $slugNotUnique
+     * @return CityName
+     */
+    public function setSlugNotUnique($slugNotUnique)
+    {
+        $this->slugNotUnique = $slugNotUnique;
+
+        return $this;
+    }
+
+    /**
+     * Get slugNotUnique
+     *
+     * @return string 
+     */
+    public function getSlugNotUnique()
+    {
+        return $this->slugNotUnique;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return CityName
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string 
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
