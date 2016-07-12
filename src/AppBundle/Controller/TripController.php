@@ -286,22 +286,23 @@ class TripController extends Controller
         $em = $this->getDoctrine()->getManager();
         $maxTrips = $this->container->getParameter('max_trips_search_page');
         // Paginated results here !
-        $trips = $em->getRepository('AppBundle:Trip')->search($tripSearch, $page, $maxTrips);
+        // each result has a "trip", and can have a "dep" (delta of departure stop"), and a "arr" (delta...)
+        $results = $em->getRepository('AppBundle:Trip')->search($tripSearch, $page, $maxTrips);
 
         $pagination = array(
             'route' => 'covoiturage_find', // Todo : replace by the actual route (ex covoiturage/paris/lyon)
             'route_params' => array(),
             'word' =>'Trajets',
-            'total' => count($trips), // total of query results (not only those listed on the page)
+            'total' => count($results), // total of query results (not only those listed on the page)
             'page' => $page,
-            'pages_count' => ceil(count($trips) / $maxTrips),
+            'pages_count' => ceil(count($results) / $maxTrips),
             'per_page' => $maxTrips
         );
 
         return $this->render('pages/trip/list.html.twig', array(
             'h1' => "Tous les covoiturages",
             'form' => $tripSearchForm->createView(),
-            'trips' => $trips,
+            'results' => $results,
             'pagination' => $pagination,
         ));
 

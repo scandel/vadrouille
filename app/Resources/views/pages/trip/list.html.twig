@@ -25,13 +25,16 @@
                 </div>
 
                 <table class="table table-striped table-hover" width="100%">
-                {% for trip in trips %}
+                {% for result in results %}
+
+                    {% set trip = result.trip %}
                     {% set stops = trip.stops %}
-                    {#{% set driver = trip.driver %}#}
+                    {% set depDelta = (result.dep is defined) ? result.dep : 0 %}
+                    {% set arrDelta = (result.arr is defined) ? result.arr : (trip.numberofstops-1) %}
+                    {#{% set driver = trip.driver %} #}
                     {% include "components/tripline.html.twig" %}
                 {% endfor %}
                 </table>
-                {# {{ dump(trips) }} #}
 
                 {# Pagination #}
                 <div class="pull-right">

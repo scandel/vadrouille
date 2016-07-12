@@ -25,7 +25,7 @@ class TripRepository extends EntityRepository
         // ORM Query Builder
         $qb= $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('t')
+        $qb->select('t AS trip')
             ->from('AppBundle:Trip', 't');
 
         $parameters = array();
@@ -34,12 +34,14 @@ class TripRepository extends EntityRepository
         if ($tripSearch->getDepCity()) {
             $qb->innerJoin('t.stops', 'd', 'WITH', 'd.city = :depCity');
             $parameters['depCity'] = $tripSearch->getDepCity();
+            $qb->addSelect('d.delta AS dep');
         }
 
         // Arrival City is given
         if ($tripSearch->getArrCity()) {
             $qb->innerJoin('t.stops', 'a', 'WITH', 'a.city = :arrCity');
             $parameters['arrCity'] = $tripSearch->getArrCity();
+            $qb->addSelect('a.delta AS arr');
         }
 
         // Order between departure and arrival

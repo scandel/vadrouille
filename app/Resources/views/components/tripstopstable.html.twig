@@ -3,8 +3,7 @@
 <table class="table trip-stops">
 {% for stop in stops %}
 
-    {# {% set class_line = (stop.id == trip.dep_city_id) ? "dep" : ((stop.id == trip.arr_city_id) ? "arr" : "") %}#}
-    {% set class_line = 'myclass' %}
+    {% set class_line = (stop.delta == depDelta) ? "dep" : ((stop.delta == arrDelta) ? "arr" : "") %}
 
     <tr{{ class_line ? (' class="' ~ class_line ~ '"')|raw }}>
         <td class="time">
