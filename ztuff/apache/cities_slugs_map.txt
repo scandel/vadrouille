@@ -1,3 +1,0 @@
-#
-# Rewriting old to new city slugs (only the non-equals are listed here)
-#
