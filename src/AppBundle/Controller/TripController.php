@@ -253,12 +253,35 @@ class TripController extends Controller
         $em = $this->getDoctrine()->getManager();
         $trip = $em->getRepository('AppBundle:Trip')->find($id);
 
-        /*if (!$trip) {
+        if (!$trip) {
             throw $this->createNotFoundException('Covoiturage non trouvé.');
-        }*/
+        }
+
+        // Retrieve dep and arr Cities and stop.delta
+        $depCityName = $em->getRepository('AppBundle:CityName')->findOneBySlug($city1);
+        $arrCityName = $em->getRepository('AppBundle:CityName')->findOneBySlug($city2);
+
+        $depDelta = $arrDelta = null;
+        foreach ($trip->getStops() as $stop) {
+            if ($stop->getCity()->getId() == $depCityName->getCity()->getId()) {
+                $depDelta = $stop->getDelta();
+            }
+            else if ($stop->getCity()->getId() == $arrCityName->getCity()->getId()) {
+                $arrDelta = $stop->getDelta();
+            }
+        }
+
+        if (is_null($depDelta) || is_null($arrDelta)) {
+            // Vague message for not showing indications to bots
+            throw $this->createNotFoundException('Covoiturage non trouvé.');
+        }
 
         return $this->render('pages/trip/view.html.twig', array(
             'trip' => $trip,
+            'depDelta' => $depDelta,
+            'arrDelta' => $arrDelta,
+            'depCityName' => $depCityName,
+            'arrCityName' => $arrCityName,
         ));
     }
 

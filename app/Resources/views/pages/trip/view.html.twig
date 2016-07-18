@@ -13,7 +13,7 @@
     {{ block('head_map_scripts') }}
 {% endblock head_script %}
 
-{% block headline %}Covoiturage XXX{% endblock %}
+{% block headline %}Covoiturage {{ depCityName.name }} {{ arrCityName.name }} - {{ depDelta }} --> {{ arrDelta }}{% endblock %}
 
 {% block content %}
     <div class="row">
