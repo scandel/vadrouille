@@ -4,6 +4,10 @@
 <div id="search-form" class="form-inline">
     {{ form_start(form) }}
     {{ form_row(form.depCity) }}
+    <button id="invert-button" type="button" class="btn btn-default btn-xs"
+            title="Inverser le départ et l'arrivée">
+        <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+    </button>
     {{ form_row(form.arrCity) }}
     {{ form_row(form.date) }}
     {{ form_widget(form.search) }}

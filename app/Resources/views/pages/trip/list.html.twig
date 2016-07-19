@@ -49,3 +49,10 @@
    </div>
     </div>
 {% endblock content %}
+
+{% block body_end %}
+    {# JS for interverting departure and arrival #}
+    {% javascripts 'bundles/app/js/specific/search-form.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock body_end %}
