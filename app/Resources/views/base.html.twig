@@ -116,6 +116,9 @@
     {% javascripts 'bundles/app/js/global/*' %}
     <script type="text/javascript" src="{{ asset_url }}"></script>
     {% endjavascripts %}
+    {% javascripts 'bundles/app/js/locales/*' %}
+    {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('bundles/app/js/locales/' ~ app.request.locale  ~ '/bootstrap-datepicker.min.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
