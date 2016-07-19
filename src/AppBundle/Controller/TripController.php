@@ -16,6 +16,7 @@ use AppBundle\Entity\Stop;
 use AppBundle\Entity\TripSearch;
 use AppBundle\Form\Trip\TripType;
 use AppBundle\Form\Trip\TripSearchType;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 
 /**
@@ -238,7 +239,7 @@ class TripController extends Controller
         $em->remove($entity);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('covoiturage_find'));
+        return $this->redirect($this->generateUrl('covoiturage_all'));
     }
 
     /**
@@ -286,25 +287,90 @@ class TripController extends Controller
     }
 
     /**
-     * Lists all Trip entities.
+     * Lists trip entities based on search query,
+     * parameters passed in url.
      * Paginated (?page=x)
      *
-     * @Route("/", name="covoiturage_find")
+     * URL forms :
+     * /covoiturage/slug-dep_city/slug-arr-city
+     * /covoiturage/depart/slug-dep_city
+     * /covoiturage/arrivee/slug-arr-city
+     * /covoiturage  --> all trips
+     *
+     * Parameters :
+     * ?date=YYYYmmdd (default '')
+     * ?page=n (default 1)
+     *
+     * @Route("/{city1}/{city2}", name="covoiturage_from_to")
+     * @Route("/depart/{city1}", defaults={"city2" = ""}, name="covoiturage_from")
+     * @Route("/arrivee/{city2}", defaults={"city1" = ""}, name="covoiturage_to")
+     * @Route("/", defaults={"city1" = "", "city2" = ""}, name="covoiturage_all")
      */
-    public function listAction(Request $request)
+    public function listAction($city1, $city2, Request $request)
     {
-        // Page of results
+        // Page of results (query parameter)
         $page = $request->query->get('page',1);
+
+        // Date (query parameter)
+        $dateString = $request->query->get('date','');
+        $date = ($dateString) ? new \DateTime($dateString) : '';
+
+        // Dep and arr cities: fill the TripSearch object
+        $em = $this->getDoctrine()->getManager();
 
         $tripSearch = new TripSearch();
 
+        if ($city1 == 'depart' && !empty($city2)) {
+            $depCityName = $em->getRepository('AppBundle:CityName')->findOneBySlug($city2);
+            if ($depCityName) {
+                $tripSearch->setDepCity($depCityName->getCity());
+                $h1 = "Covoiturages depuis " . $depCityName->getName();
+            }
+            else {
+                // todo : message flash d'erreur
+            }
+        }
+        else if ($city1 == 'arrivee' && !empty($city2)) {
+            $arrCityName = $em->getRepository('AppBundle:CityName')->findOneBySlug($city2);
+            if ($arrCityName) {
+                $tripSearch->setArrCity($arrCityName->getCity());
+                $h1 = "Covoiturages vers " . $arrCityName->getName();
+            }
+            else {
+                // todo : message flash d'erreur
+            }
+        }
+        else if (!empty($city1) && !empty($city2)) {
+            $depCityName = $em->getRepository('AppBundle:CityName')->findOneBySlug($city1);
+            if ($depCityName) {
+                $tripSearch->setDepCity($depCityName->getCity());
+                $h1 = "Covoiturages " . $depCityName->getName() ;
+            }
+            else {
+                // todo : message flash d'erreur
+            }
+            $arrCityName = $em->getRepository('AppBundle:CityName')->findOneBySlug($city2);
+            if ($arrCityName) {
+                $tripSearch->setArrCity($arrCityName->getCity());
+                $h1 .= " " . $arrCityName->getName();
+            }
+            else {
+                // todo : message flash d'erreur
+            }
+        }
+        else {
+            $h1 = "Tous les covoiturages";
+        }
+
+        if (!empty($date)) {
+            $tripSearch->setDate($date);
+        }
+
         $tripSearchForm =  $this->createForm('app_trip_search', $tripSearch, array(
-            'action' => $this->generateUrl('covoiturage_find'),
+            'action' => $this->generateUrl('covoiturage_search_rewrite'),
             'method' => 'POST',
         ));
 
-        $tripSearchForm->handleRequest($request);
-        $tripSearch = $tripSearchForm->getData();
 
         $em = $this->getDoctrine()->getManager();
         $maxTrips = $this->container->getParameter('max_trips_search_page');
@@ -313,7 +379,7 @@ class TripController extends Controller
         $results = $em->getRepository('AppBundle:Trip')->search($tripSearch, $page, $maxTrips);
 
         $pagination = array(
-            'route' => 'covoiturage_find', // Todo : replace by the actual route (ex covoiturage/paris/lyon)
+            'route' => 'covoiturage_all', // Todo : replace by the actual route (ex covoiturage/paris/lyon)
             'route_params' => array(),
             'word' =>'Trajets',
             'total' => count($results), // total of query results (not only those listed on the page)
@@ -323,12 +389,75 @@ class TripController extends Controller
         );
 
         return $this->render('pages/trip/list.html.twig', array(
-            'h1' => "Tous les covoiturages",
+            'h1' => $h1,
             'form' => $tripSearchForm->createView(),
             'results' => $results,
             'pagination' => $pagination,
         ));
+    }
+
+    /**
+     * Rewrites search url according to search form
+     *
+     * @Route("/recherche", name="covoiturage_search_rewrite")
+     * @Method({"GET", "POST"})
+     */
+    public function rewriteSearchUrl(Request $request) {
+        // Handles form
+        $tripSearch = new TripSearch();
+        $tripSearchForm =  $this->createForm('app_trip_search', $tripSearch, array());
+        $tripSearchForm->handleRequest($request);
+
+        if ($tripSearchForm->isValid()) {
+            $tripSearch = $tripSearchForm->getData();
+
+            //== dep and arr cities
+
+            $dep = ($tripSearch->getDepCity()) ? true : false;
+            $arr = ($tripSearch->getArrCity()) ? true : false;
+
+            if ($dep && $arr) {
+                $route = 'covoiturage_from_to';
+                $params = array(
+                    'city1' => $tripSearch->getDepCity()->getSlug(),
+                    'city2' => $tripSearch->getArrCity()->getSlug()
+                );
+            }
+            else if ($dep) {
+                $route = 'covoiturage_from';
+                $params = array(
+                    'city1' => $tripSearch->getDepCity()->getSlug()
+                );
+            }
+            else if ($arr) {
+                $route = 'covoiturage_to';
+                $params = array(
+                    'city2' => $tripSearch->getArrCity()->getSlug()
+                );
+            }
+            else {
+                $route = 'covoiturage_all';
+                $params = array();
+            }
+
+            //== add date as query parameter
+            if ($date = $tripSearch->getDate()) {
+                $params['date'] = $tripSearch->getDate()->format('Y-m-d');
+            }
+
+            return $this->redirect($this->generateUrl($route, $params));
+        }
+
+        return $this->render('pages/trip/list.html.twig', array(
+            'h1' => "Recherche de covoiturages",
+            'form' => $tripSearchForm->createView(),
+            'results' => null,
+            'pagination' => array(
+                'total' => 0
+            ),
+        ));
 
     }
+
 
 }
