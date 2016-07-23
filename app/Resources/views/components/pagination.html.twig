@@ -12,7 +12,7 @@
 #}
 
 <nav>
-    {% if pagination.word is defined %}
+     {% if pagination.word is defined %}
         <span class="pagination-count">
             {{ pagination.word }}
             <strong>{{ (pagination.page-1) * pagination.per_page + 1 }} -

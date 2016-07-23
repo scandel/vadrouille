@@ -366,6 +366,19 @@ class TripController extends Controller
             $tripSearch->setDate($date);
         }
 
+        // Current route & parameters, without page query parameter
+        $routeName = $request->get('_route');
+
+        $queryString = $request->getQueryString();
+        parse_str($queryString,$queryParams);
+        if (isset($queryParams['page'])) {
+            unset($queryParams['page']);
+        }
+        $queryParams['city1'] = $city1;
+        $queryParams['city2'] = $city2;
+
+
+
         $tripSearchForm =  $this->createForm('app_trip_search', $tripSearch, array(
             'action' => $this->generateUrl('covoiturage_search_rewrite'),
             'method' => 'POST',
@@ -379,8 +392,8 @@ class TripController extends Controller
         $results = $em->getRepository('AppBundle:Trip')->search($tripSearch, $page, $maxTrips);
 
         $pagination = array(
-            'route' => 'covoiturage_all', // Todo : replace by the actual route (ex covoiturage/paris/lyon)
-            'route_params' => array(),
+            'route' => $routeName,
+            'route_params' => $queryParams,
             'word' =>'Trajets',
             'total' => count($results), // total of query results (not only those listed on the page)
             'page' => $page,
