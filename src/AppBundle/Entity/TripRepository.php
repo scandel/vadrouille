@@ -49,7 +49,7 @@ class TripRepository extends EntityRepository
             $qb->andWhere('d.delta < a.delta');
         }
         else if ($tripSearch->getArrCity()) {
-            $qb->andWhere('a.delta > 1');
+            $qb->andWhere('a.delta > 0');
         }
         else if ($tripSearch->getDepCity()) {
             // Add a fake arrival to simulate it is not the last stop

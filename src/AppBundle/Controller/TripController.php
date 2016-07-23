@@ -377,13 +377,10 @@ class TripController extends Controller
         $queryParams['city1'] = $city1;
         $queryParams['city2'] = $city2;
 
-
-
         $tripSearchForm =  $this->createForm('app_trip_search', $tripSearch, array(
             'action' => $this->generateUrl('covoiturage_search_rewrite'),
             'method' => 'POST',
         ));
-
 
         $em = $this->getDoctrine()->getManager();
         $maxTrips = $this->container->getParameter('max_trips_search_page');
