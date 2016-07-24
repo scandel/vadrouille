@@ -28,6 +28,10 @@ class TripRepository extends EntityRepository
         $qb->select('t AS trip')
             ->from('AppBundle:Trip', 't');
 
+        // Trip must be 'current', updated by a cron every 5 minutes
+        // todo: index on current
+        $qb->where('t.current = 1');
+
         $parameters = array();
 
         // Departure City is given
@@ -59,18 +63,18 @@ class TripRepository extends EntityRepository
         // Date is given
         if ($tripSearch->getDate()) {
             // Must match if this is the one date of the trip (single trip)
-            // OR if the given date is in the days of a regular trip
+            // OR if the given date is in the days of a regular trip,
+            // and the date is beetween begin_date and end_date
             // todo : speed up this part ? index ON days ?
-            $qb->andwhere('(t.regular=0 AND t.depDate = :date) OR (t.regular=1 AND t.days LIKE :day)');
+
+            $qb->andwhere('(t.regular=0 AND t.depDate = :date)
+                        OR (t.regular=1 AND t.days LIKE :day AND :date BETWEEN t.beginDate AND t.endDate)');
             $parameters['date'] = $tripSearch->getDate()->format('Y-m-d');
             $day  = ($tripSearch->getDate()->format('w') == '0') ? '7' : $tripSearch->getDate()->format('w');
             $parameters['day'] = "%$day%";
-        }
-        else {
-            // Just use 'current', updated by a cron every 5 minutes
-            $qb->andwhere('t.current = 1');
-        }
 
+        }
+       // Else: just do nothing ; the trip must be 'current', already asked.
 
         // Order
         $qb->orderBy('t.nextDateTime');

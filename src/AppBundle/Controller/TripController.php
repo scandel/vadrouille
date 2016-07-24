@@ -402,6 +402,7 @@ class TripController extends Controller
             'h1' => $h1,
             'form' => $tripSearchForm->createView(),
             'results' => $results,
+            'depDate' => $date,
             'pagination' => $pagination,
         ));
     }

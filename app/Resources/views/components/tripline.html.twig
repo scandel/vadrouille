@@ -2,15 +2,22 @@
 {# Variables : trip, stops, driver #}
 
 <tr class="trip-line row"  {#onclick="location.href='{{ trip.url }}';"#} ><td>
-    {# Date et régularité #}
+    {# Date et régularité - if reserach has been done with a date, we have a 'date" variable #}
     <div class="col-xs-12">
-        {# Date #}
-        {% if trip.nextDateTime|date("Y-m-d") == "now"|date("Y-m-d") %}
-            <time datetime='{{ trip.nextDateTime|date("Y-m-d H:i:s") }}' class="h4">Aujourd'hui - {{ trip.nextDateTime|date('H\\hi') }}</time>
-        {% elseif  trip.nextDateTime|date("Y-m-d") == "tomorrow"|date("Y-m-d") %}
-            <time datetime='{{ trip.nextDateTime|date("Y-m-d H:i:s") }}' class="h4">Demain - {{ trip.nextDateTime|date("H\\hi") }}</time>
+        {# Wich date to use ? #}
+        {% if trip.regular and depDate %}
+            {% set dateOfTrip = depDate %}
         {% else %}
-            <time datetime='{{ trip.nextDateTime|date("Y-m-d H:i:s") }}' class="h4">{{ trip.nextDateTime|localizeddate('full','full',NULL,NULL,"EEEE d MMMM - HH'h'mm")|capitalize }}</time>
+            {% set dateOfTrip = trip.nextDateTime %}
+        {% endif %}
+
+        {# Date #}
+        {% if dateOfTrip|date("Y-m-d") == "now"|date("Y-m-d") %}
+            <time datetime='{{ dateOfTrip|date("Y-m-d")}} {{ trip.depTime|date("H:i:s") }}' class="h4">Aujourd'hui - {{ trip.depTime|date('H\\hi') }}</time>
+        {% elseif  dateOfTrip|date("Y-m-d") == "tomorrow"|date("Y-m-d") %}
+            <time datetime='{{ dateOfTrip|date("Y-m-d")}} {{ trip.depTime|date("H:i:s") }}' class="h4">Demain - {{ trip.depTime|date("H\\hi") }}</time>
+        {% else %}
+            <time datetime='{{ dateOfTrip|date("Y-m-d")}} {{ trip.depTime|date("H:i:s") }}' class="h4">{{ dateOfTrip|localizeddate('full','full',NULL,NULL,"EEEE d MMMM")|capitalize }} - {{ trip.depTime|date("H\\hi") }}</time>
         {% endif %}
 
         {# Régulier #}
@@ -53,8 +60,10 @@
     </div>
 
     {# Zone actions#}
+    {% set tripUrl = app.request.baseUrl ~ trip.url(depDelta, arrDelta) ~ ((trip.regular and depDate) ? ('?date=' ~ dateOfTrip|date("Y-m-d")))  %}
+
     <div class="col-xs-2 text-center">
-        <a class="btn btn-default btn-sm" href="{{ app.request.baseUrl ~ trip.url(depDelta, arrDelta) }}"><span class="glyphicon glyphicon-circle-arrow-right"></span></a><br>
+        <a class="btn btn-default btn-sm" href="{{ tripUrl }}"><span class="glyphicon glyphicon-circle-arrow-right"></span></a><br>
         <a class="btn btn-default btn-sm" href="{{ path('covoiturage_delete', { 'id': trip.id }) }}"><span class="glyphicon glyphicon-remove"></span></a><br>
         <a class="btn btn-default btn-sm" href="{{ path('covoiturage_edit', { 'id': trip.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
     </div>
