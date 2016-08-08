@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * and have direct accessors to common properties
  *
 * @ORM\Entity
-* @ORM\Table(name="Persons")
+* @ORM\Table(name="prod.Persons")
 */
 class Person
 {

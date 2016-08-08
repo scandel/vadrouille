@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CarModel
  *
- * @ORM\Table(name="CarModels")
+ * @ORM\Table(name="static.CarModels")
  * @ORM\Entity
  */
 class CarModel

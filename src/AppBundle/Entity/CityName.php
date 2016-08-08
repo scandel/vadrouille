@@ -8,7 +8,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * CityName
  *
- * @ORM\Table(name="CitiesNames")
+ * @ORM\Table(name="static.CitiesNames")
  * @ORM\Entity
  * @UniqueEntity("slug")
  */

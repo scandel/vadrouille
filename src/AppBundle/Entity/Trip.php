@@ -10,7 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * Trip
  *
- * @ORM\Table(name="Trips")
+ * @ORM\Table(name="prod.Trips")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\TripRepository")
  * @ORM\HasLifecycleCallbacks()
  */

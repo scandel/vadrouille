@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * GeoZone
  *
- * @ORM\Table(name="GeoZones")
+ * @ORM\Table(name="static.GeoZones")
  * @ORM\Entity
  */
 class GeoZone
@@ -65,7 +65,7 @@ class GeoZone
 
     /**
      * @ORM\ManyToMany(targetEntity="GeoZone")
-     * @ORM\JoinTable(name="GeoZonesAdjacent",
+     * @ORM\JoinTable(name="static.GeoZonesAdjacent",
      *      joinColumns={@ORM\JoinColumn(name="zone1", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="zone2", referencedColumnName="id")}
      *      )

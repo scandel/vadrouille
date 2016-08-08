@@ -10,7 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
 * @ORM\Entity
-* @ORM\Table(name="Users")
+* @ORM\Table(name="prod.Users")
 * @ORM\HasLifecycleCallbacks
 */
 class User extends BaseUser

@@ -13,7 +13,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * A guest is used like an user for sending emails.
  *
 * @ORM\Entity
-* @ORM\Table(name="Guests")
+* @ORM\Table(name="prod.Guests")
 */
 class Guest
 {

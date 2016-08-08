@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Stop
  *
- * @ORM\Table(name="Stops")
+ * @ORM\Table(name="prod.Stops")
  * @ORM\Entity
  */
 class Stop

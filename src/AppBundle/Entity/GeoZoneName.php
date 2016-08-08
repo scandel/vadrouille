@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * GeoZoneName
  *
- * @ORM\Table(name="GeoZonesNames")
+ * @ORM\Table(name="static.GeoZonesNames")
  * @ORM\Entity
  */
 class GeoZoneName

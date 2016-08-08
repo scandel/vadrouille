@@ -62,18 +62,19 @@ doctrine:
         default_connection: default
         connections:
             default:
+                driver: pdo_pgsql
                 host: "%database_host%"
                 port: "%database_port%"
                 dbname: "%database_name%"
                 user: "%database_user%"
                 password: "%database_password%"
                 charset:  UTF8
-                driver: pdo_mysql
                 mapping_types:
                     enum: string
             source:
+                driver:     pdo_mysql
                 host:       195.154.227.86
-                port:       "%database_port%"
+                port:       null
                 dbname:     vadrouillecovo
                 user:       migrate_user
                 password:   mLWNeXfXvAxpYudj
