@@ -33,6 +33,7 @@ class LoadCountriesData extends AbstractFixture implements OrderedFixtureInterfa
             $entity->setCode($data['code']);
             $entity->setName($data['name']);
             $entity->setNote($data['note']);
+            $entity->setLanguages(explode(',',$data['languages']));
 
             $manager->persist($entity);
         }

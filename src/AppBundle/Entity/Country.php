@@ -110,4 +110,27 @@ class Country
     {
         return $this->note;
     }
+
+    /**
+     * Set languages
+     *
+     * @param array $languages
+     * @return Country
+     */
+    public function setLanguages($languages)
+    {
+        $this->languages = $languages;
+
+        return $this;
+    }
+
+    /**
+     * Get languages
+     *
+     * @return array 
+     */
+    public function getLanguages()
+    {
+        return $this->languages;
+    }
 }
