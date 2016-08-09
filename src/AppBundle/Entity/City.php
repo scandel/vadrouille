@@ -58,14 +58,14 @@ class City
     /**
      * @var string
      *
-     * @ORM\Column(name="lat", type="decimal", precision=7, scale=5)
+     * @ORM\Column(name="lat", type="decimal", precision=7, scale=5, nullable=true)
      */
     private $lat;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="lng", type="decimal", precision=7, scale=5)
+     * @ORM\Column(name="lng", type="decimal", precision=7, scale=5, nullable=true)
      */
     private $lng;
 
@@ -412,5 +412,34 @@ class City
     public function getZone2()
     {
         return $this->zone2;
+    }
+
+    /**
+     * Set center
+     *
+     * @param string WKT $center : 'SRID=3785;POINT(37.4220761 -122.0845187)' ou 'POINT(37.4220761 -122.0845187)'
+     * @return City
+     */
+    public function setCenter($center)
+    {
+        // WKT for a point  containing a SRID
+        if (preg_match('/^SRID=\d{4};POINT\([-.\d]+ [-.\d]+\)/i', $center)) {
+            $this->center = $center;
+        }
+        // WKT for a point  with no SRID: add default SRID
+        else if (preg_match('/^POINT\([-.\d]+ [-.\d]+\)/i', $center)) {
+            $this->center = 'SRID=4326;' . $center;
+        }
+        return $this;
+    }
+
+    /**
+     * Get center
+     *
+     * @return string (As_EWKT)
+     */
+    public function getCenter()
+    {
+        return $this->center;
     }
 }

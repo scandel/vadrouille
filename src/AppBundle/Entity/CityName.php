@@ -37,13 +37,6 @@ class CityName
     private $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="norm_name", type="string", length=255, nullable=false)
-     */
-    private $normName;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $slugNotUnique;
@@ -144,29 +137,6 @@ class CityName
     public function isMain()
     {
         return $this->main;
-    }
-
-    /**
-     * Set normName
-     *
-     * @param string $normName
-     * @return CityName
-     */
-    public function setNormName($normName)
-    {
-        $this->normName = $normName;
-
-        return $this;
-    }
-
-    /**
-     * Get normName
-     *
-     * @return string 
-     */
-    public function getNormName()
-    {
-        return $this->normName;
     }
 
     /**

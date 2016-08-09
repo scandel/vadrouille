@@ -38,7 +38,7 @@ class LoadCitiesData extends AbstractFixture implements OrderedFixtureInterface,
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . 'Resources/data/Cities/Cities_*.csv';
-        //    DIRECTORY_SEPARATOR . 'Resources/data/Cities/Cities_FR.csv';
+        //    DIRECTORY_SEPARATOR . 'Resources/data/Cities/Cities100.csv';
 
 
         $em = $this->container->get('doctrine')->getManager('default');
@@ -58,7 +58,7 @@ class LoadCitiesData extends AbstractFixture implements OrderedFixtureInterface,
             echo "Cities : Processing $filename ...\n";
 
             $rows = array_map('str_getcsv', file($filename));
-            $header = (isset($header)) ? $header : array_shift($rows) ;
+            $header = array_shift($rows) ;
             $csv = array();
             foreach ($rows as $row) {
                 $csv[] = array_combine($header, $row);
@@ -77,42 +77,39 @@ class LoadCitiesData extends AbstractFixture implements OrderedFixtureInterface,
 
                 $entity->setId(intval($data['id']))
                     ->setCountry($country)
-                    ->setPostCode($data['postal_code'])
-                    ->setLat($data['lat'])
-                    ->setLng($data['lng'])
+                    ->setPostCode($data['postCode'])
+                    ->setCenter($data['point'])
                     ->setNote($data['note']);
                 $em->persist($entity);
 
                 // Geozones
-                if (!empty($data['zone1'])) {
-                    $zone1 = $em->getRepository('AppBundle:GeoZone')->find($data['zone1']);
+                if (!empty($data['zone1_id']) && $data['zone1_id']!='NULL') {
+                    $zone1 = $em->getRepository('AppBundle:GeoZone')->find($data['zone1_id']);
                     $entity->setZone1($zone1);
                 }
-                if (!empty($data['zone2'])) {
-                    $zone2 = $em->getRepository('AppBundle:GeoZone')->find($data['zone2']);
+                if (!empty($data['zone2_id']) && $data['zone2_id']!='NULL') {
+                    $zone2 = $em->getRepository('AppBundle:GeoZone')->find($data['zone2_id']);
                     $entity->setZone2($zone2);
                 }
 
                 // City Name(s)
+                $names = explode(',', $data['names']);
+                $slugs = explode(',', $data['slugs']);
+                $languages = explode(',', $data['languages']);
+                $mains = explode(',', $data['mains']);
+                $citiesCount = min(count($names),count($slugs),count($languages),count($mains));
 
-                // Local name (french or not)
-                $name = new CityName();
-                $name->setCity($entity)
-                    ->setName($data['name'])
-                    ->setNormName($data['norm_name'])
-                    ->setLanguage(strtolower($data['country_code']));
-                $em->persist($name);
-
-                // French name also defined
-                if (!empty($data['french_name'])) {
-                    $frenchName = new CityName();
-                    $frenchName->setCity($entity)
-                        ->setName($data['french_name'])
-                        ->setNormName($data['norm_french_name'])
-                        ->setLanguage('fr');
-                    $em->persist($frenchName);
+                for($i=0; $i<$citiesCount; $i++) {
+                    $name = new CityName();
+                    $name->setCity($entity)
+                        ->setName($names[$i])
+                        ->setSlug($slugs[$i])
+                        ->setMain($mains[$i])
+                        ->setLanguage($languages[$i]);
+                    $em->persist($name);
                 }
-                if (($count % $batchSize) === 0) {
+
+                 if (($count % $batchSize) === 0) {
                     $em->flush();
                     $em->clear(); // Detaches all objects from Doctrine!
                 }
