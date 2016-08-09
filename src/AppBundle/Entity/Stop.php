@@ -60,6 +60,11 @@ class Stop
     private $lng;
 
     /**
+     * @ORM\Column(type="geometry", options={"geometry_type"="POINT", "srid"=4326})
+     */
+    private $point;
+
+    /**
      * @var : the time interval from departure (first stop) in seconds
      *
      * @ORM\Column(name="time", type="integer", nullable=true)

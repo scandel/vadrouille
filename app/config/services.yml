@@ -8,6 +8,12 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+    # ----- Doctrine - postgis types
+    doctrine_postgis_subscriber_default:
+        class: Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
     # ----- Twig Vendor
     twig.extension.intl:
         class: Twig_Extensions_Extension_Intl

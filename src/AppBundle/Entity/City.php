@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * City
  *
- * @ORM\Table(name="Cities")
+ * @ORM\Table(name="static.Cities")
  * @ORM\Entity
  */
 class City
@@ -68,6 +68,11 @@ class City
      * @ORM\Column(name="lng", type="decimal", precision=7, scale=5)
      */
     private $lng;
+
+    /**
+     * @ORM\Column(type="geometry", options={"geometry_type"="POINT", "srid"=4326})
+     */
+    private $center;
 
     /**
      * @var integer

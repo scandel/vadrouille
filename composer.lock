@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1a96971e4094b5f9cfd9871a23f9db54",
-    "content-hash": "8d1e3b62852e1998c7300925d5679207",
+    "hash": "66c4e1545935f1964765e6fa1ba30d3e",
+    "content-hash": "363c332ea5a2839905fc5fb372f722f0",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -184,7 +184,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craue/CraueFormFlowBundle/zipball/551482eadb8b5d9cacda46a8afa8108ae9e08cdb",
+                "url": "https://api.github.com/repos/craue/CraueFormFlowBundle/zipball/64bc0bfa0a4c3caea0c0b0c6fc8697f63d9cad76",
                 "reference": "08cd90cbaddc803010819d9d68f207a0513fc279",
                 "shasum": ""
             },
@@ -1200,7 +1200,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/d1fccc6335b74beca94525551cacc06b256ed261",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/42ad0730ee22406de20da75fa9a3f4d74c565a83",
                 "reference": "6ccff96434c0ac7fee077d1dce90966341dfd278",
                 "shasum": ""
             },
@@ -1617,6 +1617,68 @@
                 "webinterface"
             ],
             "time": "2013-06-08 14:08:19"
+        },
+        {
+            "name": "jsor/doctrine-postgis",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jsor/doctrine-postgis.git",
+                "reference": "25a6f87cba4ac0d643fde863bdbdfb2259ef89db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jsor/doctrine-postgis/zipball/25a6f87cba4ac0d643fde863bdbdfb2259ef89db",
+                "reference": "25a6f87cba4ac0d643fde863bdbdfb2259ef89db",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "~2.4",
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "doctrine/orm": "~2.4",
+                "fabpot/php-cs-fixer": "~1.6"
+            },
+            "suggest": {
+                "doctrine/orm": "For using with the Doctrine ORM"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jsor\\Doctrine\\PostGIS\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Sorgalla",
+                    "email": "jsorgalla@gmail.com",
+                    "homepage": "http://sorgalla.com"
+                }
+            ],
+            "description": "Spatial and Geographic Data with PostGIS and Doctrine.",
+            "keywords": [
+                "database",
+                "dbal",
+                "doctrine",
+                "geo",
+                "geography",
+                "geometry",
+                "gis",
+                "orm",
+                "postgis",
+                "spatial"
+            ],
+            "time": "2016-04-08 07:06:30"
         },
         {
             "name": "knplabs/knp-menu",
