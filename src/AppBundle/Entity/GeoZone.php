@@ -38,11 +38,11 @@ class GeoZone
     private $level;
 
     /**
-     * Local id of the zone ; ex 27 for Eure
+     * Local id of the zone ; ex 27 for Eure, 2A for Corse
      *
      * @var integer
      *
-     * @ORM\Column(name="localId", type="integer")
+     * @ORM\Column(name="localId", type="string", length=10)
      */
     private $localId;
 
