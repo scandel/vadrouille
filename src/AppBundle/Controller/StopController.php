@@ -29,8 +29,7 @@ class StopController extends Controller
             if ($stop->getCity()) {
 
                 // set lat and lng to the ones of the city
-                $stop->setLat($stop->getCity()->getLat());
-                $stop->setLng($stop->getCity()->getLng());
+                $stop->setLatLng($stop->getCity()->getLat(),$stop->getCity()->getLng());
 
                 $em->persist($stop);
                 $em->flush();
@@ -68,8 +67,7 @@ class StopController extends Controller
 
             if ($stop->getCity()) {
                 // set lat and lng to the ones of the city
-                $stop->setLat($stop->getCity()->getLat());
-                $stop->setLng($stop->getCity()->getLng());
+                $stop->setLatLng($stop->getCity()->getLat(),$stop->getCity()->getLng());
 
                 $em->persist($stop);
                 $em->flush();

@@ -91,8 +91,7 @@ class TripController extends Controller
                     $stop->setTrip($trip);
                     if ($stop->getLat() == null || $stop->getLng() == null) {
                         // set lat and lng to the ones of the city
-                        $stop->setLat($stop->getCity()->getLat());
-                        $stop->setLng($stop->getCity()->getLng());
+                        $stop->setLatLng($stop->getCity()->getLat(),$stop->getCity()->getLng());
                     }
                     $em->persist($stop);
                 }
@@ -163,8 +162,7 @@ class TripController extends Controller
                 foreach ($trip->getStops() as $stop) {
                     if ($stop->getLat() == 0 || $stop->getLng() == 0) {
                         // set lat and lng to the ones of the city
-                        $stop->setLat($stop->getCity()->getLat());
-                        $stop->setLng($stop->getCity()->getLng());
+                        $stop->setLatLng($stop->getCity()->getLat(),$stop->getCity()->getLng());
                     }
                     // Useful when a new stop is added
                     $stop->setTrip($trip);

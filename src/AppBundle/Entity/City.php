@@ -56,20 +56,6 @@ class City
     private $postCode;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="lat", type="decimal", precision=7, scale=5, nullable=true)
-     */
-    private $lat;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="lng", type="decimal", precision=7, scale=5, nullable=true)
-     */
-    private $lng;
-
-    /**
      * @ORM\Column(type="geometry", options={"geometry_type"="POINT", "srid"=4326})
      */
     private $center;
@@ -152,16 +138,61 @@ class City
     }
 
     /**
-     * Set lat
+     * Set center
      *
-     * @param string $lat
+     * @param string WKT $center : 'SRID=3785;POINT(37.4220761 -122.0845187)' ou 'POINT(37.4220761 -122.0845187)'
      * @return City
      */
-    public function setLat($lat)
+    public function setCenter($center, $srid=4326)
     {
-        $this->lat = $lat;
-
+        // WKT for a point  containing a SRID
+        if (preg_match('/^SRID=\d{4};POINT\([-.\d]+ [-.\d]+\)/i', $center)) {
+            $this->center = $center;
+        }
+        // WKT for a point  with no SRID: add default SRID
+        else if (preg_match('/^POINT\([-.\d]+ [-.\d]+\)/i', $center)) {
+            $this->center = "SRID=$srid;" . $center;
+        }
         return $this;
+    }
+
+    /**
+     * Get center
+     *
+     * @return string (As_EWKT)
+     */
+    public function getCenter()
+    {
+        return $this->center;
+    }
+
+    /**
+     * Set together lat and lng, via setCenter
+     *
+     * @param $lat: latitude
+     * @param $lng: longitude
+     * @param $srid: srid, default value 4326
+     * @return $this
+     */
+    public function setLatLng($lat, $lng, $srid=4326)
+    {
+        $wkt = sprintf("POINT(%f %f)",$lng,$lat);
+        return $this->setCenter($wkt,$srid);
+    }
+
+    /**
+     * Get together lat and lng from wkt
+     *
+     * @return array
+     */
+    public function getLatLng()
+    {
+        if (preg_match('/POINT\(([-.\d]+) ([-.\d])+\)/i', $this->center, $matches)) {
+            $lon = $matches[1];
+            $lat = $matches[2];
+            return array($lat, $lon);
+        }
+        else return null;
     }
 
     /**
@@ -171,20 +202,11 @@ class City
      */
     public function getLat()
     {
-        return $this->lat;
-    }
-
-    /**
-     * Set lng
-     *
-     * @param string $lng
-     * @return City
-     */
-    public function setLng($lng)
-    {
-        $this->lng = $lng;
-
-        return $this;
+        if (list($lat, $lng) = $this->getLatLng()) {
+            return $lat;
+        }
+        else
+            return null;
     }
 
     /**
@@ -194,32 +216,11 @@ class City
      */
     public function getLng()
     {
-        return $this->lng;
-    }
-
-    /**
-     * Set together lat and lng
-     *
-     * @param $lat
-     * @param $lng
-     * @return $this
-     */
-    public function setLatLng($lat, $lng)
-    {
-        $this->lat = $lat;
-        $this->lng = $lng;
-
-        return $this;
-    }
-
-    /**
-     * Get together lat and lng
-     *
-     * @return array
-     */
-    public function getLatLng()
-    {
-        return array($this->lat, $this->lng);
+        if (list($lat, $lng) = $this->getLatLng()) {
+            return $lng;
+        }
+        else
+            return null;
     }
 
     /**
@@ -414,32 +415,4 @@ class City
         return $this->zone2;
     }
 
-    /**
-     * Set center
-     *
-     * @param string WKT $center : 'SRID=3785;POINT(37.4220761 -122.0845187)' ou 'POINT(37.4220761 -122.0845187)'
-     * @return City
-     */
-    public function setCenter($center)
-    {
-        // WKT for a point  containing a SRID
-        if (preg_match('/^SRID=\d{4};POINT\([-.\d]+ [-.\d]+\)/i', $center)) {
-            $this->center = $center;
-        }
-        // WKT for a point  with no SRID: add default SRID
-        else if (preg_match('/^POINT\([-.\d]+ [-.\d]+\)/i', $center)) {
-            $this->center = 'SRID=4326;' . $center;
-        }
-        return $this;
-    }
-
-    /**
-     * Get center
-     *
-     * @return string (As_EWKT)
-     */
-    public function getCenter()
-    {
-        return $this->center;
-    }
 }

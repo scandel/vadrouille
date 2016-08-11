@@ -46,20 +46,6 @@ class Stop
     private $place;
 
     /**
-     * @var float : latitude
-     *
-     * @ORM\Column(name="lat", type="decimal", precision=7, scale=5)
-     */
-    private $lat;
-
-    /**
-     * @var float: longitude
-     *
-     * @ORM\Column(name="lng", type="decimal", precision=7, scale=5)
-     */
-    private $lng;
-
-    /**
      * @ORM\Column(type="geometry", options={"geometry_type"="POINT", "srid"=4326})
      */
     private $point;
@@ -179,78 +165,7 @@ class Stop
     {
         return $this->place;
     }
-
-    /**
-     * Set lat
-     *
-     * @param string $lat
-     * @return Stop
-     */
-    public function setLat($lat)
-    {
-        $this->lat = $lat;
-
-        return $this;
-    }
-
-    /**
-     * Get lat
-     *
-     * @return string 
-     */
-    public function getLat()
-    {
-        return $this->lat;
-    }
-
-    /**
-     * Set lng
-     *
-     * @param string $lng
-     * @return Stop
-     */
-    public function setLng($lng)
-    {
-        $this->lng = $lng;
-
-        return $this;
-    }
-
-    /**
-     * Get lng
-     *
-     * @return string 
-     */
-    public function getLng()
-    {
-        return $this->lng;
-    }
-
-    /**
-     * Set together lat and lng
-     *
-     * @param $lat
-     * @param $lng
-     * @return $this
-     */
-    public function setLatLng($lat, $lng)
-    {
-        $this->lat = $lat;
-        $this->lng = $lng;
-
-        return $this;
-    }
-
-    /**
-     * Get together lat and lng
-     *
-     * @return array
-     */
-    public function getLatLng()
-    {
-        return array($this->lat, $this->lng);
-    }
-
+    
     /**
      * Set time
      *
@@ -296,4 +211,91 @@ class Stop
     {
         return $this->price;
     }
+
+    /**
+     * Set point
+     *
+     * @param string WKT $point : 'SRID=3785;POINT(37.4220761 -122.0845187)' ou 'POINT(37.4220761 -122.0845187)'
+     * @return City
+     */
+    public function setPoint($point, $srid=4326)
+    {
+        // WKT for a point  containing a SRID
+        if (preg_match('/^SRID=\d{4};POINT\([-.\d]+ [-.\d]+\)/i', $point)) {
+            $this->point = $point;
+        }
+        // WKT for a point  with no SRID: add default SRID
+        else if (preg_match('/^POINT\([-.\d]+ [-.\d]+\)/i', $point)) {
+            $this->point = "SRID=$srid;" . $point;
+        }
+        return $this;
+    }
+
+    /**
+     * Get point
+     *
+     * @return string (As_EWKT)
+     */
+    public function getPoint()
+    {
+        return $this->point;
+    }
+
+    /**
+     * Set together lat and lng, via setCenter
+     *
+     * @param $lat: latitude
+     * @param $lng: longitude
+     * @param $srid: srid, default value 4326
+     * @return $this
+     */
+    public function setLatLng($lat, $lng, $srid=4326)
+    {
+        $wkt = sprintf("POINT(%f %f)",$lng,$lat);
+        return $this->setPoint($wkt,$srid);
+    }
+
+    /**
+     * Get together lat and lng from wkt
+     *
+     * @return array
+     */
+    public function getLatLng()
+    {
+        if (preg_match('/POINT\(([-.\d]+) ([-.\d])+\)/i', $this->point, $matches)) {
+            $lon = $matches[1];
+            $lat = $matches[2];
+            return array($lat, $lon);
+        }
+        else return null;
+    }
+
+    /**
+     * Get lat
+     *
+     * @return string
+     */
+    public function getLat()
+    {
+        if (list($lat, $lng) = $this->getLatLng()) {
+            return $lat;
+        }
+        else
+            return null;
+    }
+
+    /**
+     * Get lng
+     *
+     * @return string
+     */
+    public function getLng()
+    {
+        if (list($lat, $lng) = $this->getLatLng()) {
+            return $lng;
+        }
+        else
+            return null;
+    }
+    
 }
