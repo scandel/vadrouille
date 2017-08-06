@@ -1,8 +1,0 @@
-# User
-user:
-  firstName.blank: Entrez votre prénom s'il vous plait
-  lastName.blank: Entrez votre nom s'il vous plait
-  phone.invalid: Ce n'est pas un numéro de téléphone valide
-  terms.unchecked: Vous devez accepter les Conditions d'Utilisation pour vous inscrire
-
-

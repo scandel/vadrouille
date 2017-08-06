@@ -1,3 +1,0 @@
-migrate_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: MigrateBundle:Default:index }
